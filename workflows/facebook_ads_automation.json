@@ -1,0 +1,457 @@
+{
+  "name": "Facebook Ads - Full Campaign Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "aaaa0001-0000-0000-0000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-01",
+              "name": "access_token",
+              "value": "={{ $env.FB_ACCESS_TOKEN }}",
+              "type": "string"
+            },
+            {
+              "id": "cfg-02",
+              "name": "ad_account_id",
+              "value": "={{ $env.FB_AD_ACCOUNT_ID }}",
+              "type": "string"
+            },
+            {
+              "id": "cfg-03",
+              "name": "campaign_name",
+              "value": "Automated Campaign - N8N",
+              "type": "string"
+            },
+            {
+              "id": "cfg-04",
+              "name": "campaign_objective",
+              "value": "OUTCOME_TRAFFIC",
+              "type": "string"
+            },
+            {
+              "id": "cfg-05",
+              "name": "daily_budget",
+              "value": "500",
+              "type": "string"
+            },
+            {
+              "id": "cfg-06",
+              "name": "currency",
+              "value": "USD",
+              "type": "string"
+            },
+            {
+              "id": "cfg-07",
+              "name": "ad_title",
+              "value": "Check out our latest offer!",
+              "type": "string"
+            },
+            {
+              "id": "cfg-08",
+              "name": "ad_body",
+              "value": "Click to learn more about our amazing products.",
+              "type": "string"
+            },
+            {
+              "id": "cfg-09",
+              "name": "ad_link",
+              "value": "https://yourwebsite.com",
+              "type": "string"
+            },
+            {
+              "id": "cfg-10",
+              "name": "image_url",
+              "value": "https://yourwebsite.com/ad-image.jpg",
+              "type": "string"
+            },
+            {
+              "id": "cfg-11",
+              "name": "targeting_country",
+              "value": "US",
+              "type": "string"
+            },
+            {
+              "id": "cfg-12",
+              "name": "age_min",
+              "value": "18",
+              "type": "string"
+            },
+            {
+              "id": "cfg-13",
+              "name": "age_max",
+              "value": "65",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aaaa0002-0000-0000-0000-000000000002",
+      "name": "Set Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $json.ad_account_id }}/campaigns",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $json.campaign_name }}\",\n  \"objective\": \"{{ $json.campaign_objective }}\",\n  \"status\": \"PAUSED\",\n  \"special_ad_categories\": [],\n  \"access_token\": \"{{ $json.access_token }}\"\n}",
+        "options": {}
+      },
+      "id": "aaaa0003-0000-0000-0000-000000000003",
+      "name": "Create Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "merge-01",
+              "name": "campaign_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-02",
+              "name": "access_token",
+              "value": "={{ $('Set Config').item.json.access_token }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-03",
+              "name": "ad_account_id",
+              "value": "={{ $('Set Config').item.json.ad_account_id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-04",
+              "name": "daily_budget",
+              "value": "={{ $('Set Config').item.json.daily_budget }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-05",
+              "name": "targeting_country",
+              "value": "={{ $('Set Config').item.json.targeting_country }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-06",
+              "name": "age_min",
+              "value": "={{ $('Set Config').item.json.age_min }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-07",
+              "name": "age_max",
+              "value": "={{ $('Set Config').item.json.age_max }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-08",
+              "name": "ad_title",
+              "value": "={{ $('Set Config').item.json.ad_title }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-09",
+              "name": "ad_body",
+              "value": "={{ $('Set Config').item.json.ad_body }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-10",
+              "name": "ad_link",
+              "value": "={{ $('Set Config').item.json.ad_link }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-11",
+              "name": "image_url",
+              "value": "={{ $('Set Config').item.json.image_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aaaa0004-0000-0000-0000-000000000004",
+      "name": "Merge Campaign ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $json.ad_account_id }}/adsets",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"Ad Set - N8N\",\n  \"campaign_id\": \"{{ $json.campaign_id }}\",\n  \"daily_budget\": \"{{ $json.daily_budget }}\",\n  \"billing_event\": \"IMPRESSIONS\",\n  \"optimization_goal\": \"REACH\",\n  \"bid_amount\": \"2\",\n  \"targeting\": {\n    \"geo_locations\": {\n      \"countries\": [\"{{ $json.targeting_country }}\"]\n    },\n    \"age_min\": {{ $json.age_min }},\n    \"age_max\": {{ $json.age_max }}\n  },\n  \"status\": \"PAUSED\",\n  \"access_token\": \"{{ $json.access_token }}\"\n}",
+        "options": {}
+      },
+      "id": "aaaa0005-0000-0000-0000-000000000005",
+      "name": "Create Ad Set",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "merge2-01",
+              "name": "adset_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-02",
+              "name": "access_token",
+              "value": "={{ $('Merge Campaign ID').item.json.access_token }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-03",
+              "name": "ad_account_id",
+              "value": "={{ $('Merge Campaign ID').item.json.ad_account_id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-04",
+              "name": "ad_title",
+              "value": "={{ $('Merge Campaign ID').item.json.ad_title }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-05",
+              "name": "ad_body",
+              "value": "={{ $('Merge Campaign ID').item.json.ad_body }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-06",
+              "name": "ad_link",
+              "value": "={{ $('Merge Campaign ID').item.json.ad_link }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-07",
+              "name": "image_url",
+              "value": "={{ $('Merge Campaign ID').item.json.image_url }}",
+              "type": "string"
+            },
+            {
+              "id": "merge2-08",
+              "name": "campaign_id",
+              "value": "={{ $('Merge Campaign ID').item.json.campaign_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aaaa0006-0000-0000-0000-000000000006",
+      "name": "Merge Ad Set ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $json.ad_account_id }}/adcreatives",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"Ad Creative - N8N\",\n  \"object_story_spec\": {\n    \"link_data\": {\n      \"link\": \"{{ $json.ad_link }}\",\n      \"message\": \"{{ $json.ad_body }}\",\n      \"name\": \"{{ $json.ad_title }}\",\n      \"picture\": \"{{ $json.image_url }}\",\n      \"call_to_action\": {\n        \"type\": \"LEARN_MORE\",\n        \"value\": {\n          \"link\": \"{{ $json.ad_link }}\"\n        }\n      }\n    },\n    \"page_id\": \"YOUR_PAGE_ID\"\n  },\n  \"access_token\": \"{{ $json.access_token }}\"\n}",
+        "options": {}
+      },
+      "id": "aaaa0007-0000-0000-0000-000000000007",
+      "name": "Create Ad Creative",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "merge3-01",
+              "name": "creative_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge3-02",
+              "name": "access_token",
+              "value": "={{ $('Merge Ad Set ID').item.json.access_token }}",
+              "type": "string"
+            },
+            {
+              "id": "merge3-03",
+              "name": "ad_account_id",
+              "value": "={{ $('Merge Ad Set ID').item.json.ad_account_id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge3-04",
+              "name": "adset_id",
+              "value": "={{ $('Merge Ad Set ID').item.json.adset_id }}",
+              "type": "string"
+            },
+            {
+              "id": "merge3-05",
+              "name": "campaign_id",
+              "value": "={{ $('Merge Ad Set ID').item.json.campaign_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aaaa0008-0000-0000-0000-000000000008",
+      "name": "Merge Creative ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1780, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v19.0/{{ $json.ad_account_id }}/ads",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"Ad - N8N\",\n  \"adset_id\": \"{{ $json.adset_id }}\",\n  \"creative\": {\n    \"creative_id\": \"{{ $json.creative_id }}\"\n  },\n  \"status\": \"PAUSED\",\n  \"access_token\": \"{{ $json.access_token }}\"\n}",
+        "options": {}
+      },
+      "id": "aaaa0009-0000-0000-0000-000000000009",
+      "name": "Create Ad",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "out-01",
+              "name": "status",
+              "value": "success",
+              "type": "string"
+            },
+            {
+              "id": "out-02",
+              "name": "ad_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "out-03",
+              "name": "campaign_id",
+              "value": "={{ $('Merge Creative ID').item.json.campaign_id }}",
+              "type": "string"
+            },
+            {
+              "id": "out-04",
+              "name": "adset_id",
+              "value": "={{ $('Merge Creative ID').item.json.adset_id }}",
+              "type": "string"
+            },
+            {
+              "id": "out-05",
+              "name": "creative_id",
+              "value": "={{ $('Merge Creative ID').item.json.creative_id }}",
+              "type": "string"
+            },
+            {
+              "id": "out-06",
+              "name": "message",
+              "value": "Ad created successfully in PAUSED state. Activate it in Meta Business Manager.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aaaa0010-0000-0000-0000-000000000010",
+      "name": "Output Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2220, 380]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [{"node": "Set Config", "type": "main", "index": 0}]
+      ]
+    },
+    "Set Config": {
+      "main": [
+        [{"node": "Create Campaign", "type": "main", "index": 0}]
+      ]
+    },
+    "Create Campaign": {
+      "main": [
+        [{"node": "Merge Campaign ID", "type": "main", "index": 0}]
+      ]
+    },
+    "Merge Campaign ID": {
+      "main": [
+        [{"node": "Create Ad Set", "type": "main", "index": 0}]
+      ]
+    },
+    "Create Ad Set": {
+      "main": [
+        [{"node": "Merge Ad Set ID", "type": "main", "index": 0}]
+      ]
+    },
+    "Merge Ad Set ID": {
+      "main": [
+        [{"node": "Create Ad Creative", "type": "main", "index": 0}]
+      ]
+    },
+    "Create Ad Creative": {
+      "main": [
+        [{"node": "Merge Creative ID", "type": "main", "index": 0}]
+      ]
+    },
+    "Merge Creative ID": {
+      "main": [
+        [{"node": "Create Ad", "type": "main", "index": 0}]
+      ]
+    },
+    "Create Ad": {
+      "main": [
+        [{"node": "Output Summary", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": ["facebook-ads", "automation"]
+}
