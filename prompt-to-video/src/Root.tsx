@@ -3,6 +3,7 @@ import { Composition, getStaticFiles } from "remotion";
 import { AIVideo, aiVideoSchema } from "./components/AIVideo";
 import { FPS, INTRO_DURATION } from "./lib/constants";
 import { getTimelinePath, loadTimelineFromFile } from "./lib/utils";
+import { AdVideo, TOTAL_DURATION } from "./AdVideo";
 
 export const RemotionRoot: React.FC = () => {
   const staticFiles = getStaticFiles();
@@ -12,8 +13,21 @@ export const RemotionRoot: React.FC = () => {
 
   return (
     <>
+      {/* ── Cyber-Ad: "Your Ads Are Dying" ─────────────────────── */}
+      <Composition
+        id="CyberAd"
+        component={AdVideo}
+        fps={30}
+        width={1080}
+        height={1920}
+        durationInFrames={TOTAL_DURATION}
+        defaultProps={{}}
+      />
+
+      {/* ── Original AI-Video template compositions ─────────────── */}
       {timelines.map((storyName) => (
         <Composition
+          key={storyName}
           id={storyName}
           component={AIVideo}
           fps={FPS}
