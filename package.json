@@ -1,0 +1,16 @@
+{
+  "name": "anglecast",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Record like Google Meet. Walk away with multi-cam podcast footage.",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "pnpm --filter @anglecast/web dev",
+    "build": "pnpm -r --filter=./packages/* build && pnpm --filter @anglecast/web build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
