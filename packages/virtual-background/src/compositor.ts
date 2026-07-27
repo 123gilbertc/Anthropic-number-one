@@ -1,6 +1,6 @@
 /**
- * WebGL2 compositor: camera RGB + segmentation mask + background → output.
- * Includes temporal EMA on the mask for hair-friendly, Meet-like stability.
+ * WebGL2 compositor: camera RGB + person mask + background → output.
+ * Mask convention: 1.0 = person (keep camera), 0.0 = background (show virtual set).
  */
 
 const VERT = `#version 300 es
@@ -23,20 +23,26 @@ uniform sampler2D u_bg;
 uniform vec3 u_bgColor;
 uniform int u_bgMode; // 0=none, 1=color, 2=image/video
 uniform float u_edgeSoftness;
-uniform float u_maskGamma;
+uniform float u_personBias;
 
 float sampleMask(vec2 uv) {
-  // Slight blur via 5-tap cross for edge refinement
-  vec2 texel = vec2(1.0) / vec2(textureSize(u_mask, 0));
-  float c = texture(u_mask, uv).r;
-  float l = texture(u_mask, uv + vec2(-texel.x, 0.0)).r;
-  float r = texture(u_mask, uv + vec2(texel.x, 0.0)).r;
-  float u = texture(u_mask, uv + vec2(0.0, -texel.y)).r;
-  float d = texture(u_mask, uv + vec2(0.0, texel.y)).r;
-  float m = (c * 2.0 + l + r + u + d) / 6.0;
-  m = pow(clamp(m, 0.0, 1.0), u_maskGamma);
-  // Soften transition for hair / fine edges
-  return smoothstep(0.5 - u_edgeSoftness, 0.5 + u_edgeSoftness, m);
+  // 9-tap blur for hair / fine edges without eating into the subject
+  vec2 texel = 1.0 / vec2(textureSize(u_mask, 0));
+  float m = 0.0;
+  m += texture(u_mask, uv + vec2(-texel.x, -texel.y)).r * 0.0625;
+  m += texture(u_mask, uv + vec2(0.0, -texel.y)).r * 0.125;
+  m += texture(u_mask, uv + vec2(texel.x, -texel.y)).r * 0.0625;
+  m += texture(u_mask, uv + vec2(-texel.x, 0.0)).r * 0.125;
+  m += texture(u_mask, uv).r * 0.25;
+  m += texture(u_mask, uv + vec2(texel.x, 0.0)).r * 0.125;
+  m += texture(u_mask, uv + vec2(-texel.x, texel.y)).r * 0.0625;
+  m += texture(u_mask, uv + vec2(0.0, texel.y)).r * 0.125;
+  m += texture(u_mask, uv + vec2(texel.x, texel.y)).r * 0.0625;
+
+  // Bias threshold toward keeping the person (reduces BG "cutting into" face)
+  float low = 0.5 - u_edgeSoftness - u_personBias;
+  float high = 0.5 + u_edgeSoftness - u_personBias * 0.35;
+  return smoothstep(low, high, clamp(m, 0.0, 1.0));
 }
 
 void main() {
@@ -52,6 +58,7 @@ void main() {
   } else {
     bg = texture(u_bg, v_uv).rgb;
   }
+  // alpha=1 → person/camera in front; alpha=0 → virtual background behind
   outColor = vec4(mix(bg, cam.rgb, alpha), 1.0);
 }`;
 
@@ -83,12 +90,12 @@ export class WebGLCompositor {
     bgColor: WebGLUniformLocation;
     bgMode: WebGLUniformLocation;
     edgeSoftness: WebGLUniformLocation;
-    maskGamma: WebGLUniformLocation;
+    personBias: WebGLUniformLocation;
   };
   private width = 0;
   private height = 0;
 
-  /** CPU-side previous mask for temporal EMA (Float32 grayscale) */
+  /** CPU-side previous mask for temporal EMA (person alpha 0–1) */
   private prevMask: Float32Array | null = null;
   private maskW = 0;
   private maskH = 0;
@@ -128,17 +135,16 @@ export class WebGLCompositor {
       bgColor: loc("u_bgColor"),
       bgMode: loc("u_bgMode"),
       edgeSoftness: loc("u_edgeSoftness"),
-      maskGamma: loc("u_maskGamma"),
+      personBias: loc("u_personBias"),
     };
 
-    // Fullscreen quad
     const vao = gl.createVertexArray();
     if (!vao) throw new Error("Failed to create VAO");
     this.vao = vao;
     gl.bindVertexArray(vao);
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    // pos.xy, uv.xy — flip Y for video textures
+    // Match HTML top-left origin: flip V so video + mask share the same orientation
     const quad = new Float32Array([
       -1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, -1, 1, 0, 0, 1, -1, 1, 1, 1, 1, 1, 0,
     ]);
@@ -177,8 +183,9 @@ export class WebGLCompositor {
   }
 
   /**
-   * Apply temporal EMA to a grayscale mask ImageData / Uint8ClampedArray (R channel used).
-   * Returns a Uint8Array suitable for LUMINANCE upload.
+   * Temporal smooth with person-preserving + motion-adaptive behavior.
+   * Fast motion → trust the new mask (stops black BG tearing through the subject).
+   * Still areas → light EMA for stable hair edges.
    */
   smoothMask(
     maskData: Uint8Array | Uint8ClampedArray,
@@ -187,28 +194,44 @@ export class WebGLCompositor {
     temporalAlpha: number,
   ): Uint8Array {
     const n = width * height;
+    const stride = maskData.length === n ? 1 : 4;
+    const cur = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      cur[i] = (maskData[i * stride] ?? 0) / 255;
+    }
+
     if (!this.prevMask || this.maskW !== width || this.maskH !== height) {
-      this.prevMask = new Float32Array(n);
+      this.prevMask = cur;
       this.maskW = width;
       this.maskH = height;
-      for (let i = 0; i < n; i++) {
-        // MediaPipe category mask is often single-channel; support RGBA too
-        const stride = maskData.length === n ? 1 : 4;
-        this.prevMask[i] = maskData[i * stride]! / 255;
-      }
-    } else {
-      const a = temporalAlpha;
-      for (let i = 0; i < n; i++) {
-        const stride = maskData.length === n ? 1 : 4;
-        const cur = maskData[i * stride]! / 255;
-        this.prevMask[i] = a * this.prevMask[i]! + (1 - a) * cur;
-      }
+      return toBytes(cur);
     }
-    const out = new Uint8Array(n);
+
+    // Motion amount: how much the person mask changed this frame
+    let motion = 0;
+    for (let i = 0; i < n; i += 4) {
+      motion += Math.abs(cur[i]! - this.prevMask[i]!);
+    }
+    motion /= n / 4;
+    // Map motion → blend toward current frame (0 = sticky, 1 = instant)
+    const motionBoost = Math.min(1, motion * 6);
+    // Base hold from quality preset, reduced when moving
+    const hold = temporalAlpha * (1 - motionBoost * 0.85);
+    const out = new Float32Array(n);
+
     for (let i = 0; i < n; i++) {
-      out[i] = Math.round(this.prevMask[i]! * 255);
+      const c = cur[i]!;
+      const p = this.prevMask[i]!;
+      let v = hold * p + (1 - hold) * c;
+      // Asymmetric: prefer keeping person pixels (prevents BG eating into face/body)
+      if (c > p) {
+        v = Math.max(v, c * 0.85 + p * 0.15);
+      }
+      out[i] = v;
     }
-    return out;
+
+    this.prevMask = out;
+    return toBytes(out);
   }
 
   draw(opts: {
@@ -218,11 +241,16 @@ export class WebGLCompositor {
     maskHeight: number;
     background: BackgroundSourceLike;
     edgeSoftness?: number;
-    maskGamma?: number;
+    personBias?: number;
   }) {
     const gl = this.gl;
     gl.useProgram(this.program);
     gl.bindVertexArray(this.vao);
+
+    // Keep HTML and typed-array uploads in the same orientation
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.camTex);
@@ -231,15 +259,15 @@ export class WebGLCompositor {
 
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, this.maskTex);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    // WebGL2 R8 — LUMINANCE is unreliable across browsers
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
-      gl.LUMINANCE,
+      gl.R8,
       opts.maskWidth,
       opts.maskHeight,
       0,
-      gl.LUMINANCE,
+      gl.RED,
       gl.UNSIGNED_BYTE,
       opts.mask,
     );
@@ -260,8 +288,8 @@ export class WebGLCompositor {
 
     gl.uniform1i(this.uniforms.bgMode, mode);
     gl.uniform3f(this.uniforms.bgColor, color[0], color[1], color[2]);
-    gl.uniform1f(this.uniforms.edgeSoftness, opts.edgeSoftness ?? 0.12);
-    gl.uniform1f(this.uniforms.maskGamma, opts.maskGamma ?? 0.85);
+    gl.uniform1f(this.uniforms.edgeSoftness, opts.edgeSoftness ?? 0.1);
+    gl.uniform1f(this.uniforms.personBias, opts.personBias ?? 0.08);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
@@ -282,6 +310,14 @@ export type BackgroundSourceLike =
   | { kind: "color"; color: string }
   | { kind: "image"; element: TexImageSource }
   | { kind: "video"; element: TexImageSource };
+
+function toBytes(src: Float32Array): Uint8Array {
+  const out = new Uint8Array(src.length);
+  for (let i = 0; i < src.length; i++) {
+    out[i] = Math.round(Math.min(1, Math.max(0, src[i]!)) * 255);
+  }
+  return out;
+}
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");

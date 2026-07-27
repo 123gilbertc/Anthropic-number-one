@@ -121,6 +121,9 @@ export class VirtualBackgroundProcessor {
       maskWidth: segmented.width,
       maskHeight: segmented.height,
       background: bg,
+      // Soft edges + slight person bias so the virtual set stays behind you
+      edgeSoftness: 0.1,
+      personBias: 0.1,
     });
   }
 

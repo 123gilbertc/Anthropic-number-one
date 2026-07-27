@@ -34,20 +34,21 @@ export interface VirtualBackgroundQuality {
 export const QUALITY_PRESETS = {
   high: {
     maskWidth: 256,
-    maskHeight: 256,
-    temporalAlpha: 0.65,
+    maskHeight: 144,
+    // Lower hold = less lag when you move (BG won't tear black holes through you)
+    temporalAlpha: 0.35,
     targetFps: 30,
   },
   balanced: {
-    maskWidth: 192,
-    maskHeight: 192,
-    temporalAlpha: 0.7,
+    maskWidth: 256,
+    maskHeight: 144,
+    temporalAlpha: 0.4,
     targetFps: 24,
   },
   low: {
-    maskWidth: 160,
-    maskHeight: 160,
-    temporalAlpha: 0.75,
+    maskWidth: 192,
+    maskHeight: 108,
+    temporalAlpha: 0.45,
     targetFps: 20,
   },
 } as const satisfies Record<string, VirtualBackgroundQuality>;
