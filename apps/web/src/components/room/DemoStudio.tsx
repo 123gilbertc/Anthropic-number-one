@@ -8,7 +8,7 @@ import {
 import { LocalTrackRecorder } from "@anglecast/recording";
 import { PRODUCT } from "@anglecast/shared";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRESET_BACKGROUNDS, useRoomStore } from "@/lib/room-store";
+import { resolveBackground, useRoomStore } from "@/lib/room-store";
 import { StudioChrome } from "@/components/room/StudioChrome";
 import { BackgroundPicker } from "@/components/room/BackgroundPicker";
 import { RecordingConsentModal } from "@/components/room/RecordingConsentModal";
@@ -41,6 +41,7 @@ export function DemoStudio({
   );
 
   const backgroundId = useRoomStore((s) => s.backgroundId);
+  const customBackgrounds = useRoomStore((s) => s.customBackgrounds);
   const recording = useRoomStore((s) => s.recording);
   const setRecording = useRoomStore((s) => s.setRecording);
   const setVbStatsFps = useRoomStore((s) => s.setVbStatsFps);
@@ -64,7 +65,7 @@ export function DemoStudio({
 
         const processor = new AngleCastBackgroundProcessor({
           quality: "balanced",
-          background: { kind: "color", color: "#2A3544" },
+          background: { kind: "color", color: "#0B0F14" },
           onStats: (s) => setVbStatsFps(Math.round(s.fps)),
         });
         await processor.init({ track: camTrack });
@@ -94,7 +95,7 @@ export function DemoStudio({
   useEffect(() => {
     const processor = processorRef.current;
     if (!processor || !ready) return;
-    const asset = PRESET_BACKGROUNDS.find((b) => b.id === backgroundId);
+    const asset = resolveBackground(backgroundId, customBackgrounds);
     if (!asset) return;
     let cancelled = false;
     (async () => {
@@ -110,7 +111,7 @@ export function DemoStudio({
     return () => {
       cancelled = true;
     };
-  }, [backgroundId, ready]);
+  }, [backgroundId, customBackgrounds, ready]);
 
   const toggleMic = () => {
     const track = camStreamRef.current?.getAudioTracks()[0];

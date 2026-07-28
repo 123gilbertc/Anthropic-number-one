@@ -19,7 +19,7 @@ import {
 import "@livekit/components-styles";
 import { Track, type LocalVideoTrack } from "livekit-client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRESET_BACKGROUNDS, useRoomStore } from "@/lib/room-store";
+import { resolveBackground, useRoomStore } from "@/lib/room-store";
 import { StudioChrome } from "@/components/room/StudioChrome";
 import { BackgroundPicker } from "@/components/room/BackgroundPicker";
 import { RecordingConsentModal } from "@/components/room/RecordingConsentModal";
@@ -63,6 +63,7 @@ function StudioSession({ roomName, displayName }: { roomName: string; displayNam
   );
 
   const backgroundId = useRoomStore((s) => s.backgroundId);
+  const customBackgrounds = useRoomStore((s) => s.customBackgrounds);
   const recording = useRoomStore((s) => s.recording);
   const setRecording = useRoomStore((s) => s.setRecording);
   const setVbStatsFps = useRoomStore((s) => s.setVbStatsFps);
@@ -85,7 +86,7 @@ function StudioSession({ roomName, displayName }: { roomName: string; displayNam
 
         const processor = new AngleCastBackgroundProcessor({
           quality: "balanced",
-          background: { kind: "color", color: "#2A3544" },
+          background: { kind: "color", color: "#0B0F14" },
           onStats: (s) => setVbStatsFps(Math.round(s.fps)),
         });
         await track.setProcessor(processor);
@@ -109,7 +110,7 @@ function StudioSession({ roomName, displayName }: { roomName: string; displayNam
   useEffect(() => {
     const processor = processorRef.current;
     if (!processor || !processorReady) return;
-    const asset = PRESET_BACKGROUNDS.find((b) => b.id === backgroundId);
+    const asset = resolveBackground(backgroundId, customBackgrounds);
     if (!asset) return;
 
     let cancelled = false;
@@ -130,7 +131,7 @@ function StudioSession({ roomName, displayName }: { roomName: string; displayNam
     return () => {
       cancelled = true;
     };
-  }, [backgroundId, processorReady]);
+  }, [backgroundId, customBackgrounds, processorReady]);
 
   const toggleScreenShare = useCallback(async () => {
     const enabled = localParticipant.isScreenShareEnabled;
