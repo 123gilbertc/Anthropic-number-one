@@ -244,7 +244,7 @@ def size_positions(
             replace(
                 opp,
                 stake_fraction=stake,
-                stake_usd=round(stake * bankroll, 2),
+                stake_usd=math.floor(stake * bankroll * 100.0 + 1e-9) / 100.0,
                 reason=reason,
             )
         )

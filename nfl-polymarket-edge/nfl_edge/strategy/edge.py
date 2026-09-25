@@ -231,12 +231,17 @@ def _exposure_key(market: "PolyMarket", market_id: str, game_id: str | None) -> 
         return f"game:{game_id}"
     home = getattr(market, "home", None)
     away = getattr(market, "away", None)
+    slug = getattr(market, "event_slug", None)
     if str(getattr(market, "kind", "")) in GAME_KINDS or (home and away):
-        slug = getattr(market, "event_slug", None)
         if slug:
             return f"event:{slug}"
         if home and away:
             return "teams:" + "|".join(sorted((canonical(home), canonical(away))))
+    # Positions inside one mutually exclusive futures event (division, conference, Super Bowl,
+    # top seed) are one correlated bet: NO on several teams is YES on the rest. Cap them jointly.
+    if str(getattr(market, "kind", "")) == "futures" and slug:
+        if market_category(market) in EXCLUSIVE_FUTURES:
+            return f"event:{slug}"
     return f"market:{market_id}"
 
 

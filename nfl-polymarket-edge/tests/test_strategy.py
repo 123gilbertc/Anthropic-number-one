@@ -562,11 +562,18 @@ def test_exposure_key_fallbacks_and_game_id_inheritance():
     opps = find_edges([a, b], {"a": 0.60, "b": 0.60}, cfg=CFG)
     assert {o.exposure_key for o in opps} == {"teams:BUF|KC"}
     assert sum(o.stake_fraction for o in opps) == pytest.approx(CFG.max_game_exposure)
-    # futures on different teams are independent positions (per-market key)
+    # futures inside one mutually exclusive event (one Super Bowl winner) are one correlated bet:
+    # they share the event key and the per-game cap
     f1 = FakeMarket("f1", "Will the Chiefs win Super Bowl LXI?", "futures", team="KC", event_slug="sb", book=book(0.40, 0.41))
     f2 = FakeMarket("f2", "Will the Bills win Super Bowl LXI?", "futures", team="BUF", event_slug="sb", book=book(0.40, 0.41))
     opps = find_edges([f1, f2], {"f1": 0.60, "f2": 0.60}, cfg=CFG)
-    assert {o.exposure_key for o in opps} == {"market:f1", "market:f2"}
+    assert {o.exposure_key for o in opps} == {"event:sb"}
+    assert sum(o.stake_fraction for o in opps) == pytest.approx(CFG.max_game_exposure)
+    # non-exclusive futures (several teams make the playoffs) stay independent per-market positions
+    p1 = FakeMarket("p1", "Will the Chiefs make the playoffs?", "futures", team="KC", event_slug="po", book=book(0.40, 0.41))
+    p2 = FakeMarket("p2", "Will the Bills make the playoffs?", "futures", team="BUF", event_slug="po", book=book(0.40, 0.41))
+    opps = find_edges([p1, p2], {"p1": 0.60, "p2": 0.60}, cfg=CFG)
+    assert {o.exposure_key for o in opps} == {"market:p1", "market:p2"}
     assert all(o.stake_fraction == pytest.approx(0.03) for o in opps)
     # a market the caller mapped lends its game_id to unmapped markets of the same event
     opps = find_edges(_game_event(), {"ml": 0.60, "sp": 0.60, "tot": 0.60}, cfg=CFG, game_ids={"ml": "2026_03_KC_MIA"})

@@ -90,6 +90,8 @@ _WIN_TOTAL_RE = re.compile(
     r"\bwin total\b|\bregular[- ]season wins\b|\b(?:more|fewer|less) than\s+\d+(?:\.\d+)?\s+(?:games|wins)\b"
 )
 _TOP_SEED_RE = re.compile(r"(?:#\s*1|no\.?\s*1|number one|top|first)\s+seed|\bbye\b")
+_PLAYOFF_WINS_RE = re.compile(r"\b\d+(?:\.\d+)?\+?\s*(?:or more\s+)?(?:playoff|postseason)\s+(?:games?|wins?)\b"
+                              r"|\b(?:playoff|postseason)\s+(?:games?|wins?)\b|\bwin\b[^?]*\bin the (?:playoffs|postseason)\b")
 # A spread quote number: '-10.5' / '(+3)'. The sign must follow whitespace or '(' so that '2026-27' is
 # not read as a quote of -27. Which team owns the number is decided by ``_spread_quotes``.
 _SIGNED_NUMBER_RE = re.compile(r"(?:(?<=\s)|(?<=\())(?P<num>[+-]\d+(?:\.\d+)?)(?=$|[\s).])")
@@ -437,7 +439,9 @@ def _futures_type(text: str) -> str | None:
     if _SUPER_BOWL_RE.search(text):
         return "super_bowl"
     if _PLAYOFFS_RE.search(text):
-        return "playoffs"
+        # "win 2+ playoff games" is neither make-the-playoffs nor a regular-season win total;
+        # leave it unclassified so the strategy layer never prices it off the wrong model.
+        return None if _PLAYOFF_WINS_RE.search(text) else "playoffs"
     if _WIN_TOTAL_RE.search(text):
         return "win_total"
     if _TOP_SEED_RE.search(text):

@@ -173,7 +173,7 @@ def growth_rate(p, price, f) -> float  # expected log growth, for tests
 @dataclass
 class Opportunity:
     market_id, question, kind, side ("YES"|"NO"), token_id, fair_prob (of the side), price (best ask of side),
-    effective_price (price*(1+slippage) + fee-adjusted), edge, ev, kelly, stake_fraction, stake_usd,
+    effective_price (price + cfg.slippage_buffer, additive in price space, capped at 0.999), edge, ev, kelly, stake_fraction, stake_usd,
     liquidity_usd, game_id | None, teams: list[str], reason: str
 def find_edges(markets: list[PolyMarket], fair_yes: dict[str, float], cfg=DEFAULT_STRATEGY, bankroll=1000.0) -> list[Opportunity]
     # Evaluate YES at ask and NO at (1 - best_bid) [= NO ask]; respect min_prob/max_prob, min_liquidity, min_edge.
