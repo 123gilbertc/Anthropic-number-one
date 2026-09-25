@@ -1,0 +1,81 @@
+{
+  "elo": {
+    "k": 20.0,
+    "hfa": 45.0,
+    "mov": true,
+    "season_regress": 0.5,
+    "rest_bonus": 25.0,
+    "qb_change_penalty": 40.0,
+    "playoff_mult": 1.0,
+    "mean": 1500.0
+  },
+  "epa": {
+    "halflife": 5.0,
+    "prior_games": 6.0,
+    "carryover": 0.5,
+    "iters": 5,
+    "scale": 8.304387993875613
+  },
+  "sigma": 13.203258599984093,
+  "sigma_total": 13.435444423238017,
+  "l2": 5.0,
+  "stacker": {
+    "format_version": 1,
+    "features": [
+      "market_shin",
+      "elo_prob",
+      "epa_prob"
+    ],
+    "l2": 5.0,
+    "use_intercept": true,
+    "coef_": {
+      "market_shin_logit": 1.006484283984373,
+      "elo_prob_logit": 0.19495568651442177,
+      "epa_prob_logit": -0.19135893008880248
+    },
+    "intercept_": -0.08352600673062938,
+    "n_fit_": 6232,
+    "converged_": true,
+    "n_iter_": 14
+  },
+  "stacker_model_only": {
+    "format_version": 1,
+    "features": [
+      "elo_prob",
+      "epa_prob"
+    ],
+    "l2": 5.0,
+    "use_intercept": true,
+    "coef_": {
+      "elo_prob_logit": 0.8249314999425027,
+      "epa_prob_logit": 0.2844174358470266
+    },
+    "intercept_": 0.06375789816092882,
+    "n_fit_": 6232,
+    "converged_": true,
+    "n_iter_": 10
+  },
+  "market_anchor_lambda": 0.2,
+  "rating_noise_elo": 60.0,
+  "train_through": 2025,
+  "fitted_at": "2026-09-25T01:09:53Z",
+  "notes": {
+    "elo_tuning": {
+      "logloss": 0.6272309679763948,
+      "accuracy": 0.6513157894736842,
+      "n": 6232,
+      "combos": 34
+    },
+    "stacker_coefs": {
+      "market_shin_logit": 1.006484283984373,
+      "elo_prob_logit": 0.19495568651442177,
+      "epa_prob_logit": -0.19135893008880248,
+      "intercept": -0.08352600673062938
+    },
+    "model_only_coefs": {
+      "elo_prob_logit": 0.8249314999425027,
+      "epa_prob_logit": 0.2844174358470266,
+      "intercept": 0.06375789816092882
+    }
+  }
+}
