@@ -127,9 +127,8 @@ def load_team_week_stats(
         frames.append(pd.read_csv(dest, low_memory=False))
     if not frames:
         return pd.DataFrame()
-    df = pd.concat(frames, ignore_index=True)
-    df["team_c"] = df["team"].map(canonical)
-    df["opponent_c"] = df["opponent_team"].map(canonical)
+    df = pd.concat(frames, ignore_index=True).copy()
+    df = df.assign(team_c=df["team"].map(canonical), opponent_c=df["opponent_team"].map(canonical))
     return df
 
 
