@@ -390,8 +390,9 @@ def fit_elo(
     Every prediction is out-of-sample with respect to the game outcome (sequential replay), but
     the chosen hyper-parameters are of course fitted to ``train_seasons``.
 
-    ``grid`` keys override the corresponding ``DEFAULT_GRID`` entries; supplying a key that is not
-    a field of ``EloParams`` raises. ``metric`` is ``"logloss"``, ``"brier"`` (minimised) or
+    ``grid`` maps ``EloParams`` field names to candidate values and defines the whole search space
+    (``DEFAULT_GRID`` when omitted); fields absent from it stay at their ``start`` value. A key that
+    is not a field of ``EloParams`` raises. ``metric`` is ``"logloss"``, ``"brier"`` (minimised) or
     ``"accuracy"`` (maximised).
 
     Returns ``(best_params, results)`` where ``results`` has one row per distinct parameter
@@ -405,16 +406,18 @@ def fit_elo(
     seasons = sorted({int(s) for s in train_seasons})
     if not seasons:
         raise ValueError("train_seasons is empty")
-    search: dict[str, list[Any]] = {k: list(v) for k, v in DEFAULT_GRID.items()}
-    if grid:
-        unknown = set(grid) - set(_param_field_names())
-        if unknown:
-            raise ValueError(f"grid has unknown EloParams fields: {sorted(unknown)}")
-        for key, values in grid.items():
-            vals = list(values)
-            if not vals:
-                raise ValueError(f"grid[{key!r}] is empty")
-            search[key] = vals
+    source = DEFAULT_GRID if grid is None else grid
+    unknown = set(source) - set(_param_field_names())
+    if unknown:
+        raise ValueError(f"grid has unknown EloParams fields: {sorted(unknown)}")
+    search: dict[str, list[Any]] = {}
+    for key, values in source.items():
+        vals = list(values)
+        if not vals:
+            raise ValueError(f"grid[{key!r}] is empty")
+        search[key] = vals
+    if not search:
+        raise ValueError("grid is empty")
 
     sub = games[games["season"] <= seasons[-1]]
     mask = (sub["played"] & sub["season"].isin(seasons)).to_numpy()
