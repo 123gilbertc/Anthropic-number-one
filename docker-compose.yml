@@ -21,5 +21,17 @@ services:
       - n8n_data:/home/node/.n8n
       - ./workflows:/home/node/.n8n/workflows-import
 
+  nfl-edge-snapshotter:
+    build: ./nfl-polymarket-edge
+    restart: unless-stopped
+    entrypoint: ["sh", "/app/scripts/snapshot_loop.sh"]
+    environment:
+      - NFL_EDGE_DATA_DIR=/data
+      - SNAPSHOT_INTERVAL_SECONDS=${SNAPSHOT_INTERVAL_SECONDS:-900}
+    volumes:
+      - ./nfl-polymarket-edge/scripts:/app/scripts:ro
+      - nfl_edge_data:/data
+
 volumes:
   n8n_data:
+  nfl_edge_data:
