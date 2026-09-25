@@ -1,7 +1,7 @@
 """Load historical matches from Jeff Sackmann CSVs or tennis-data.co.uk files.
 
 Both are free:
-  * Sackmann:        https://github.com/JeffSackmann/tennis_atp  (and tennis_wta)
+  * Sackmann format: ATP via https://github.com/Tennismylife/TML-Database
   * tennis-data.co.uk: http://www.tennis-data.co.uk/alldata.php  (includes
     closing bookmaker odds - needed for an honest backtest)
 
@@ -168,23 +168,22 @@ def load_matches(paths: Iterable[str]) -> list[Match]:
     return matches
 
 
-SACKMANN_URL = "https://raw.githubusercontent.com/JeffSackmann/tennis_{tour}/master/{tour}_matches_{year}.csv"
-TENNIS_DATA_URL = "http://www.tennis-data.co.uk/{year}/{file}.xlsx"
+TML_URL = "https://raw.githubusercontent.com/Tennismylife/TML-Database/master/{name}.csv"
 
 
-def download_sackmann(tour: str, years: Iterable[int], out_dir: str) -> list[str]:
-    """Download Sackmann yearly CSVs (tour = 'atp' or 'wta')."""
+def download_tml(years: Iterable[int], out_dir: str) -> list[str]:
+    """Download ATP results from TML-Database (a Sackmann-format mirror; the original
+    JeffSackmann/tennis_atp repo is no longer public)."""
     import requests
 
     os.makedirs(out_dir, exist_ok=True)
     saved = []
-    for y in years:
-        url = SACKMANN_URL.format(tour=tour, year=y)
-        r = requests.get(url, timeout=30)
+    for name in [str(y) for y in years] + ["ongoing_tourneys"]:
+        r = requests.get(TML_URL.format(name=name), timeout=60)
         if r.status_code != 200:
-            print(f"  skip {url} ({r.status_code})")
+            print(f"  skip {name} ({r.status_code})")
             continue
-        path = os.path.join(out_dir, f"{tour}_matches_{y}.csv")
+        path = os.path.join(out_dir, f"atp_{name}.csv")
         with open(path, "wb") as fh:
             fh.write(r.content)
         saved.append(path)

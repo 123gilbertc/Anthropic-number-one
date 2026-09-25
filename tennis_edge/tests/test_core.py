@@ -99,6 +99,7 @@ def test_tennis_data_csv(tmp_path):
 
 def test_polymarket_event_parsing():
     ev = {"title": "Wimbledon: Sinner vs Alcaraz", "slug": "wim-sinner-alcaraz",
+          "sport": {"sport": "atp"},
           "markets": [
               {"question": "Sinner vs. Alcaraz", "conditionId": "c1", "active": True,
                "outcomes": json.dumps(["Jannik Sinner", "Carlos Alcaraz"]),
@@ -116,3 +117,27 @@ def test_polymarket_event_parsing():
     assert m.outcomes[0].mid == 0.45 and m.outcomes[1].token_id == "t2"
     assert guess_best_of("WTA Wimbledon") == 3
     assert guess_surface("Mutua Madrid Open") == "clay"
+
+
+def test_polymarket_keeps_only_moneyline_and_quotes_both_sides():
+    base = {"outcomes": json.dumps(["Elise Mertens", "Maja Chwalinska"]), "active": True,
+            "gameStartTime": "2026-09-25 05:00:00+00", "clobTokenIds": json.dumps(["a", "b"])}
+    ev = {"title": "Singapore Open: Elise Mertens vs Maja Chwalinska", "slug": "wta-x",
+          "sport": {"sport": "wta"},
+          "markets": [
+              {**base, "conditionId": "m", "sportsMarketType": "moneyline", "feeType": "sports_fees_v3",
+               "outcomePrices": json.dumps(["0.665", "0.335"]), "bestAsk": 0.67, "bestBid": 0.66},
+              {**base, "conditionId": "h", "sportsMarketType": "tennis_game_handicap",
+               "question": "Game Spread: Elise Mertens (-3.5) vs Maja Chwalinska (+3.5)"},
+              {**base, "conditionId": "s", "sportsMarketType": "tennis_first_set_winner"},
+          ]}
+    (m,) = _parse_event(ev, None, set())
+    assert m.tour == "wta" and m.best_of == 3 and m.fee_rate == 0.05 and not m.doubles
+    assert m.outcomes[0].best_ask == 0.67 and m.outcomes[1].best_ask == 0.34
+    assert m.start_dt.hour == 5 and m.start_dt.tzinfo is not None
+
+
+def test_fee_eats_thin_edges():
+    # 4c raw edge at p=0.5 minus 0.05*0.5*0.5 = 1.25c fee -> 2.75c, below a 3c threshold
+    assert size_bet("A", 0.54, 0.50, 1000, min_edge=0.03, fee=0.05 * 0.25) is None
+    assert size_bet("A", 0.54, 0.50, 1000, min_edge=0.03) is not None

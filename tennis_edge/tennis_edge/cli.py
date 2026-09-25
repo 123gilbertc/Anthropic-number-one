@@ -12,11 +12,12 @@ from __future__ import annotations
 import argparse
 import csv
 import os
-from datetime import date, datetime, timezone
+import json
+from datetime import date, datetime, timedelta, timezone
 
 from .backtest import BacktestConfig, run, tune_w_model
 from .betting import shrink, size_bet
-from .data import download_sackmann, load_matches
+from .data import download_tml, load_matches
 from .elo import Elo, EloParams
 
 DEFAULT_DATA = ["data/*.csv", "data/*.xlsx"]
@@ -30,16 +31,19 @@ def _model(args) -> Elo:
                          "or pass --data path/to/*.csv")
     elo = Elo(EloParams(surface_weight=args.surface_weight)).fit(matches)
     print(f"[model] trained on {len(matches):,} matches up to {matches[-1].date}")
+    stale = (date.today() - matches[-1].date).days
+    if stale > 14:
+        print(f"[model] WARNING: newest result is {stale} days old. Ratings miss recent form, injuries "
+              f"and breakout players. Refresh ./data before betting real money.")
     return elo
 
 
 def cmd_download(args):
     years = range(args.start, args.end + 1)
-    for tour in args.tours:
-        print(f"Downloading {tour.upper()} {args.start}-{args.end} ...")
-        download_sackmann(tour, years, args.out)
-    print("\nFor backtesting with odds also grab yearly files from "
-          "http://www.tennis-data.co.uk/alldata.php into ./data/")
+    print(f"Downloading ATP {args.start}-{args.end} (TML-Database, Sackmann format) ...")
+    download_tml(years, args.out)
+    print("\nFor WTA, current-season results and closing odds, download the yearly .xlsx files\n"
+          "(ATP and WTA 'w' folders) from http://www.tennis-data.co.uk/alldata.php into ./data/")
 
 
 def cmd_ratings(args):
@@ -58,21 +62,25 @@ def cmd_predict(args):
     print(f"Fair prices: {args.a} {pa:.3f}, {args.b} {1-pa:.3f}")
 
 
-def _evaluate(elo, a, b, price_a, price_b, surface, best_of, args):
+def _evaluate(elo, a, b, price_a, price_b, surface, best_of, args, fee_rate=None):
     """Return list of (player, p_model, p_final, price, Bet|None)."""
+    rate = args.fee_rate if fee_rate is None else fee_rate
     pa = elo.prob(a, b, surface, best_of, on=date.today())
     mid_a = price_a / (price_a + price_b) if price_a and price_b else price_a
     pf = shrink(pa, mid_a, args.w_model) if mid_a else pa
     rows = []
     for name, pm, pfinal, price in ((a, pa, pf, price_a), (b, 1 - pa, 1 - pf, price_b)):
+        fee = rate * price * (1 - price) if price else 0.0
         bet = size_bet(name, pfinal, price, args.bankroll, kelly_fraction=args.kelly,
-                       max_bet_pct=args.max_bet, min_edge=args.min_edge, fee=args.fee) if price else None
+                       max_bet_pct=args.max_bet, min_edge=args.min_edge, fee=fee) if price else None
         rows.append((name, pm, pfinal, price, bet))
     return rows
 
 
 def cmd_price(args):
     elo = _model(args)
+    if args.fee_rate is None:
+        args.fee_rate = 0.05
     pb = args.price_b if args.price_b is not None else 1 - args.price_a
     for name, pm, pf, price, bet in _evaluate(elo, args.a, args.b, args.price_a, pb,
                                               args.surface, args.best_of, args):
@@ -98,47 +106,70 @@ def cmd_backtest(args):
 
 
 def cmd_scan(args):
-    from .polymarket import fetch_tennis_markets
+    from .polymarket import fetch_events, markets_from_events
 
     elo = _model(args)
-    markets = fetch_tennis_markets(tags=args.tags, with_books=not args.no_books)
-    print(f"[polymarket] {len(markets)} head-to-head tennis markets\n")
-    picks = []
-    for mk in markets:
+    if args.events_json:
+        events = []
+        for path in args.events_json:
+            with open(path) as fh:
+                events += json.load(fh)
+        markets = markets_from_events(events)
+    else:
+        import requests
+        s = requests.Session()
+        markets = markets_from_events(fetch_events(args.tags, session=s), None if args.no_books else s)
+    now = datetime.now(timezone.utc)
+    horizon = now + timedelta(hours=args.hours)
+    markets = [m for m in markets if not m.doubles and m.start_dt and now < m.start_dt <= horizon]
+    print(f"[polymarket] {len(markets)} singles match-winner markets starting in the next {args.hours}h\n")
+
+    picks, rated, unrated = [], [], []
+    for mk in sorted(markets, key=lambda m: m.start_dt):
         a, b = mk.outcomes
-        if not (elo.known(a.name) and elo.known(b.name)):
-            continue
-        if min(elo.experience(a.name), elo.experience(b.name)) < args.min_matches:
+        exp = min(elo.experience(a.name), elo.experience(b.name))
+        if exp < args.min_matches:
+            unrated.append(mk)
             continue
         pa_price = a.best_ask or a.mid
         pb_price = b.best_ask or b.mid
         surface = args.surface or mk.surface
         best_of = args.best_of or mk.best_of
-        for name, pm, pf, price, bet in _evaluate(elo, a.name, b.name, pa_price, pb_price,
-                                                  surface, best_of, args):
+        rows = _evaluate(elo, a.name, b.name, pa_price, pb_price, surface, best_of, args,
+                         fee_rate=mk.fee_rate if args.fee_rate is None else args.fee_rate)
+        rated.append((mk, rows))
+        for name, pm, pf, price, bet in rows:
             if bet and mk.liquidity >= args.min_liquidity:
                 picks.append((bet.edge, mk, name, pm, pf, price, bet))
-        if args.all:
-            print(f"  {mk.question[:60]:<60} {a.name} {pa_price}  /  {b.name} {pb_price}")
+
+    if args.all or not picks:
+        print("Rated matches (model% vs market ask):")
+        for mk, rows in rated:
+            (na, pa, _, qa, _), (nb, pb, _, qb, _) = rows
+            print(f"  {mk.start_dt:%a %H:%M}Z  {na[:22]:<22} {pa:>5.0%} @ {qa or 0:.2f}   "
+                  f"{nb[:22]:<22} {pb:>5.0%} @ {qb or 0:.2f}   [{mk.event_title.split(':')[0][:22]}]")
+        print(f"\n{len(unrated)} matches skipped: a player has < {args.min_matches} rated matches in the data.\n")
+
     picks.sort(key=lambda x: -x[0])
     if not picks:
-        print("No bets clear the edge threshold. Passing is a position - that's normal.")
+        print("No bets clear the edge threshold after fees. Passing is a position - that's normal.")
         return
-    print(f"{'PLAYER':<24}{'MODEL':>7}{'BLEND':>7}{'PRICE':>7}{'EDGE':>7}{'STAKE':>9}  MATCH")
+    print(f"{'PLAYER':<24}{'MODEL':>7}{'BLEND':>7}{'ASK':>7}{'EDGE':>7}{'STAKE':>9}  START (UTC)  MATCH")
     for edge, mk, name, pm, pf, price, bet in picks:
         print(f"{name[:23]:<24}{pm:>7.1%}{pf:>7.1%}{price:>7.3f}{edge:>+7.3f}{bet.stake:>9.2f}  "
-              f"{mk.question[:50]} [{mk.surface}, Bo{mk.best_of}]")
+              f"{mk.start_dt:%a %H:%M}    {mk.event_title[:48]} [{args.surface or mk.surface}, Bo{args.best_of or mk.best_of}]")
+    print("\nEDGE is after Polymarket's taker fee. Use a limit order at or below ASK.")
     if args.log:
         new = not os.path.exists(JOURNAL)
         with open(JOURNAL, "a", newline="") as fh:
             w = csv.writer(fh)
             if new:
-                w.writerow(["logged_utc", "match", "player", "model_p", "blend_p", "price",
-                            "edge", "stake", "url", "closing_price", "result", "pnl"])
-            ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
+                w.writerow(["logged_utc", "match_start_utc", "match", "player", "model_p", "blend_p",
+                            "price", "edge", "stake", "url", "closing_price", "result", "pnl"])
+            ts = now.isoformat(timespec="seconds")
             for edge, mk, name, pm, pf, price, bet in picks:
-                w.writerow([ts, mk.question, name, f"{pm:.4f}", f"{pf:.4f}", f"{price:.3f}",
-                            f"{edge:.4f}", bet.stake, mk.url, "", "", ""])
+                w.writerow([ts, mk.start_dt.isoformat(), mk.event_title, name, f"{pm:.4f}", f"{pf:.4f}",
+                            f"{price:.3f}", f"{edge:.4f}", bet.stake, mk.url, "", "", ""])
         print(f"\nLogged {len(picks)} picks to {JOURNAL} - fill in closing_price/result to track CLV.")
 
 
@@ -157,12 +188,13 @@ def main(argv=None):
             p.add_argument("--min-edge", type=float, default=0.04)
             p.add_argument("--kelly", type=float, default=0.25, help="Kelly fraction")
             p.add_argument("--max-bet", type=float, default=0.02, help="max fraction of bankroll per bet")
-            p.add_argument("--fee", type=float, default=0.0, help="per-share fee, if the market charges one")
+            p.add_argument("--fee-rate", type=float, default=None,
+                           help="taker fee rate; fee/share = rate*p*(1-p). Default: 0.05 on Polymarket "
+                                "sports markets (scan) and 0.05 for `price`")
         return p
 
     p = sub.add_parser("download")
-    p.add_argument("--tours", nargs="+", default=["atp", "wta"])
-    p.add_argument("--start", type=int, default=2010)
+    p.add_argument("--start", type=int, default=2015)
     p.add_argument("--end", type=int, default=date.today().year)
     p.add_argument("--out", default="data")
     p.set_defaults(fn=cmd_download)
@@ -198,7 +230,9 @@ def main(argv=None):
     p.add_argument("--best-of", type=int, choices=[3, 5], help="override guessed format")
     p.add_argument("--min-matches", type=int, default=30)
     p.add_argument("--min-liquidity", type=float, default=1000.0)
-    p.add_argument("--no-books", action="store_true", help="use Gamma mid prices, skip order books")
+    p.add_argument("--hours", type=float, default=24, help="only matches starting within this many hours")
+    p.add_argument("--events-json", nargs="+", help="read saved Gamma /events JSON instead of calling the API")
+    p.add_argument("--no-books", action="store_true", help="use Gamma top-of-book, skip CLOB order books")
     p.add_argument("--all", action="store_true", help="also print every market found")
     p.add_argument("--log", action="store_true", help=f"append picks to {JOURNAL}")
     p.set_defaults(fn=cmd_scan)

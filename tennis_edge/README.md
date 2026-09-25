@@ -15,7 +15,7 @@ skipping everything else.
 | **Edge filter** | Bet only when `p − ask price ≥ min_edge` (default 4¢) | Small edges disappear into the spread and model error |
 | **Fractional Kelly** | Stake = ¼ Kelly, capped at 2% of bankroll | Full Kelly on noisy probabilities wipes out bankrolls |
 | **Walk-forward backtest** (`backtest.py`) | Replays years of matches against **Pinnacle closing odds**, never using future data | The honest test: if it can't beat Pinnacle, it can't beat Polymarket |
-| **Scanner** (`polymarket.py`) | Pulls live tennis head-to-head markets and real order-book asks from Polymarket's public API (read-only, never places orders) | Finds the actual price you'd pay |
+| **Scanner** (`polymarket.py`) | Pulls live singles match-winner (`moneyline`) markets and their ask prices from Polymarket's public API. It skips set/game/handicap props, doubles and matches already in progress, and never places orders | Finds the actual price you'd pay |
 | **Journal** (`scan --log`) | Writes every pick to `bets_journal.csv` | Track closing-line value (CLV). Beating the closing price is the best early sign of a real edge |
 
 ## Setup
@@ -24,37 +24,43 @@ skipping everything else.
 cd tennis_edge
 pip install -r requirements.txt
 
-# 1) Rating data (free): Jeff Sackmann's match files
-python -m tennis_edge download --start 2010
+# 1) ATP results 2015-now (free, Sackmann format, via TML-Database)
+python -m tennis_edge download
 
-# 2) Odds data for backtesting (free): download the yearly ATP/WTA .xlsx files from
-#    http://www.tennis-data.co.uk/alldata.php into a folder, e.g. odds/
+# 2) WTA + current-season results + closing odds (free): open
+#    http://www.tennis-data.co.uk/alldata.php and save the yearly .xlsx files for
+#    ATP (e.g. 2024, 2025, 2026) and WTA (the "w" links) into ./data/
+#    Name the WTA ones differently, e.g. data/wta_2026.xlsx, so they don't overwrite the ATP files.
 ```
 
-> If the Sackmann download returns 404s, clone the repos directly
-> (`git clone https://github.com/JeffSackmann/tennis_atp`) and pass `--data tennis_atp/atp_matches_20*.csv`.
+The scanner warns you if your newest result is more than 14 days old. Refresh `./data` weekly.
 
-## Use it
+## Tonight's run (the daily routine)
 
 ```bash
-# Current top players
-python -m tennis_edge ratings --surface clay
-
-# One match
-python -m tennis_edge predict "Jannik Sinner" "Carlos Alcaraz" --surface grass --best-of 5
-
-# Check a price you're looking at on Polymarket (ask for A, ask for B)
-python -m tennis_edge price "Sinner" "Alcaraz" 0.47 0.55 --surface grass --best-of 5
-
-# PROVE IT FIRST: backtest against closing odds and tune the model weight
-python -m tennis_edge backtest --data "odds/*.xlsx" --start 2019-01-01 --tune
-
-# Live scan of Polymarket, logging picks
-python -m tennis_edge scan --bankroll 500 --w-model 0.3 --min-edge 0.04 --log
+# every rated match starting in the next 24h, plus any bets that clear the edge after fees
+python -m tennis_edge scan --bankroll 500 --hours 24 --all --log
 ```
 
-Main settings: `--w-model` (trust in the model), `--min-edge`, `--kelly`, `--max-bet`, `--fee`
-(if the market charges a fee), and `--min-liquidity`.
+The output shows each player's model probability vs the Polymarket ask, then a pick list with
+**edge after Polymarket's taker fee** (sports fee = 5% × p × (1−p) per share) and a stake.
+Players with fewer than 30 rated matches (most ITF events) are skipped rather than guessed.
+
+If your network blocks the Polymarket API, save the JSON from
+`https://gamma-api.polymarket.com/events?tag_slug=tennis&active=true&closed=false&limit=100&offset=0`
+(and `offset=100`, `200` ...) in a browser, then run `scan --events-json page1.json page2.json`.
+
+## Other commands
+
+```bash
+python -m tennis_edge ratings --surface clay
+python -m tennis_edge predict "Jannik Sinner" "Carlos Alcaraz" --surface grass --best-of 5
+python -m tennis_edge price "Sinner" "Alcaraz" 0.47 0.55 --surface grass --best-of 5
+python -m tennis_edge backtest --data "data/*.xlsx" --start 2024-01-01 --tune   # needs tennis-data odds
+```
+
+Main settings: `--w-model` (trust in the model vs the market, default 0.3), `--min-edge` (default 4¢
+after fees), `--kelly` (default ¼), `--max-bet` (default 2% of bankroll), `--min-liquidity`, `--fee-rate`.
 
 ## Recommended process
 
