@@ -1,0 +1,4 @@
+data/
+bets_journal.csv
+__pycache__/
+.pytest_cache/
