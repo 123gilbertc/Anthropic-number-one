@@ -41,14 +41,14 @@ Walk-forward 2012-2025, 3,829 games with moneylines, every season scored by mode
 | Model | Log-loss | Brier | Accuracy |
 |---|---|---|---|
 | Closing line, Shin de-vigged | 0.6095 | 0.2102 | 66.4% |
-| Elo (tuned: k=20, HFA 45, QB-change penalty 40, 50% season regression) | 0.6290 | 0.2188 | 65.1% |
-| EPA ratings | 0.6442 | 0.2257 | 63.1% |
-| Elo + EPA stack, no market | 0.6287 | 0.2186 | 64.6% |
-| Ensemble (market + Elo + EPA) | 0.6097 | 0.2103 | 66.5% |
+| Elo (tuned: k=20, HFA 45, QB-change penalty 60, 50% season regression, playoff x1.2) | 0.6287 | 0.2186 | 65.1% |
+| EPA ratings (with home-field term) | 0.6377 | 0.2228 | 63.4% |
+| Elo + EPA stack, no market | 0.6283 | 0.2185 | 64.6% |
+| Ensemble (market + Elo + EPA) | 0.6097 | 0.2103 | 66.4% |
 
-Paired bootstrap, ensemble minus closing line: +0.0002 log-loss, 95% CI [-0.0009, +0.0014]. **The ensemble does
-not beat the closing line**, and betting it at vigged closing odds returns about zero (599 bets at a 2% edge
-threshold: -0.1% ROI, CI -10% to +10%). Elo alone against the market loses 5%. Betting every closing line
+Paired bootstrap, ensemble minus closing line: +0.0002 log-loss, 95% CI [-0.0010, +0.0014]. **The ensemble does
+not beat the closing line**, and betting it at vigged closing odds returns about zero (673 bets at a 2% edge
+threshold: -2.4% ROI, CI -12% to +7%; 214 bets at 5%: +2.2%, CI -17% to +21%). Elo alone against the market loses 4-5%. Betting every closing line
 loses the 3% vig. These are the correct results for an efficient market and they are printed, not hidden.
 
 What that means for Polymarket: the fair values in `reports/predictions_2026_wk03.md` are the sharp line
@@ -149,9 +149,10 @@ Two details matter for pricing futures honestly (`pipeline.py`):
   for unplayed games (each line says `r_home - r_away + HFA = market Elo gap`), shrunk toward Elo.
   The sim therefore reflects what sharp books currently believe, applied through the correct playoff
   structure, which is where futures crowds are usually wrong.
-* **Rating uncertainty.** Strength is not known exactly and drifts (injuries, form). The sims run as
-  a mixture over rating draws (default sd 60 Elo). Ignoring this overstates favourites: with it, the
-  2026 Super Bowl favourite moves from 17% to 11%.
+* **Rating uncertainty.** Strength is not known exactly and drifts (injuries, form). Every simulated
+  season runs "hot" (its own Elo updates after each simulated game, so strength drifts) and draws each
+  team's current rating from a normal with sd 35 Elo. Ignoring both overstates favourites: with them,
+  the 2026 Super Bowl favourite prices at 11-12% instead of 17%.
 
 ### Fair values per market kind
 * Moneyline: ensemble P(team wins).

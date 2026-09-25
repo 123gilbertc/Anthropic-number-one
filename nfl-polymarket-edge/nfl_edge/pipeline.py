@@ -38,7 +38,7 @@ from .markets.polymarket import (
 from .models import calibration as cal
 from .models.elo import EloModel, EloParams, fit_elo
 from .models.ensemble import LogisticStacker, add_logits, fit_final, walk_forward
-from .models.epa import epa_prob, epa_ratings, fit_epa_scale, team_game_epa
+from .models.epa import epa_prob, epa_ratings, fit_epa_hfa, team_game_epa
 from .models.market import fit_spread_sigma, market_probs
 from .odds import american_to_prob, devig, prob_to_elo_diff
 from .sim.season import SimConfig, simulate_season, win_total_probs
@@ -52,6 +52,12 @@ SNAPSHOT_PATH = SNAPSHOT_DIR / "polymarket_nfl.jsonl"
 GAME_FEATURES = ["market_shin", "elo_prob", "epa_prob"]
 MODEL_ONLY_FEATURES = ["elo_prob", "epa_prob"]
 FIRST_TUNE_SEASON = 2003
+# Wider than the module default so the coordinate descent is not pinned at a grid boundary.
+ELO_GRID = {
+    "k": [12, 16, 20, 24, 28, 32], "hfa": [30, 35, 45, 55, 65], "mov": [True, False],
+    "season_regress": [0.2, 0.33, 0.5, 0.67, 0.8], "rest_bonus": [0, 15, 25, 40],
+    "qb_change_penalty": [0, 20, 40, 60, 80, 100], "playoff_mult": [1.0, 1.2],
+}
 FUTURES_COLUMNS = {
     "super_bowl": "p_super_bowl",
     "conference": "p_conference",
@@ -92,7 +98,7 @@ class ModelBundle:
 
     elo: EloParams = field(default_factory=EloParams)
     epa: dict[str, float] = field(
-        default_factory=lambda: {"halflife": 5.0, "prior_games": 6.0, "carryover": 0.5, "iters": 5, "scale": 15.0}
+        default_factory=lambda: {"halflife": 5.0, "prior_games": 6.0, "carryover": 0.5, "iters": 5, "scale": 15.0, "hfa": 0.0}
     )
     sigma: float = NFL_MARGIN_SIGMA        # final-margin sigma around the fair spread
     sigma_total: float = 13.5              # total-points sigma around the fair total
@@ -100,7 +106,7 @@ class ModelBundle:
     stacker: dict | None = None            # LogisticStacker.to_dict() on GAME_FEATURES
     stacker_model_only: dict | None = None  # on MODEL_ONLY_FEATURES (games without a line)
     market_anchor_lambda: float = 0.2      # ridge weight pulling market-anchored ratings to Elo
-    rating_noise_elo: float = 60.0         # sd of per-simulation rating draws (strength uncertainty + drift)
+    rating_noise_elo: float = 35.0         # sd of per-simulation rating draws: current-strength uncertainty (drift is simulated)
     train_through: int = 0
     fitted_at: str = ""
     notes: dict[str, Any] = field(default_factory=dict)
@@ -149,9 +155,14 @@ def build_features(games: pd.DataFrame, bundle: ModelBundle, team_week: pd.DataF
         carryover=bundle.epa["carryover"],
         iters=int(bundle.epa["iters"]),
     )
-    feats["epa_prob"] = epa_prob(feats["epa_diff"].to_numpy(dtype=float), bundle.epa["scale"])
+    feats["epa_prob"] = _epa_prob(feats, bundle)
     feats["market_shin"] = market_probs(feats, "shin", bundle.sigma).to_numpy(dtype=float)
     return feats
+
+
+def _epa_prob(feats: pd.DataFrame, bundle: ModelBundle) -> np.ndarray:
+    return epa_prob(feats["epa_diff"].to_numpy(dtype=float), bundle.epa["scale"],
+                    hfa=float(bundle.epa.get("hfa", 0.0)), neutral=feats["location"])
 
 
 def _played_before(games: pd.DataFrame, season: int) -> pd.DataFrame:
@@ -179,7 +190,7 @@ def fit_models(
     bundle = ModelBundle(l2=l2, train_through=train_through)
 
     if tune_elo:
-        grid = None
+        grid = ELO_GRID
         if quick:
             grid = {"k": [16, 20, 24], "hfa": [45, 55, 65], "season_regress": [0.25, 0.33], "rest_bonus": [0, 25]}
         log(f"tuning Elo on {train_seasons.start}-{train_seasons.stop - 1} ({'quick' if quick else 'full'} grid)...")
@@ -199,9 +210,10 @@ def fit_models(
 
     team_week = load_team_week_stats()
     feats = build_features(games, bundle, team_week)
-    bundle.epa["scale"] = float(fit_epa_scale(feats, seasons=train_seasons))
-    feats["epa_prob"] = epa_prob(feats["epa_diff"].to_numpy(dtype=float), bundle.epa["scale"])
-    log(f"EPA scale {bundle.epa['scale']:.2f}")
+    scale, hfa = fit_epa_hfa(feats, seasons=train_seasons)
+    bundle.epa["scale"], bundle.epa["hfa"] = float(scale), float(hfa)
+    feats["epa_prob"] = _epa_prob(feats, bundle)
+    log(f"EPA scale {scale:.2f}, home-field {hfa:.3f} logits")
 
     train = feats[feats["played"] & feats["home_win"].notna() & (feats["season"] >= FIRST_TUNE_SEASON)]
     train = train[train["season"] <= train_through]
@@ -434,9 +446,10 @@ def futures(games: pd.DataFrame, bundle: ModelBundle, season: int | None = None,
             rating_noise: float | None = None, write: bool = True) -> pd.DataFrame:
     """Per-team playoff / division / conference / Super Bowl probabilities and win distributions.
 
-    Team strength is not known exactly and drifts over a season (injuries, form), so the simulation
-    is a mixture: the sims are split into batches and each batch draws every team's rating from
-    ``N(rating, rating_noise^2)``. Ignoring this overstates favourites and understates longshots.
+    Ratings are market-anchored by default. The simulation is "hot" (each simulated season updates
+    its own Elo after every game, so strength drifts as it does in reality) and every simulation
+    draws each team's current rating from ``N(rating, rating_noise^2)``; ignoring either
+    overstates favourites and understates longshots.
     """
     season = season or current_season(games)
     if feats is None:
@@ -447,26 +460,12 @@ def futures(games: pd.DataFrame, bundle: ModelBundle, season: int | None = None,
     elo = model.ratings()
     ratings = (market_adjusted_ratings(feats, elo, bundle.elo.hfa, season, bundle.market_anchor_lambda)
                if anchor_to_market else dict(elo))
-    rng = np.random.default_rng(seed)
-    batch = max(50, n_sims // 40) if noise > 0 else n_sims  # ~40 rating draws per run
-    remaining, i, tables = n_sims, 0, []
-    while remaining > 0:
-        n = min(batch, remaining)
-        drawn = {t: v + rng.normal(0.0, noise) for t, v in ratings.items()} if noise > 0 else ratings
-        cfg = SimConfig(n_sims=n, seed=seed + i, hfa_elo=bundle.elo.hfa, playoff_mult=bundle.elo.playoff_mult)
-        tables.append(simulate_season(games, season, drawn, cfg))
-        remaining -= n
-        i += 1
-    wins = pd.concat([t.attrs["wins"] for t in tables], ignore_index=True)
-    sim = sum(t[SIM_PROB_COLUMNS] * len(t.attrs["wins"]) for t in tables) / n_sims
-    sim["win_dist"] = [
-        {int(k): float(np.mean(wins[team].to_numpy() == k)) for k in range(int(wins[team].max()) + 1)}
-        for team in sim.index
-    ]
+    cfg = SimConfig(n_sims=n_sims, seed=seed, hfa_elo=bundle.elo.hfa, playoff_mult=bundle.elo.playoff_mult,
+                    hot=True, k=bundle.elo.k, mov=bundle.elo.mov, rating_noise_sd=noise)
+    sim = simulate_season(games, season, ratings, cfg).copy()
     sim["elo"] = pd.Series(elo).reindex(sim.index)
     sim["rating_used"] = pd.Series(ratings).reindex(sim.index)
-    sim.attrs = {"season": season, "n_sims": n_sims, "teams": list(sim.index), "wins": wins,
-                 "rating_noise": noise, "anchored": anchor_to_market}
+    sim.attrs.update({"rating_noise": noise, "anchored": anchor_to_market})
     if write:
         ensure_dirs()
         out = sim.drop(columns=["win_dist"]).copy()
@@ -484,8 +483,9 @@ def _futures_markdown(sim: pd.DataFrame, season: int, n_sims: int, anchored: boo
         "top seed": t["p_top_seed"], "conference": t["p_conference"], "Super Bowl": t["p_super_bowl"],
     })
     return "\n".join([f"# {season} season simulation ({n_sims:,} runs)", "",
-                      f"Generated {_utcnow()}. Ratings: {'market-anchored Elo' if anchored else 'Elo'} with "
-                      f"per-batch rating noise sd {noise:.0f} Elo; played games fixed, NFL tiebreakers and bracket applied.", "",
+                      f"Generated {_utcnow()}. Ratings: {'market-anchored Elo' if anchored else 'Elo'}; hot simulation "
+                      f"(ratings drift within each simulated season) with per-simulation rating noise sd {noise:.0f} Elo; "
+                      "played games fixed, NFL tiebreakers and bracket applied.", "",
                       _md(view), ""])
 
 

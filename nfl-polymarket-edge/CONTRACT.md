@@ -62,7 +62,7 @@ def fit_elo(games: pd.DataFrame, train_seasons: range | list[int], grid: dict | 
     # allowed for rating state only). Returns best params and a tidy results table of every combo tried.
 def save_params(params: EloParams, path) / load_params(path) -> EloParams   # JSON
 ```
-Expected quality: log-loss on 2015-2024 ≈ 0.60-0.62 (market ≈ 0.585). Accuracy ≈ 64-66%.
+Measured quality (2015-2024 played games with moneylines): Elo log-loss ≈ 0.633-0.636, accuracy ≈ 64-65%; the closing-line baseline on the same rows is 0.613 / 66.1%. No Elo variant reaches the market; that is expected.
 
 ## nfl_edge/models/epa.py
 ```python

@@ -98,14 +98,14 @@ def test_futures_mixture_is_coherent(games, bundle, feats):
     assert sim.attrs["wins"].shape == (1000, 32)
     for d in sim["win_dist"]:
         assert abs(sum(d.values()) - 1.0) < 1e-6
-    # no noise and a single batch reproduce simulate_season exactly
     sharp = pipeline.futures(games, bundle, live, n_sims=1000, feats=feats, write=False, rating_noise=0.0)
     assert abs(sharp["p_super_bowl"].sum() - 1.0) < 1e-6 and sharp.attrs["rating_noise"] == 0.0
+    assert sim.attrs["rating_noise"] == bundle.rating_noise_elo and sim.attrs["anchored"]
     # rating noise fattens the tails: the favourite's title odds shrink vs the no-noise run
     noisy = pipeline.futures(games, bundle, live, n_sims=8000, feats=feats, write=False)
     sharp8 = pipeline.futures(games, bundle, live, n_sims=8000, feats=feats, write=False, rating_noise=0.0)
     assert noisy["p_super_bowl"].max() < sharp8["p_super_bowl"].max()
-    assert noisy["p_super_bowl"].min() > sharp8["p_super_bowl"].min() - 1e-9
+    assert noisy["p_super_bowl"].std() < sharp8["p_super_bowl"].std()  # noise flattens the title distribution
 
 
 def test_fair_yes_for_markets_covers_every_kind(games, bundle, feats):
