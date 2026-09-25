@@ -178,7 +178,7 @@ That process caught and fixed, among others: a calendar-week ordering that let J
 leak into September Kelly sizing; NO-side liquidity measured in the wrong units; YES/NO game markets
 silently attributed to the home team; a per-game exposure cap that could be bypassed; false "risk-free"
 arbitrage on events with two winners; a missing home-field term in the EPA model. The suite has
-416 offline tests and blocks all network access.
+315 offline tests and blocks all network access.
 
 ## Polymarket access
 The scanner talks to `gamma-api.polymarket.com` and `clob.polymarket.com`. If those hosts are
