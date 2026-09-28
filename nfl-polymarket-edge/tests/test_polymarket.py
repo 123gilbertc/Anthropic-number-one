@@ -564,17 +564,22 @@ def test_match_game_markets_on_real_schedule(markets, games):
     assert (df["date_diff_days"] == 0).all() and df["home_matches_schedule"].all()
     assert df["home_away_confident"].all()
     # schedule truth: home/away codes come from nflverse rows
+    sched = games.set_index("game_id")
+    kc_row = sched.loc["2026_03_KC_MIA"]
     kc = df[df["game_id"] == "2026_03_KC_MIA"].set_index("kind")
     assert kc.loc["moneyline", "home_team_c"] == "MIA" and kc.loc["moneyline", "away_team_c"] == "KC"
     assert kc.loc["moneyline", "yes_team"] == "MIA" and kc.loc["moneyline", "price_yes"] == 0.14
-    assert kc.loc["spread", "line"] == -10.5 and kc.loc["spread", "line_home"] == kc.loc["spread", "spread_line"]
-    assert kc.loc["total", "line"] == 45.5 and kc.loc["total", "total_line"] == 45.5
+    # the market's own line (fixture) in the schedule frame, and the nflverse close copied from the schedule row
+    assert kc.loc["spread", "line"] == -10.5 and kc.loc["spread", "line_home"] == -10.5
+    assert kc.loc["spread", "spread_line"] == kc_row["spread_line"]
+    assert kc.loc["total", "line"] == 45.5 and kc.loc["total", "total_line"] == kc_row["total_line"]
     assert pd.isna(kc.loc["total", "yes_team"]) and kc.loc["total", "yes_outcome"] == "Over"
-    assert (kc["season"] == 2026).all() and (kc["week"] == 3).all() and (~kc["played"].astype(bool)).all()
-    # every fixture spread agrees with the nflverse closing spread convention
+    assert (kc["season"] == 2026).all() and (kc["week"] == 3).all()
+    assert (kc["played"].astype(bool) == bool(kc_row["played"])).all()
+    # every fixture spread is stated in the nflverse home-line convention and carries the schedule's close
     sp = df[df["kind"] == "spread"]
-    assert (sp["line_home"] == sp["spread_line"]).all()
-    assert (sp["line_market_home"] == sp["line_home"]).all()  # market home == schedule home: no flip
+    assert (sp["line_home"] == sp["line_market_home"]).all()  # market home == schedule home: no flip
+    assert (sp["spread_line"].to_numpy() == sched.loc[sp["game_id"], "spread_line"].to_numpy()).all()
     assert df.loc[df["kind"] != "spread", ["line_home", "line_market_home"]].isna().all().all()
     # the neutral-site BAL@DAL game still matches on the unordered pair
     assert "2026_03_BAL_DAL" in set(sp["game_id"])
@@ -593,7 +598,8 @@ def test_match_game_markets_date_window_and_swapped_home(games):
     row = match_game_markets([sp], games).iloc[0]
     assert row["game_id"] == "2026_03_KC_MIA" and row["home_team_c"] == "MIA" and not row["home_matches_schedule"]
     assert row["line_market_home"] == 10.5
-    assert row["line_home"] == row["spread_line"] == -10.5  # schedule frame: comparable to spread_line in the same row
+    assert row["line_home"] == -10.5  # schedule frame: directly comparable to spread_line in the same row
+    assert row["spread_line"] == games.set_index("game_id").loc["2026_03_KC_MIA", "spread_line"]
     assert row["yes_team"] == "KC" and row["yes_outcome"] == "Chiefs"  # a code: frame-independent
     far = {"slug": "nfl-kc-mia-2026-10-15", "title": "Chiefs vs. Dolphins"}
     m2 = parse_market(_yes_no("Chiefs vs. Dolphins", id="2", outcomes='["Chiefs", "Dolphins"]',

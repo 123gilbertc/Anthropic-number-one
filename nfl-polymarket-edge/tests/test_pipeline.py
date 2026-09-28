@@ -165,8 +165,26 @@ def test_snapshot_and_clv_roundtrip(games, bundle, tmp_path, monkeypatch):
     fair = tmp_path / "fair.jsonl"
     n = pipeline.take_snapshot(client, None, None, path=snap, log=lambda *_: None)
     assert n > 0 and snap.exists()
-    # no recorded moneyline market has settled (fixture games are unplayed): report returns None
-    assert pipeline.clv_report(games, bundle, snapshot_path=snap, fair_path=fair, log=lambda *_: None) is None
+    fixture_ids = ["2026_03_KC_MIA", "2026_03_BAL_DAL", "2026_03_SEA_WAS", "2026_03_PHI_CHI"]
+    mask = games["game_id"].isin(fixture_ids)
+    assert mask.sum() == len(fixture_ids)
+    # The live cache decides whether the fixture games have been played, so force both branches.
+    # 1) Nothing settled yet: the report returns None and writes nothing.
+    unplayed = games.copy()
+    unplayed.loc[mask, ["played", "home_win", "home_score", "away_score", "result"]] = [False, np.nan, np.nan, np.nan, np.nan]
+    assert pipeline.clv_report(unplayed, bundle, snapshot_path=snap, fair_path=fair, log=lambda *_: None) is None
+    assert not (tmp_path / "clv.md").exists()
+    # 2) All four settled today (inside the 10-day snapshot window): a report with one bet per market side.
+    settled = games.copy()
+    today = pd.Timestamp.now("UTC").tz_localize(None).normalize()
+    settled.loc[mask, "played"] = True
+    settled.loc[mask, "home_win"] = [1.0, 0.0, 1.0, 0.0]
+    settled.loc[mask, "game_date"] = today
+    res = pipeline.clv_report(settled, bundle, snapshot_path=snap, fair_path=fair, log=lambda *_: None)
+    assert res is not None
+    assert (tmp_path / "clv.md").exists()
+    assert set(res.bets["game_id"]) <= set(fixture_ids)
+    assert res.bets["stake_flat"].ge(0).all()
 
 
 def test_md_renderer_handles_types():

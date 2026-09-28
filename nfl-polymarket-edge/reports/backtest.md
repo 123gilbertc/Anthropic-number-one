@@ -1,6 +1,6 @@
 # Walk-forward evaluation 2012-2025
 
-Generated 2026-09-25T01:15:44Z. Every prediction for season S uses only games before S; Elo/EPA ratings update sequentially and never see the game they predict.
+Generated 2026-09-28T01:11:10Z. Every prediction for season S uses only games before S; Elo/EPA ratings update sequentially and never see the game they predict.
 
 ## Probability quality (lower log-loss / Brier is better)
 

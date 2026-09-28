@@ -59,7 +59,7 @@
   "market_anchor_lambda": 0.2,
   "rating_noise_elo": 35.0,
   "train_through": 2025,
-  "fitted_at": "2026-09-25T01:15:41Z",
+  "fitted_at": "2026-09-28T01:10:52Z",
   "notes": {
     "elo_tuning": {
       "logloss": 0.6269775511988713,
