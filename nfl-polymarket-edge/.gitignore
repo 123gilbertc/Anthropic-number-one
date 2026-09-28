@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+data/cache/*.csv
+data/cache/*.csv.gz
+data/cache/*.parquet
+data/cache/*.tmp
+data/snapshots/*.json
+data/snapshots/*.jsonl
+data/reports/*.md
+data/reports/*.csv
+data/reports/*.json
+!data/**/.gitkeep
+.env
