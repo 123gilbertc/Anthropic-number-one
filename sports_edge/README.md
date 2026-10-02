@@ -7,6 +7,7 @@ A live sports probability and market-overreaction **research** system, starting 
 - Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Models and evaluation: [docs/MODELS_EVALUATION.md](docs/MODELS_EVALUATION.md)
 - Where things stand: [PROGRESS.md](PROGRESS.md)
+- UI workflow and integration audit: [docs/UI_INTEGRATION.md](docs/UI_INTEGRATION.md)
 
 ## Current honest status
 
@@ -44,7 +45,11 @@ cd web && npm ci && npm run build && cd ..
 | Replay | `uv run sports-edge replay fixtures/nhl_synthetic_dip.jsonl [--persist] [--model artifacts/<id>.json]` |
 | Train (synthetic) | `uv run sports-edge train --synthetic [--kind gbm]` |
 | Paper comparison | `uv run sports-edge paper fixtures/nhl_synthetic_dip.jsonl [--mechanics-demo]` |
-| API + dashboard | `uv run sports-edge serve` → http://127.0.0.1:8000 |
+| API + dashboard | `uv run sports-edge serve` → http://127.0.0.1:8000. Sign in with the operator token from `SPORTS_EDGE_API_TOKEN` or `runs/api_token`. |
+| Model comparison | `uv run sports-edge train --synthetic --compare` |
+| Freeze thresholds | `uv run sports-edge thresholds --synthetic` |
+| Regenerate API types | `uv run sports-edge openapi && (cd web && npm run gen:api)` |
+| Browser tests | `cd web && npm run build && npm run e2e` (desktop + mobile; Chromium via Playwright) |
 | Dashboard dev | `cd web && npm run dev` (proxies `/api` to :8000) |
 | Kalshi market discovery | `uv run sports-edge discover --series KXNHLGAME` |
 | Kalshi recording | `uv run sports-edge record <TICKER>...` (needs Kalshi API key) |

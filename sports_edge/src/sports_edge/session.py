@@ -98,7 +98,7 @@ class EventLog:
     def since(self, seq: int) -> tuple[bool, list[tuple[int, str, dict]]]:
         """(needs_resync, events after seq)."""
         oldest = self.buffer[0][0] if self.buffer else self.seq + 1
-        if seq < oldest - 1:
+        if seq < oldest - 1 or seq > self.seq:  # gap, or a cursor from a replaced session
             return True, []
         return False, [e for e in self.buffer if e[0] > seq]
 

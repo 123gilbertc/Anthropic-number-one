@@ -1,5 +1,44 @@
 # Progress log (for resuming in a new session)
 
+## 2026-10-02: connected workflow + remaining research items
+
+### Done
+
+**Connected paper workflow**
+
+- **Backend (`session.py`, `api/app.py`) is the single source of truth.** It owns a paced or steppable replay session, a sequenced event stream (SSE with resync), and preview → idempotent paper order → delayed rechecked fill → ledger events → settlement → evaluation.
+- **Operator auth:** HttpOnly cookie plus CSRF header, or bearer token.
+- **Connection registry with real tests:** server-side secrets, readiness by capability, disconnect.
+- **Ledger persisted** to Postgres (migration `8ee7ba57d575`). Every record is tagged with mode, data label and run ID.
+- **Frontend (`web/`):**
+  - TypeScript types generated from the OpenAPI schema; zod checks on incoming data.
+  - One shared store for all screens, kept current by the update stream.
+  - Screens: Connections, Games, Game, Paper tracker, Evaluation, Audit.
+  - Browser tests (`npm run e2e`): 12 passing on desktop and mobile. They cover:
+    - double click → exactly one order
+    - an expired signal is refused
+    - reconnect → refetch everything
+    - an unavailable provider shows its real error
+    - no horizontal overflow on any screen
+
+**Other research items**
+
+- **Model comparison** (`train --synthetic --compare`): logistic vs GBM vs the market's own price as a baseline.
+- **Threshold estimation and freezing** (`thresholds --synthetic`).
+- **MLB:** game-state reducer and features (`mlb_v1`).
+- **Polymarket (international):** parser and fee model.
+- **AI review adapters** for OpenAI, xAI and Google, plus a promotion check that needs prospective evidence.
+- **Pregame entries:** a pregame forecaster and three pregame strategy variants.
+- **Discord alerts:** off by default.
+
+### Still blocked or missing
+
+- **True Edge / Odds Brain** code and both spec files were not found (see docs/UI_INTEGRATION.md). The workflow lives in `sports_edge/web` until they are provided.
+- **Credentials:** Kalshi, The Odds API and the LLM providers. Without them the real-provider paths stay unproven.
+- **Live NHL feed:** BLOCKED.
+- **Real historical data:** none yet.
+
+
 ## 2026-10-02: first vertical slice
 
 ### Works

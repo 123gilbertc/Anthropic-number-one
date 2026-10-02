@@ -108,9 +108,10 @@ class Monitor:
     # auto_paper=True: research mode, approvals go straight to the paper broker.
     # auto_paper=False: approvals become signals; only an explicit command creates an order.
     auto_paper: bool = True
+    pregame_forecaster: object | None = None  # PregamePriorForecaster, optional
     listeners: list = field(default_factory=list)
     signals: dict[str, Decision] = field(default_factory=dict)  # decision_id -> approval
-    decision_state: dict[str, NHLState] = field(default_factory=dict)
+    decision_state: dict[str, NHLState | None] = field(default_factory=dict)
     _alert_keys: set[str] = field(default_factory=set)
 
     def _emit(self, kind: str, payload: dict) -> None:
@@ -242,9 +243,15 @@ class Monitor:
         snap = None
         if book is not None and book.last_received is not None:
             snap = book.snapshot()
+        now = self.clock.now()
+        pregame = rt.reducer.state is None and now < rt.game.scheduled_start
+        pred = rt.predictions.get(m.contract_id)
+        if pregame and self.pregame_forecaster is not None:
+            pred = self.pregame_forecaster.predict(  # type: ignore[attr-defined]
+                rt.game.game_id, m.selection_team, rt.pregame_prob.get(m.selection_team), now)
         return TriggerContext(
             game=rt.game, mapping=m, state=rt.reducer.state, book=snap,
-            prediction=rt.predictions.get(m.contract_id),
+            prediction=pred, is_pregame=pregame,
             references=tuple(rt.references.values()) if self.use_references else (),
             has_position=self.broker.has_position(rt.game.game_id, m.contract_id),
             anchor_price=rt.anchor_price.get(m.contract_id),
@@ -288,14 +295,13 @@ class Monitor:
                                         "decision_id": d.decision_id, "action": d.action.value})
             rt.last_decision[m.contract_id] = d
             if d.action in APPROVING:
-                assert state is not None
                 self._register_signal(d, state)
                 if self.auto_paper:
                     self.engine.note_submitted(d)
                     self.broker.submit(d, state)
         self.tick()
 
-    def _register_signal(self, d: Decision, state: NHLState) -> None:
+    def _register_signal(self, d: Decision, state: NHLState | None) -> None:
         self.signals[d.decision_id] = d
         self.decision_state[d.decision_id] = state
         if d.dedupe_key not in self._alert_keys:  # one alert per state/strategy version
@@ -318,7 +324,7 @@ class Monitor:
                                or p.valid_until < now):
             self._forecast(rt, now)
         d = self.engine.evaluate(self.context(rt, m), now)
-        if d.action in APPROVING and rt.reducer.state is not None:
+        if d.action in APPROVING:
             self.signals[d.decision_id] = d
             self.decision_state[d.decision_id] = rt.reducer.state
         return d
@@ -339,7 +345,7 @@ class Monitor:
                               f"newer decision {latest.action.value}: "
                               + ",".join(r.value for r in latest.reasons))
         try:
-            order = self.broker.submit(d, self.decision_state[decision_id], quantity, now)
+            order = self.broker.submit(d, self.decision_state.get(decision_id), quantity, now)
         except ValueError as e:
             raise SignalError("INVALID_QUANTITY", str(e)) from e
         self.engine.note_submitted(d)
@@ -383,7 +389,7 @@ class Monitor:
         for m in rt.mappings:
             ctx = self.context(rt, m)
             d = rt.last_decision.get(m.contract_id)
-            p = rt.predictions.get(m.contract_id)
+            p = ctx.prediction
             pos = self.broker.positions.get((game_id, m.contract_id))
             room, _ = self.engine.ledger.remaining(game_id, m.selection_team, now.date())
             ref_age = None

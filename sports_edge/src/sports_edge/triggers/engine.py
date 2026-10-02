@@ -205,13 +205,23 @@ class TriggerEngine:
         if pred is None and ctx.abstention and ctx.abstention.startswith("CRITICAL"):
             return self._decision(ctx, now, Action.WATCH, [Reason.CRITICAL_FEATURE_MISSING],
                                   notes=(ctx.abstention,))
-        unconditional = cfg.entry_mode == "dip_unconditional"
+        mode = cfg.entry_mode
+        pregame_capable = mode in ("pregame_only", "pregame_plus_dip",
+                                   "pregame_plus_dip_unconditional")
+        dip_mode = mode in ("dip_conditional", "dip_unconditional", "pregame_plus_dip",
+                            "pregame_plus_dip_unconditional")
+        unconditional = (mode in ("dip_unconditional", "pregame_plus_dip_unconditional")
+                         and not ctx.is_pregame)
+        expected_snapshot = (ctx.state.snapshot_id if ctx.state is not None
+                             else f"pregame:{ctx.game.game_id}" if ctx.is_pregame else None)
         usable_pred = (
             pred is not None and pred.model_status in self.allowed_model_statuses
-            and pred.valid_until >= now and ctx.state is not None
-            and pred.snapshot_id == ctx.state.snapshot_id
+            and pred.valid_until >= now and expected_snapshot is not None
+            and pred.snapshot_id == expected_snapshot
             and pred.selection_team == ctx.mapping.selection_team
             and pred.settlement_rule == ctx.mapping.settlement_rule)
+        if ctx.is_pregame and not pregame_capable:
+            return self._decision(ctx, now, Action.WATCH, [])
         if not unconditional:
             if pred is None or pred.model_status not in self.allowed_model_statuses:
                 return self._decision(ctx, now, Action.WATCH, [Reason.MODEL_NOT_VALIDATED])
@@ -227,7 +237,9 @@ class TriggerEngine:
 
         # 4. dip trigger (only starts evaluation) ------------------------------
         reasons: list[Reason] = []
-        if cfg.entry_mode in ("dip_conditional", "dip_unconditional"):
+        if mode == "pregame_only" and not ctx.is_pregame:
+            return self._decision(ctx, now, Action.WATCH, [], room=room)
+        if dip_mode and not ctx.is_pregame:
             detected, persistent = self._dip(ctx, now)
             if not detected:
                 return self._decision(ctx, now, Action.WATCH, [], room=room)
@@ -235,9 +247,6 @@ class TriggerEngine:
             if not persistent:
                 return self._decision(ctx, now, Action.CANDIDATE,
                                       reasons + [Reason.DIP_NOT_PERSISTENT], room=room)
-        if cfg.entry_mode == "pregame_only" and not ctx.is_pregame:
-            return self._decision(ctx, now, Action.WATCH, [], room=room)
-
         # 5. book quality and size --------------------------------------------
         book = ctx.book
         assert book is not None

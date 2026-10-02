@@ -22,7 +22,10 @@ class StrategyConfig:
     # dip_conditional: a persistent dip starts evaluation; EV gates decide.
     # dip_unconditional: COMPARISON BASELINE ONLY - adds on any persistent dip, no EV gate.
     # any_edge: evaluate on every update (live-only entries).
-    entry_mode: Literal["dip_conditional", "dip_unconditional", "any_edge", "pregame_only"]
+    # pregame_only / pregame_plus_dip / pregame_plus_dip_unconditional: allow pregame
+    # entries (zero initial stake is allowed: every entry still needs a current edge).
+    entry_mode: Literal["dip_conditional", "dip_unconditional", "any_edge", "pregame_only",
+                        "pregame_plus_dip", "pregame_plus_dip_unconditional"]
     forecast_rule: SettlementRule
     provisional: bool = True
     # freshness / alignment

@@ -14,6 +14,7 @@ This repo holds two unrelated projects:
 - **One code path.** Decision logic is shared by replay and live through the injected `Clock`. Never call `datetime.now()` in decision code.
 - **LLMs:** zero decision weight. The trigger engine must not take LLM input.
 - **Thresholds** stay `provisional=True` until estimated on train/validation data and frozen.
+- **Frontend:** the backend decides probabilities, fees, risk, eligible size and fills. `web/` only displays results and sends authenticated commands, through the shared store (`web/src/store.ts`).
 - **Tests:** never weaken a test to make it pass. The 7 acceptance cases live in `tests/test_acceptance.py`.
 - **Ask first** before destructive changes, paid purchases or public deployment.
 
@@ -24,7 +25,7 @@ uv sync --frozen
 uv run pytest
 uv run ruff check src tests scripts
 uv run sports-edge demo
-cd web && npm ci && npm run build
+cd web && npm ci && npm run build && npm run e2e
 ```
 
 Local Postgres: `service postgresql start`, then `uv run alembic upgrade head`.

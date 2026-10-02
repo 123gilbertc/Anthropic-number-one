@@ -76,3 +76,36 @@ def train_synthetic(n_games: int = 600, seed: int = 0, kind: str = "logistic",
     df = simulate_season(n_games, seed=seed)
     return train_nhl(df, f"SYNTHETIC simulate_season(n={n_games}, seed={seed})",
                      ModelStatus.SYNTHETIC_ONLY, kind, log_path)
+
+
+def compare_models(df: pd.DataFrame, data_desc: str, status: ModelStatus,
+                   log_path: Path | None = None) -> dict:
+    """Same chronological split for every model; reports test metrics side by side.
+
+    Baseline A (market-implied) is included when ``market_p`` exists: a model
+    that cannot beat the same-time market price has no claim to an edge.
+    """
+    split = chronological_split(df)
+    test = split.test
+    out: dict[str, dict] = {}
+    for kind in ("logistic", "gbm"):
+        params = {"C": 1.0} if kind == "logistic" else {"n_estimators": 150}
+        m = StateModel(kind, tuple(FEATURE_NAMES), params, n_bootstrap=3).fit(
+            split.train, split.validation)
+        p, _, _ = m.predict_matrix(test[list(FEATURE_NAMES)].to_numpy(float))
+        scored = test.assign(p=p)
+        out[kind] = {"brier": clustered_bootstrap(scored, brier).__dict__,
+                     "log_loss": clustered_bootstrap(scored, log_loss).__dict__,
+                     "by_phase": by_phase(scored).to_dict(orient="records")}
+    if "market_p" in test:
+        scored = test.assign(p=test["market_p"])
+        out["market_implied_baseline"] = {
+            "brier": clustered_bootstrap(scored, brier).__dict__,
+            "log_loss": clustered_bootstrap(scored, log_loss).__dict__,
+            "by_phase": by_phase(scored).to_dict(orient="records")}
+    report = {"data": data_desc, "status": status.value, "test_games":
+              int(test["game_id"].nunique()), "models": out,
+              "note": "Compare equal game phases; late-game states inflate accuracy."}
+    if log_path:
+        ExperimentLog(log_path).log("MODEL_COMPARISON", **report)
+    return report

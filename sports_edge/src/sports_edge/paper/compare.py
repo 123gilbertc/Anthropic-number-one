@@ -64,6 +64,13 @@ def compare_strategies(path: Path, mechanics_demo: bool = False) -> dict:
             replace(base, strategy_version="dip_uncond_v0", entry_mode="dip_unconditional"),
         "live_only_any_edge (no pregame stake)":
             replace(base, strategy_version="live_any_edge_v0", entry_mode="any_edge"),
+        "pregame_only":
+            replace(base, strategy_version="pregame_only_v0", entry_mode="pregame_only"),
+        "pregame + model-validated dip adds":
+            replace(base, strategy_version="pregame_dip_v0", entry_mode="pregame_plus_dip"),
+        "pregame + unconditional dip adds (baseline)":
+            replace(base, strategy_version="pregame_dip_uncond_v0",
+                    entry_mode="pregame_plus_dip_unconditional"),
     }
     results = [_summarize(n, replay_file(path, forecaster=fc, cfg=cfg,
                                          mechanics_demo=mechanics_demo))
@@ -75,8 +82,8 @@ def compare_strategies(path: Path, mechanics_demo: bool = False) -> dict:
         if mechanics_demo else "No model loaded: strategies that need a model cannot act.",
         "results": results,
         "not_run": [
-            {"strategy": "pregame_only / pregame + adds",
-             "reason": "no validated pregame model or pregame price history in this data"},
+            {"strategy": "pregame strategies without --mechanics-demo",
+             "reason": "no validated pregame model: they correctly take no positions"},
             {"strategy": "quant-only vs LLM-enhanced",
              "reason": "LLMs have zero decision weight until prospective locked logs exist"},
             {"strategy": "same-time sportsbook baseline",

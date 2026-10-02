@@ -91,8 +91,14 @@ def build_monitor(clock, *, forecaster: ChainForecaster | None, cfg: StrategyCon
         label = "MECHANICS DEMO: synthetic data and a synthetic-only model. Not evidence."
     engine = TriggerEngine(cfg, fee_model or KalshiQuadraticFee(), ledger, frozenset(usable),
                            frozenset(allowed), label)
+    pregame = None
+    if mechanics_demo:
+        from sports_edge.forecast.pregame import PregamePriorForecaster
+        # fixture priors are synthetic, so the pregame "model" is SYNTHETIC_ONLY
+        pregame = PregamePriorForecaster(ModelStatus.SYNTHETIC_ONLY, "pregame_prior_syn1",
+                                         cfg.forecast_rule)
     return Monitor(clock=clock, engine=engine, broker=PaperBroker(engine), forecaster=forecaster,
-                   books=KalshiBookManager(source_status=status))
+                   books=KalshiBookManager(source_status=status), pregame_forecaster=pregame)
 
 
 class ReplayStream:

@@ -36,8 +36,10 @@ class PendingOrder:
     material_key: tuple
 
 
-def material_key(state: NHLState) -> tuple:
+def material_key(state: NHLState | None) -> tuple:
     """What must not change between decision and fill (clock ticks may)."""
+    if state is None:
+        return ("PREGAME",)  # any game state arriving means the game started: recheck fails
     return (state.home_score, state.away_score, state.period >= 4,
             state.last_material_event_time, state.last_material_event_kind,
             state.home_skaters, state.away_skaters, state.home_goalie, state.away_goalie,
@@ -60,7 +62,7 @@ class PaperBroker:
     fills: list[PaperFill] = field(default_factory=list)
     attempts: list[FillAttempt] = field(default_factory=list)
 
-    def submit(self, decision: Decision, state: NHLState, quantity: int | None = None,
+    def submit(self, decision: Decision, state: NHLState | None, quantity: int | None = None,
                now: datetime | None = None) -> PendingOrder:
         """Queue an approved decision. ``quantity`` may only shrink the planned size.
 
@@ -69,7 +71,7 @@ class PaperBroker:
         """
         if decision.action not in APPROVING:
             raise ValueError("only approving decisions can be submitted")
-        if state.snapshot_id != decision.snapshot_id:
+        if (state.snapshot_id if state else None) != decision.snapshot_id:
             raise ValueError("state does not match the decision")
         if quantity is not None:
             if not 0 < quantity <= decision.planned_quantity:
@@ -99,7 +101,7 @@ class PaperBroker:
         d = order.decision
         if now > d.expires_at:
             return FillAttempt(d.decision_id, None, (Reason.FILL_RECHECK_FAILED,), None)
-        if ctx.state is None or material_key(ctx.state) != order.material_key:
+        if material_key(ctx.state) != order.material_key:
             return FillAttempt(d.decision_id, None, (Reason.FILL_RECHECK_FAILED,
                                                      Reason.PREDICTION_STALE), None)
         # Re-run every gate. The engine's dedupe/cooldown would reject an identical

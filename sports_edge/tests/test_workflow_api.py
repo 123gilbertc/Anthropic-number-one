@@ -210,6 +210,7 @@ def test_event_log_resync_on_gap():
     assert log.since(4) == (False, [(5, "x", {"i": 4})])
     resync, evs = log.since(0)  # client missed events that left the buffer
     assert resync and evs == []
+    assert log.since(99)[0]  # cursor from a previous session -> resync, not silence
 
 
 class FailingReviewer:

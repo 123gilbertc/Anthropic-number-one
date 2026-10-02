@@ -54,3 +54,38 @@ details { margin-top: 8px; }
   .app { padding: 10px; }
   th, td { padding: 4px; font-size: 12px; }
 }
+
+/* --- workflow additions --- */
+.banner.ok { color: #4fb37a; border-color: #4fb37a; }
+.ok-text { color: #4fb37a; }
+.bad-text { color: var(--bad); }
+.wrap { flex-wrap: wrap; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 8px; }
+.row { display: flex; gap: 8px; align-items: center; }
+input, select {
+  background: var(--bg); color: var(--text); border: 1px solid var(--line);
+  border-radius: 4px; padding: 5px 8px; font: inherit; max-width: 100%;
+}
+input[type="number"] { width: 90px; }
+.error { border: 1px solid var(--bad); color: var(--bad); border-radius: 4px; padding: 6px 8px; margin: 8px 0; font-size: 13px; }
+.contracts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.tile { text-align: left; display: block; width: 100%; }
+.tile.active { border-color: var(--accent); }
+.big { font-size: 22px; font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.metric { border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+.metric label { color: var(--muted); font-size: 11px; letter-spacing: .04em; }
+.decision { border-left: 3px solid var(--line); padding: 6px 10px; margin: 8px 0; }
+.decision.eligible { border-left-color: #4fb37a; }
+.decision.blocked { border-left-color: var(--warn); }
+.decision ul, .preview ul { margin: 4px 0; padding-left: 18px; }
+.preview, .order { border: 1px dashed var(--line); border-radius: 6px; padding: 8px; margin-top: 8px; }
+tr.selected td { background: #1d2230; }
+.caps { white-space: pre-wrap; font-size: 11px; color: var(--muted); max-height: 160px; overflow: auto; }
+code { font-family: ui-monospace, monospace; font-size: 12px; }
+ol.small { padding-left: 20px; }
+@media (max-width: 640px) {
+  .big { font-size: 18px; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar .row { flex-wrap: wrap; }
+}

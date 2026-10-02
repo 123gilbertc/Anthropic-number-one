@@ -1,345 +1,142 @@
-import { useCallback, useEffect, useState } from "react";
-import { Json, cents, get, pct, post, time, usd } from "./api";
+import { useEffect, useState } from "react";
+import { ApiError, command, time } from "./api";
+import { connectStream, refreshAll, useStore } from "./store";
+import { Connections } from "./screens/Connections";
+import { GameScreen, GamesList } from "./screens/Games";
+import { Tracker } from "./screens/Tracker";
+import { Evaluation } from "./screens/Evaluation";
+import { Audit } from "./screens/Audit";
 
-type Tab = "monitor" | "alerts" | "positions" | "sources" | "audit" | "models";
+type Tab = "connections" | "games" | "game" | "tracker" | "evaluation" | "audit";
+const TABS: [Tab, string][] = [
+  ["connections", "Connections"], ["games", "Games"], ["game", "Game"],
+  ["tracker", "Paper tracker"], ["evaluation", "Evaluation"], ["audit", "Audit"],
+];
 
 export function App() {
-  const [tab, setTab] = useState<Tab>("monitor");
-  const [health, setHealth] = useState<Json | null>(null);
-  const [games, setGames] = useState<Json[]>([]);
-  const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    try {
-      setHealth(await get("/api/health"));
-      setGames(await get("/api/games"));
-      setErr(null);
-    } catch (e) {
-      setErr(String(e));
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const replay = async (mode: "honest" | "mechanics") => {
-    setBusy(true);
-    try {
-      await post("/api/replay", { mode });
-      await load();
-    } finally {
-      setBusy(false);
-    }
-  };
+  const [tab, setTab] = useState<Tab>(() => (sessionStorage.getItem("se.tab") as Tab) || "game");
+  useEffect(() => { connectStream(); }, []);
+  useEffect(() => { sessionStorage.setItem("se.tab", tab); }, [tab]);
+  const health = useStore((s) => s.health);
+  const errors = useStore((s) => s.errors);
 
   return (
     <div className="app">
       <header>
-        <h1>Sports Edge · research &amp; paper only</h1>
-        <div className="banners">
-          {err && <span className="banner bad">API NOT CONNECTED</span>}
-          {health?.banners.map((b: string) => (
-            <span key={b} className={`banner ${b.includes("MECHANICS") ? "bad" : "warn"}`}>
-              {b}
-            </span>
+        <div className="row between">
+          <h1>Sports Edge <span className="muted small">research · paper only</span></h1>
+          <StreamBadge />
+        </div>
+        <div className="banners" data-testid="banners">
+          {health?.banners.map((b) => (
+            <span key={b} className={`banner ${/MECHANICS|NOT PERSISTED/.test(b) ? "bad" : "warn"}`}>{b}</span>
           ))}
         </div>
-        <div className="controls">
-          <span className="muted">Replay:</span>
-          <button disabled={busy} onClick={() => replay("honest")}>Honest (no model)</button>
-          <button disabled={busy} onClick={() => replay("mechanics")}>Mechanics demo</button>
-          {health && <span className="muted">as of {time(health.as_of)} (replay clock)</span>}
+        <div className="toolbar">
+          <Login />
+          <SessionControls />
         </div>
+        {Object.keys(errors).length > 0 && (
+          <div className="error" role="alert">
+            {Object.entries(errors).map(([k, v]) => <div key={k}>{k}: {v}</div>)}
+          </div>
+        )}
         <nav>
-          {(["monitor", "alerts", "positions", "sources", "audit", "models"] as Tab[]).map((t) => (
-            <button key={t} className={t === tab ? "active" : ""} onClick={() => setTab(t)}>
-              {t}
-            </button>
+          {TABS.map(([t, label]) => (
+            <button key={t} className={t === tab ? "active" : ""} onClick={() => setTab(t)}>{label}</button>
           ))}
         </nav>
       </header>
       <main>
-        {tab === "monitor" && games.map((g) => <GameCard key={g.game.game_id} g={g} />)}
-        {tab === "alerts" && <Alerts />}
-        {tab === "positions" && <Positions />}
-        {tab === "sources" && <Sources />}
+        {tab === "connections" && <Connections />}
+        {tab === "games" && <GamesList onOpen={() => setTab("game")} />}
+        {tab === "game" && <GameScreen />}
+        {tab === "tracker" && <Tracker />}
+        {tab === "evaluation" && <Evaluation />}
         {tab === "audit" && <Audit />}
-        {tab === "models" && <Models />}
       </main>
     </div>
   );
 }
 
-function GameCard({ g }: { g: Json }) {
-  const s = g.state;
+function StreamBadge() {
+  const stream = useStore((s) => s.stream);
+  const last = useStore((s) => s.lastEventAt);
+  const [, tick] = useState(0);
+  useEffect(() => { const t = setInterval(() => tick((x) => x + 1), 1000); return () => clearInterval(t); }, []);
+  const age = last ? Math.round((Date.now() - last) / 1000) : null;
+  const cls = stream === "CONNECTED" ? "ok" : stream === "RECONNECTING" ? "warn" : "bad";
   return (
-    <section className="card">
-      <div className="row between">
-        <h2>
-          {g.game.away_team} @ {g.game.home_team}
-        </h2>
-        <span className="muted">{g.game.game_id}</span>
-      </div>
-      {s ? (
-        <p className="state">
-          P{s.period} · {s.seconds_remaining_in_period ?? "?"}s left · {g.game.away_team}{" "}
-          {s.away_score} – {s.home_score} {g.game.home_team} · skaters {s.away_skaters ?? "?"}v
-          {s.home_skaters ?? "?"} · goalies {s.away_goalie ?? "UNKNOWN"} / {s.home_goalie ?? "UNKNOWN"}
-          {s.is_final && <b> · FINAL ({s.final_decided_in})</b>}
-          {s.pending_reconciliation.length > 0 && (
-            <span className="banner warn">PENDING: {s.pending_reconciliation.join(", ")}</span>
-          )}
-        </p>
-      ) : (
-        <p className="muted">No game state received.</p>
-      )}
-      <div className="kv">
-        <div>
-          <label>MODEL_FAVORED_TEAM</label>
-          <b>{g.model_favored_team ?? "UNKNOWN (no prediction)"}</b>
-        </div>
-        <div>
-          <label>VALUE_SIDE</label>
-          <b>{g.value_side ?? "none"}</b>
-        </div>
-      </div>
-      <p className="hint">
-        The most likely winner and the value side are different questions: a likely winner can
-        still be overpriced.
-      </p>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Contract</th>
-              <th>Est. win prob (band)</th>
-              <th>Reliability</th>
-              <th>Ask / bid</th>
-              <th>Depth</th>
-              <th>Ref age</th>
-              <th>Cons. EV</th>
-              <th>Action</th>
-              <th>Room left</th>
-            </tr>
-          </thead>
-          <tbody>
-            {g.contracts.map((c: Json) => (
-              <tr key={c.contract_id}>
-                <td>
-                  {c.selection}
-                  <div className="muted small">{c.settlement_rule}</div>
-                </td>
-                <td>
-                  {pct(c.probability)}
-                  <div className="muted small">
-                    {pct(c.probability_low)}–{pct(c.probability_high)} · {c.model_status}
-                  </div>
-                  {c.abstention && <div className="muted small">abstain: {c.abstention}</div>}
-                </td>
-                <td>{c.reliability}</td>
-                <td>
-                  {cents(c.best_ask)} / {cents(c.best_bid)}
-                  {!c.book_valid && <div className="banner bad">BOOK INVALID</div>}
-                </td>
-                <td>{c.ask_depth ?? "—"}</td>
-                <td>{c.reference_age_seconds == null ? "none" : `${c.reference_age_seconds.toFixed(0)}s`}</td>
-                <td>{c.ev ? usd(c.ev.ev_conservative) : "—"}</td>
-                <td>
-                  <b>{c.action ?? "—"}</b>
-                  <div className="muted small">{c.reasons.join(", ")}</div>
-                </td>
-                <td>{usd(c.remaining_paper_exposure)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <details>
-        <summary>Invalidation conditions &amp; notes</summary>
-        {g.contracts.map((c: Json) => (
-          <p key={c.contract_id} className="small">
-            <b>{c.selection}:</b> {c.invalidation} Expires {time(c.decision_expires_at)}.{" "}
-            {c.notes.join(" · ")}
-          </p>
-        ))}
-      </details>
-    </section>
+    <span className={`banner ${cls}`} data-testid="stream-status" title="Backend event stream (not a data provider)">
+      UPDATES: {stream}{age != null ? ` · last event ${age}s ago` : ""}
+    </span>
   );
 }
 
-function useData<T = Json>(path: string) {
-  const [d, setD] = useState<T | null>(null);
-  useEffect(() => {
-    get<T>(path).then(setD).catch(() => setD(null));
-  }, [path]);
-  return d;
-}
-
-function Alerts() {
-  const a = useData<Json[]>("/api/alerts");
-  if (!a) return <p className="muted">Loading…</p>;
-  if (!a.length) return <p className="muted">No alerts. None are manufactured without a validated model and an authorized feed.</p>;
+function Login() {
+  const authed = useStore((s) => s.health?.authenticated ?? false);
+  const [token, setToken] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  if (authed) {
+    return (
+      <span className="row">
+        <span className="banner ok">OPERATOR SIGNED IN</span>
+        <button onClick={async () => { await command("POST", "/api/auth/logout"); refreshAll(); }}>Sign out</button>
+      </span>
+    );
+  }
   return (
-    <section className="card">
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>As of</th><th>Expires</th><th>Contract</th><th>Action</th><th>Qty</th>
-              <th>Cons. EV</th><th>Max eligible add</th><th>State ID</th><th>Fill</th>
-            </tr>
-          </thead>
-          <tbody>
-            {a.map(({ decision: d, fill, fill_outcome }) => (
-              <tr key={d.decision_id}>
-                <td>{time(d.decision_time)}</td>
-                <td>{time(d.expires_at)}</td>
-                <td>{d.contract_id}</td>
-                <td>{d.action}<div className="muted small">{d.reasons.join(", ")}</div></td>
-                <td>{d.planned_quantity}</td>
-                <td>{d.ev ? usd(d.ev.ev_conservative) : "—"}</td>
-                <td>{usd(d.max_eligible_addition)}</td>
-                <td className="small mono">{d.snapshot_id}</td>
-                <td>
-                  {fill ? `${fill.filled_quantity} @ ${usd(Number(fill.cost) / fill.filled_quantity)}` : "no fill"}
-                  <div className="muted small">{fill_outcome.join(", ")}</div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <form className="row" onSubmit={async (e) => {
+      e.preventDefault();
+      setErr(null);
+      try {
+        await command("POST", "/api/auth/login", { token });
+        setToken("");  // the token is exchanged for an HttpOnly cookie and not kept
+        refreshAll();
+      } catch (x) { setErr(x instanceof ApiError ? x.detail : String(x)); }
+    }}>
+      <input type="password" placeholder="Operator token" value={token} aria-label="Operator token"
+        onChange={(e) => setToken(e.target.value)} autoComplete="off" />
+      <button type="submit">Sign in</button>
+      {err && <span className="bad-text small">{err}</span>}
+    </form>
   );
 }
 
-function Positions() {
-  const p = useData("/api/positions");
-  if (!p) return <p className="muted">Loading…</p>;
+function SessionControls() {
+  const s = useStore((x) => x.health?.session);
+  const authed = useStore((x) => x.health?.authenticated ?? false);
+  const [speed, setSpeed] = useState(60);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  if (!s) return null;
+  const run = async (fn: () => Promise<unknown>) => {
+    setBusy(true); setErr(null);
+    try { await fn(); await refreshAll(); } catch (x) { setErr(x instanceof ApiError ? `${x.code}: ${x.detail}` : String(x)); }
+    finally { setBusy(false); }
+  };
   return (
-    <section className="card">
-      <p>Free cash {usd(p.cash)} · open cost {usd(p.open_cost)} · limits: {p.limits.label}</p>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Contract</th><th>Contracts</th><th>Total cost</th><th>Fees</th><th>Avg entry</th><th>Avg all-in</th></tr>
-          </thead>
-          <tbody>
-            {p.positions.map((x: Json) => (
-              <tr key={x.contract_id}>
-                <td>{x.contract_id}</td><td>{x.contracts}</td><td>{usd(x.total_cost)}</td>
-                <td>{usd(x.total_fees)}</td><td>{cents(x.average_entry)}</td><td>{cents(x.average_entry_all_in)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <h3>Settlements</h3>
-      {p.settlements.map((s: Json) => (
-        <p key={s.settlement_id} className="small">{s.contract_id}: <b>{s.outcome}</b> — {s.detail}</p>
-      ))}
-    </section>
-  );
-}
-
-function Sources() {
-  const s = useData("/api/sources");
-  if (!s) return <p className="muted">Loading…</p>;
-  return (
-    <section className="card">
-      <h3>Provider registry (docs checked {s.checked})</h3>
-      <div className="table-wrap">
-        <table>
-          <thead><tr><th>Source</th><th>Role</th><th>Docs</th><th>Entitlement</th><th>Live use</th></tr></thead>
-          <tbody>
-            {s.registry.map((r: Json) => (
-              <tr key={r.name}>
-                <td>{r.name}<div className="muted small">{r.notes}</div></td>
-                <td>{r.role}</td><td>{r.doc_status}</td><td>{r.entitlement}</td>
-                <td><span className={`banner ${r.live_use === "BLOCKED" ? "bad" : "warn"}`}>{r.live_use}</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <h3>Runtime health (this replay)</h3>
-      <div className="table-wrap">
-        <table>
-          <thead><tr><th>Source</th><th>Status</th><th>Msgs</th><th>Gaps</th><th>Dups</th><th>No provider time</th><th>Latency p50/p95</th></tr></thead>
-          <tbody>
-            {s.runtime.map((h: Json) => (
-              <tr key={h.name}>
-                <td>{h.name}</td><td>{h.status}</td><td>{h.messages}</td><td>{h.gaps}</td><td>{h.duplicates}</td>
-                <td>{h.missing_provider_time}</td>
-                <td>{h.latency_ms_p50 == null ? "—" : `${h.latency_ms_p50.toFixed(0)} / ${h.latency_ms_p95.toFixed(0)} ms`}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-function Audit() {
-  const d = useData<Json[]>("/api/decisions");
-  if (!d) return <p className="muted">Loading…</p>;
-  return (
-    <section className="card">
-      <p className="muted">Every change of action and every approval, taken or rejected.</p>
-      <div className="table-wrap">
-        <table>
-          <thead><tr><th>Time</th><th>Contract</th><th>Action</th><th>Reasons</th><th>Model</th></tr></thead>
-          <tbody>
-            {d.map((x) => (
-              <tr key={x.decision_id}>
-                <td>{time(x.decision_time)}</td><td>{x.contract_id}</td><td>{x.action}</td>
-                <td className="small">{x.reasons.join(", ")}</td><td className="small">{x.model_version ?? "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-function Models() {
-  const m = useData("/api/models");
-  if (!m) return <p className="muted">Loading…</p>;
-  return (
-    <section className="card">
-      <p className="muted">{m.note}</p>
-      {m.active ? (
+    <span className="row wrap">
+      <span className="muted small" data-testid="session-info">
+        {s.mode} · {s.data_label} · run {s.run_id} · {s.position}/{s.total} · as of {time(s.as_of)}
+        {s.finished ? " · FINISHED" : s.running ? " · RUNNING" : " · PAUSED"}
+      </span>
+      {authed && (
         <>
-          <p>
-            <b>{m.active.model_version}</b> · status <span className="banner warn">{m.active.status}</span> ·
-            trained on {m.active.trained_on}
-          </p>
-          <p className="small">
-            Test Brier {m.test_metrics.brier.value.toFixed(4)} (95% CI {m.test_metrics.brier.low.toFixed(4)}–
-            {m.test_metrics.brier.high.toFixed(4)}, {m.test_metrics.brier.n_clusters} games) · log loss{" "}
-            {m.test_metrics.log_loss.value.toFixed(4)}. Lower is better; always guessing 50% scores 0.25 / 0.693.
-          </p>
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Phase</th><th>Rows</th><th>Games</th><th>Brier</th><th>Log loss</th><th>Accuracy</th></tr></thead>
-              <tbody>
-                {m.test_metrics.by_phase.map((r: Json) => (
-                  <tr key={r.phase}>
-                    <td>{r.phase}</td><td>{r.n}</td><td>{r.games}</td><td>{r.brier.toFixed(4)}</td>
-                    <td>{r.log_loss.toFixed(4)}</td><td>{pct(r.accuracy)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <button disabled={busy} onClick={() => run(() => command("POST", "/api/session", { mode: "honest" }))}>New replay (no model)</button>
+          <button disabled={busy} onClick={() => run(() => command("POST", "/api/session", { mode: "mechanics" }))}>New mechanics demo</button>
+          {s.running
+            ? <button disabled={busy} onClick={() => run(() => command("POST", "/api/session/pause"))}>Pause</button>
+            : <button disabled={busy || s.finished} onClick={() => run(() => command("POST", "/api/session/run", { speed }))}>Play</button>}
+          <button disabled={busy || s.running || s.finished} onClick={() => run(() => command("POST", "/api/session/step", { n: 10 }))}>Step +10</button>
+          <label className="small muted">speed
+            <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
+              {[10, 30, 60, 120, 300].map((v) => <option key={v} value={v}>{v}×</option>)}
+            </select>
+          </label>
         </>
-      ) : (
-        <p>No model loaded. No forecasts, no value alerts.</p>
       )}
-    </section>
+      {err && <span className="bad-text small">{err}</span>}
+    </span>
   );
 }

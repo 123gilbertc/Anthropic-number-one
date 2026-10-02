@@ -24,6 +24,7 @@ BASE_GOALS_PER_SEC = 3.0 / 3600  # per team, roughly 3 goals per 60 minutes
 def simulate_season(n_games: int, seed: int = 0, snapshot_every: int = 120,
                     start: datetime = datetime(2024, 10, 1, tzinfo=UTC)) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
+    rng_mkt = np.random.default_rng(seed + 1_000_003)  # separate stream: games unchanged
     rows = []
     for g in range(n_games):
         strength_home = rng.normal(0, 0.15)
@@ -67,7 +68,13 @@ def simulate_season(n_games: int, seed: int = 0, snapshot_every: int = 120,
                 diff = (h - a) if is_home else (a - h)
                 frac = secs / 3600
                 p = pregame if is_home else 1 - pregame
+                # SYNTHETIC "market": a noisy heuristic price, for exercising the
+                # market-implied baseline and threshold estimation only.
+                mkt = 1 / (1 + np.exp(-(np.log(p / (1 - p)) * 0.9
+                                        + 0.9 * diff / np.sqrt(frac + 0.05))))
+                mkt = float(np.clip(mkt + rng_mkt.normal(0, 0.03), 0.02, 0.98))
                 rows.append({
+                    "market_p": mkt,
                     "game_id": f"SYN{g:05d}",
                     "game_start": game_start,
                     "is_home": float(is_home),

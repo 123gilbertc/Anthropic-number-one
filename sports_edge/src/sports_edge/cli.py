@@ -65,11 +65,46 @@ def cmd_train(a) -> None:
     from sports_edge.forecast.train import train_synthetic
 
     s = settings()
+    if a.compare:
+        from sports_edge.domain.enums import ModelStatus
+        from sports_edge.forecast.synthetic import simulate_season
+        from sports_edge.forecast.train import compare_models
+        df = simulate_season(a.games, seed=a.seed)
+        rep = compare_models(df, f"SYNTHETIC simulate_season(n={a.games}, seed={a.seed})",
+                             ModelStatus.SYNTHETIC_ONLY, s.runs_dir / "experiments.jsonl")
+        _print({k: {"brier": v["brier"]["value"], "brier_ci": [v["brier"]["low"],
+                                                              v["brier"]["high"]],
+                    "log_loss": v["log_loss"]["value"]} for k, v in rep["models"].items()})
+        return
     rep = train_synthetic(n_games=a.games, seed=a.seed, kind=a.kind,
                           log_path=s.runs_dir / "experiments.jsonl")
     saved = [save_artifact(f, s.artifacts_dir) for f in rep.forecaster.forecasters]
     _print({"artifacts": [v.version.artifact_path for v in saved],
             "status": saved[0].version.status, "test_metrics": rep.test_metrics})
+
+
+def cmd_thresholds(a) -> None:
+    from sports_edge.domain.enums import ModelStatus
+    from sports_edge.evaluation.splits import ExperimentLog, chronological_split
+    from sports_edge.features.nhl import FEATURE_NAMES
+    from sports_edge.forecast.synthetic import simulate_season
+    from sports_edge.forecast.train import train_nhl
+    from sports_edge.triggers import thresholds
+
+    s = settings()
+    df = simulate_season(a.games, seed=11)
+    rep = train_nhl(df, "SYNTHETIC thresholds", ModelStatus.SYNTHETIC_ONLY, n_bootstrap=5)
+    model = rep.forecaster.forecasters[0].model
+    _, lo, _ = model.predict_matrix(df[list(FEATURE_NAMES)].to_numpy(float))
+    df = df.assign(p_low=lo, ask=(df["market_p"] + 0.01).clip(0.02, 0.98))
+    sp = chronological_split(df)
+    ft = thresholds.estimate(sp.validation, "SYNTHETIC_ONLY")
+    path = thresholds.save(ft, s.runs_dir)
+    log = ExperimentLog(s.runs_dir / "experiments.jsonl")
+    test_result = thresholds.evaluate_frozen(ft, sp.test)
+    log.log("THRESHOLDS_FROZEN", config=str(path), test=test_result)
+    _print({"frozen": str(path), "thresholds": ft.__dict__, "test_once": test_result,
+            "note": "Synthetic data: plumbing check only, not evidence."})
 
 
 def cmd_paper(a) -> None:
@@ -132,7 +167,13 @@ def main(argv: list[str] | None = None) -> None:
     t.add_argument("--games", type=int, default=600)
     t.add_argument("--seed", type=int, default=0)
     t.add_argument("--kind", choices=["logistic", "gbm"], default="logistic")
+    t.add_argument("--compare", action="store_true",
+                   help="compare logistic, GBM and the market-implied baseline")
     t.set_defaults(fn=cmd_train)
+    th = sub.add_parser("thresholds", help="estimate value-gate margin on validation, freeze")
+    th.add_argument("--synthetic", action="store_true", required=True)
+    th.add_argument("--games", type=int, default=600)
+    th.set_defaults(fn=cmd_thresholds)
     pp = sub.add_parser("paper")
     pp.add_argument("file")
     pp.add_argument("--mechanics-demo", action="store_true")

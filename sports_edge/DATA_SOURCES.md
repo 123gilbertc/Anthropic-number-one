@@ -56,6 +56,8 @@ The fee model in code (`pricing/fees.py`, `KALSHI_FEE_RATE`) is labelled **UNVER
   - 20 requests per second per key.
   - Taker coefficient 0.0695; the unit basis is UNKNOWN.
 
+Implementation: `adapters/polymarket.py` covers the parser (`book`, `price_change`, `tick_size_change`) and a taker fee model. **Fee rounding UNKNOWN**: we round up to the cent (conservative). No sequence numbers are documented for this channel, so after a reconnect every book stays invalid until a fresh `book` message arrives. There is no transport yet.
+
 ## The Odds API v4
 
 | Item | Value | Status |
@@ -78,7 +80,7 @@ The fee model in code (`pricing/fees.py`, `KALSHI_FEE_RATE`) is labelled **UNVER
 | xAI | `grok-4.7`, `grok-4.3` | 2/6, 1.25/2.50 | SNIPPET |
 | Google | `gemini-3.8-flash` (price doubles 2027-01-01) | 1.35/6.75 | SNIPPET |
 
-Only the Anthropic adapter is implemented. The model ID and prices are **configuration** (`LLM_ANTHROPIC_MODEL`, `*_USD_PER_MTOK`), not code. Log every change to them.
+The Anthropic adapter is wired into the server. OpenAI/xAI (chat-completions shape) and Google (generateContent) adapters exist in `llm/providers.py` but are not yet wired into settings. All of them are untested against the live APIs from the build environment. The model ID and prices are **configuration** (`LLM_ANTHROPIC_MODEL`, `*_USD_PER_MTOK`), not code. Log every change to them.
 
 ## Monthly cost scenarios (planning ceiling $500/mo; nothing purchased)
 

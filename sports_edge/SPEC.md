@@ -182,7 +182,8 @@ Pregame-only, quant-vs-LLM and same-time sportsbook baselines are reported as NO
 | 1 | Adapter/fixture → normalization → persistence → state endpoint → dashboard, health, replay; market recording | Done for fixtures. Kalshi recorder written but untested against the live API. |
 | 2 | Historical features, baselines, calibrated challenger, chronological evaluation, artifacts | Plumbing done on synthetic data. **Real historical data not yet licensed.** |
 | 3 | Live quant updates, triggers, paper execution, risk, alerts | Engine done in replay. **Live path BLOCKED** (no feed). |
-| 4 | LLM shadow adapters, matched comparisons, prospective logs | One adapter plus the validation harness. Other vendors pending. |
-| 5 | Second venue/sport, hardening | Not started |
+| 4 | LLM shadow adapters, matched comparisons, prospective logs | Anthropic wired; OpenAI/xAI/Google adapters; promotion harness requires prospective data |
+| 5 | Second venue/sport, hardening | MLB state and features; Polymarket parser and fee; no transport yet |
+| UI | Connected workflow (docs/UI_INTEGRATION.md) | Done in `sports_edge/web`; True Edge app not available |
 
 Gate rule: no phase claims production readiness from synthetic tests.
