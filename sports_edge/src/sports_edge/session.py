@@ -16,6 +16,7 @@ recorded and never blocks monitoring or orders.
 from __future__ import annotations
 
 import asyncio
+import threading
 import uuid
 from collections import deque
 from dataclasses import dataclass, field
@@ -33,7 +34,8 @@ from sports_edge.monitor import Monitor, SignalError
 from sports_edge.paper.broker import APPROVING
 from sports_edge.replay.runner import ReplayStream
 
-OrderStatus = Literal["PENDING", "FILLED", "PARTIAL", "REJECTED"]
+# ABANDONED: the worker stopped before the order's fill attempt; it is never filled later.
+OrderStatus = Literal["PENDING", "FILLED", "PARTIAL", "REJECTED", "ABANDONED"]
 
 
 class PaperOrder(BaseModel):
@@ -65,7 +67,7 @@ class LedgerEvent(BaseModel):
     data_label: str
     time: datetime
     kind: Literal["ORDER_ACCEPTED", "ORDER_FILLED", "ORDER_PARTIAL", "ORDER_REJECTED",
-                  "POSITION_SETTLED"]
+                  "POSITION_SETTLED", "ORDER_ABANDONED"]
     order_id: str | None
     contract_id: str
     detail: dict[str, Any]
@@ -79,28 +81,53 @@ class CommandError(Exception):
 
 @dataclass
 class EventLog:
-    """Monotonic event log with a bounded buffer. Clients resync on gaps."""
+    """Monotonic event log with a bounded buffer. Clients resync on gaps.
+
+    Thread-safe: commands run in worker threads while the SSE stream reads on the
+    event loop. Waiters are woken with ``call_soon_threadsafe``.
+    """
 
     capacity: int = 2000
     seq: int = 0
     buffer: deque = field(default_factory=deque)
-    waiters: set[asyncio.Event] = field(default_factory=set)
+    waiters: set = field(default_factory=set)  # asyncio.Event, created on the event loop
+    _lock: Any = field(default_factory=threading.Lock)
+    _loops: dict = field(default_factory=dict)  # id(event) -> loop
+
+    def add_waiter(self, ev: asyncio.Event) -> None:
+        with self._lock:
+            self.waiters.add(ev)
+            self._loops[id(ev)] = asyncio.get_running_loop()
+
+    def discard_waiter(self, ev: asyncio.Event) -> None:
+        with self._lock:
+            self.waiters.discard(ev)
+            self._loops.pop(id(ev), None)
 
     def append(self, kind: str, data: dict) -> int:
-        self.seq += 1
-        self.buffer.append((self.seq, kind, data))
-        while len(self.buffer) > self.capacity:
-            self.buffer.popleft()
-        for w in list(self.waiters):
-            w.set()
-        return self.seq
+        with self._lock:
+            self.seq += 1
+            seq = self.seq
+            self.buffer.append((seq, kind, data))
+            while len(self.buffer) > self.capacity:
+                self.buffer.popleft()
+            wake = [(ev, self._loops.get(id(ev))) for ev in self.waiters]
+        for ev, loop in wake:
+            if loop is None:
+                continue
+            try:
+                loop.call_soon_threadsafe(ev.set)
+            except RuntimeError:  # loop closed
+                pass
+        return seq
 
     def since(self, seq: int) -> tuple[bool, list[tuple[int, str, dict]]]:
         """(needs_resync, events after seq)."""
-        oldest = self.buffer[0][0] if self.buffer else self.seq + 1
-        if seq < oldest - 1 or seq > self.seq:  # gap, or a cursor from a replaced session
-            return True, []
-        return False, [e for e in self.buffer if e[0] > seq]
+        with self._lock:
+            oldest = self.buffer[0][0] if self.buffer else self.seq + 1
+            if seq < oldest - 1 or seq > self.seq:  # gap, or a cursor from a replaced session
+                return True, []
+            return False, [e for e in self.buffer if e[0] > seq]
 
 
 @dataclass
@@ -123,6 +150,9 @@ class AppSession:
     _task: asyncio.Task | None = None
     reviewer: Any = None  # optional ShadowReviewer
     db: Any = None  # optional SqlSink: orders + ledger persisted append-only
+    # idempotency keys from earlier runs / before a restart (key -> order), read-only
+    prior_keys: dict[str, PaperOrder] = field(default_factory=dict)
+    lock: Any = field(default_factory=threading.RLock)  # serializes all state changes
 
     # ------------------------------------------------------------------ build
 
@@ -229,6 +259,10 @@ class AppSession:
     # ------------------------------------------------------------------ replay control
 
     def step(self, n: int = 1) -> int:
+        with self.lock:
+            return self._step(n)
+
+    def _step(self, n: int) -> int:
         k = 0
         while k < n and not self.stream.done:
             self.stream.step(self.clock, self.monitor)
@@ -258,8 +292,9 @@ class AppSession:
                     self.step(1)
                 else:  # advance the replay clock in sub-steps so the UI sees time pass
                     from datetime import timedelta
-                    self.clock.advance_to(cur + timedelta(seconds=self.speed))
-                    self.monitor.tick()
+                    with self.lock:
+                        self.clock.advance_to(cur + timedelta(seconds=self.speed))
+                        self.monitor.tick()
                     self.events.append("clock", {"as_of": self.clock.now().isoformat(),
                                                  "position": self.stream.position,
                                                  "total": len(self.stream.body)})
@@ -277,9 +312,19 @@ class AppSession:
 
     # ------------------------------------------------------------------ commands
 
-    def place_order(self, decision_id: str, idempotency_key: str,
-                    quantity: int | None) -> tuple[PaperOrder, bool]:
-        """Returns (order, created). Same key -> same order (duplicate click safe)."""
+    def place_order(self, decision_id: str, idempotency_key: str, quantity: int | None,
+                    expected_contract_id: str | None = None) -> tuple[PaperOrder, bool]:
+        """Returns (order, created). Same key -> same order (duplicate click safe).
+
+        Serialized with every other state change, so concurrent requests cannot race.
+        ``expected_contract_id`` is what the UI displayed: a mismatch is refused.
+        """
+        with self.lock:
+            return self._place_order(decision_id, idempotency_key, quantity,
+                                     expected_contract_id)
+
+    def _place_order(self, decision_id: str, idempotency_key: str, quantity: int | None,
+                     expected_contract_id: str | None) -> tuple[PaperOrder, bool]:
         if not idempotency_key or len(idempotency_key) > 100:
             raise CommandError(422, "BAD_IDEMPOTENCY_KEY", "1-100 characters required")
         if idempotency_key in self.by_key:
@@ -287,14 +332,30 @@ class AppSession:
             if o.decision_id != decision_id:
                 raise CommandError(409, "IDEMPOTENCY_KEY_REUSED", "key used for another signal")
             return o, False
+        if idempotency_key in self.prior_keys:  # a retry that crosses a restart
+            o = self.prior_keys[idempotency_key]
+            if o.decision_id != decision_id:
+                raise CommandError(409, "IDEMPOTENCY_KEY_REUSED", "key used for another signal")
+            return o, False
         if decision_id in self.by_decision:
             raise CommandError(409, "ALREADY_ORDERED",
                                f"order {self.by_decision[decision_id]} exists for this signal")
+        sig = self.monitor.signals.get(decision_id)
+        if sig is not None and expected_contract_id is not None \
+                and sig.contract_id != expected_contract_id:
+            raise CommandError(409, "CONTRACT_MISMATCH",
+                               f"signal is for {sig.contract_id}, not {expected_contract_id}")
+        if sig is not None:
+            busy = [o for o in self.orders.values()
+                    if o.contract_id == sig.contract_id and o.status == "PENDING"]
+            if busy:
+                raise CommandError(409, "ORDER_PENDING_FOR_CONTRACT",
+                                   f"order {busy[0].order_id} is still pending for this contract")
         try:
             pending = self.monitor.submit_signal(decision_id, quantity)
         except SignalError as e:
             status = 410 if e.code == "SIGNAL_EXPIRED" else 409 if e.code in (
-                "SIGNAL_SUPERSEDED",) else 404 if e.code == "UNKNOWN_SIGNAL" else 422
+                "SIGNAL_SUPERSEDED", "EXPOSURE_LIMIT") else 404 if e.code == "UNKNOWN_SIGNAL" else 422
             raise CommandError(status, e.code, e.detail) from e
         d = pending.decision
         oid = f"po_{uuid.uuid4().hex[:12]}"
@@ -355,3 +416,48 @@ class AppSession:
             "filled_win_rate": conditional_win_rate(
                 [1 if o.outcome == Outcome.WIN else 0 for o in settled]),
         }
+
+
+# ---------------------------------------------------------------------- restart recovery
+
+
+def recover(db, now: datetime) -> dict:
+    """Reload persisted orders after a worker restart.
+
+    * Orders still PENDING were never filled: they become ABANDONED (new version +
+      ledger event). They are never filled retroactively.
+    * Returns every order's latest version, keyed by idempotency key, so retried
+      requests are recognised instead of creating duplicates.
+    """
+    latest = db.latest_orders()
+    abandoned = []
+    for o in latest.values():
+        if o.status != "PENDING":
+            continue
+        a = o.model_copy(update={"status": "ABANDONED",
+                                 "reasons": ["WORKER_RESTARTED_BEFORE_FILL_ATTEMPT"]})
+        db.paper_order(a)
+        seq = db.next_ledger_seq(o.run_id)
+        db.ledger_event(LedgerEvent(
+            ledger_seq=seq, run_id=o.run_id, mode=o.mode, data_label=o.data_label, time=now,
+            kind="ORDER_ABANDONED", order_id=o.order_id, contract_id=o.contract_id,
+            detail={"reason": "worker restarted before the fill attempt"}))
+        latest[o.order_id] = a
+        abandoned.append(o.order_id)
+    return {"orders": latest, "abandoned": abandoned,
+            "by_key": {o.idempotency_key: o for o in latest.values()}}
+
+
+def restore_exposure(ledger, orders, mode: str = "LIVE") -> int:
+    """Rebuild open exposure from unsettled filled orders of one mode (LIVE in practice).
+
+    Replay runs start from a fresh bankroll and are never mixed with LIVE records.
+    """
+    n = 0
+    for o in orders:
+        if o.mode != mode or o.fill is None or o.outcome is not None:
+            continue
+        ledger.record_purchase(o.game_id, o.selection_team, o.fill.fill_time.date(),
+                               o.fill.cost, o.fill.fees)
+        n += 1
+    return n

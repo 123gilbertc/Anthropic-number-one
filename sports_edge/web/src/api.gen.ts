@@ -328,6 +328,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/paper/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * History
+         * @description Persisted ledger across runs and restarts (empty when no database).
+         */
+        get: operations["history_api_paper_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/evaluation": {
         parameters: {
             query?: never;
@@ -700,7 +720,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "ORDER_ACCEPTED" | "ORDER_FILLED" | "ORDER_PARTIAL" | "ORDER_REJECTED" | "POSITION_SETTLED";
+            kind: "ORDER_ACCEPTED" | "ORDER_FILLED" | "ORDER_PARTIAL" | "ORDER_REJECTED" | "POSITION_SETTLED" | "ORDER_ABANDONED";
             /** Order Id */
             order_id: string | null;
             /** Contract Id */
@@ -787,6 +807,8 @@ export interface components {
         OrderRequest: {
             /** Decision Id */
             decision_id: string;
+            /** Expected Contract Id */
+            expected_contract_id?: string | null;
             /** Idempotency Key */
             idempotency_key: string;
             /** Quantity */
@@ -867,7 +889,7 @@ export interface components {
              * Status
              * @enum {string}
              */
-            status: "PENDING" | "FILLED" | "PARTIAL" | "REJECTED";
+            status: "PENDING" | "FILLED" | "PARTIAL" | "REJECTED" | "ABANDONED";
             /**
              * Created Time
              * Format: date-time
@@ -1599,6 +1621,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Ledger"];
+                };
+            };
+        };
+    };
+    history_api_paper_history_get: {
+        parameters: {
+            query?: {
+                mode?: ("REPLAY" | "LIVE") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

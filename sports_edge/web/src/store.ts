@@ -57,13 +57,19 @@ export function select(gameId: string | null, contractId: string | null = null) 
   try { sessionStorage.setItem("se.selection", JSON.stringify({ gameId, contractId })); } catch { /* optional */ }
 }
 
+// Responses can arrive out of order (slow network, reconnect). Each key keeps a
+// request counter and only the newest request may write; older ones are dropped.
+const generation: Record<string, number> = {};
 async function load<K extends keyof State>(key: K, fn: () => Promise<State[K]>) {
+  const gen = (generation[key as string] = (generation[key as string] ?? 0) + 1);
   try {
     const v = await fn();
+    if (generation[key as string] !== gen) return;  // a newer request superseded this one
     const errors = { ...state.errors };
     delete errors[key as string];
     set({ [key]: v, errors } as Partial<State>);
   } catch (e) {
+    if (generation[key as string] !== gen) return;
     const msg = e instanceof ApiError ? `${e.code}: ${e.detail}` : String(e);
     set({ errors: { ...state.errors, [key as string]: msg } });
   }

@@ -82,6 +82,13 @@ class PaperBroker:
         start = now or decision.decision_time
         order = PendingOrder(decision, start + self.engine.cfg.decision_delay,
                              material_key(state))
+        # reserve the planned all-in cost (contracts + estimated fees) until the fill attempt
+        q = decision.planned_quantity
+        worst = decision.planned_cost / q if q else Decimal(0)
+        fee = self.engine.fee_model.entry_fee(q, worst)
+        self.engine.ledger.reserve(decision.decision_id, decision.game_id,
+                                   decision.selection_team or "", start.date(),
+                                   decision.planned_cost + fee)
         self.pending.append(order)
         return order
 
@@ -98,6 +105,8 @@ class PaperBroker:
         return out
 
     def _attempt(self, order: PendingOrder, now: datetime, ctx: TriggerContext) -> FillAttempt:
+        # the reservation is released on every path; a fill records the real purchase
+        self.engine.ledger.release(order.decision.decision_id)
         d = order.decision
         if now > d.expires_at:
             return FillAttempt(d.decision_id, None, (Reason.FILL_RECHECK_FAILED,), None)

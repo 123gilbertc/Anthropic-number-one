@@ -38,6 +38,7 @@ from sports_edge.forecast.models import ChainForecaster
 from sports_edge.health import SourceHealth
 from sports_edge.ingest.nhl_state import InvalidEvent, NHLStateReducer, NormalizedGameEvent
 from sports_edge.paper.broker import APPROVING, PaperBroker
+from sports_edge.risk.exposure import ExposureError
 from sports_edge.triggers.engine import TriggerContext, TriggerEngine
 
 
@@ -346,6 +347,8 @@ class Monitor:
                               + ",".join(r.value for r in latest.reasons))
         try:
             order = self.broker.submit(d, self.decision_state.get(decision_id), quantity, now)
+        except ExposureError as e:
+            raise SignalError("EXPOSURE_LIMIT", str(e)) from e
         except ValueError as e:
             raise SignalError("INVALID_QUANTITY", str(e)) from e
         self.engine.note_submitted(d)

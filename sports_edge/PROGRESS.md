@@ -1,5 +1,35 @@
 # Progress log (for resuming in a new session)
 
+## 2026-10-02: integration-validation pass
+
+The three referenced `CLAUDE_TRUE_EDGE_*.md` specs and the True Edge app are still not in any accessible location. This pass worked from the requirements in chat; see `docs/REQUIREMENTS_TRACE.md` for the requirement-by-requirement trace and both verdicts.
+
+**Gaps repaired (tests added first):**
+
+1. **Competing and duplicate orders.**
+   - Session state changes are serialized by a lock.
+   - Pending orders reserve exposure immediately.
+   - Only one pending order is allowed per contract.
+   - Orders must name the contract the UI displayed (`CONTRACT_MISMATCH`).
+2. **Worker restart.**
+   - Persisted orders are reloaded at startup.
+   - Never-filled PENDING orders become ABANDONED, with a ledger event; they are never filled retroactively.
+   - Idempotency keys survive restarts and session replacement.
+   - Live exposure can be rebuilt from unsettled LIVE fills.
+   - New endpoint `/api/paper/history`.
+3. **Late responses in the UI.**
+   - A slow preview for a contract the user has left is discarded.
+   - Per-key request counters drop out-of-order fetches.
+
+**Also this pass:**
+
+- **Timestamp-consistency rules** (`TIMESTAMP_INCONSISTENT`).
+- **The first runnable acceptance test**, `tests/test_integration_path.py`: provider-shaped Kalshi and raw Odds API v4 input → … → evaluation, with cross-screen consistency checks.
+- **Two real bugs found by the browser suite and fixed:**
+  - a lost-wakeup race in the SSE stream (stale UI for up to 10 s after events);
+  - thread-unsafe waking of the event loop from worker threads.
+
+
 ## 2026-10-02: connected workflow + remaining research items
 
 ### Done

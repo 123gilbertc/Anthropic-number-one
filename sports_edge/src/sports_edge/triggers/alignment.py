@@ -24,6 +24,8 @@ def check_reference(q: SportsbookQuote, state: NHLState, now: datetime,
                     cfg: StrategyConfig) -> Reason | None:
     if q.provider_last_update is None:
         return Reason.REFERENCE_STALE
+    if (q.provider_last_update - q.received_time).total_seconds() > 5:
+        return Reason.TIMESTAMP_INCONSISTENT  # "updated" after we received it: clocks disagree
     if now - q.received_time > cfg.max_reference_age:
         return Reason.REFERENCE_STALE
     if now - q.provider_last_update > cfg.max_reference_age:

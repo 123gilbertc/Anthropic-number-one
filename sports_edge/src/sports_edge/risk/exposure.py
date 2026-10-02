@@ -20,6 +20,10 @@ from sports_edge.domain.enums import Reason
 ZERO = Decimal("0")
 
 
+class ExposureError(ValueError):
+    pass
+
+
 @dataclass(frozen=True)
 class RiskLimits:
     bankroll: Decimal
@@ -55,6 +59,9 @@ class ExposureLedger:
     open_cost_by_team: dict[tuple[str, str], Decimal] = field(default_factory=dict)
     open_cost_by_game: dict[str, Decimal] = field(default_factory=dict)
     spend_by_day: dict[date, Decimal] = field(default_factory=dict)
+    # Pending paper orders reserve their worst-case all-in cost immediately, so two
+    # orders waiting for their fills can never jointly exceed a cap.
+    reserved: dict[str, tuple[str, str, date, Decimal]] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.cash == ZERO:
@@ -67,17 +74,37 @@ class ExposureLedger:
     def remaining(self, game_id: str, team: str, day: date) -> tuple[Decimal, tuple[Reason, ...]]:
         """Max additional all-in dollars allowed, and which limits are binding at zero."""
         lim = self.limits
+        r = self.reserved.values()
+        r_team = sum((a for g, t, _, a in r if (g, t) == (game_id, team)), ZERO)
+        r_game = sum((a for g, _, _, a in r if g == game_id), ZERO)
+        r_day = sum((a for _, _, d, a in r if d == day), ZERO)
+        r_all = sum((a for *_, a in r), ZERO)
         candidates = {
             Reason.TEAM_CAP_REACHED: lim.per_team_cap
-            - self.open_cost_by_team.get((game_id, team), ZERO),
-            Reason.GAME_CAP_REACHED: lim.per_game_cap - self.open_cost_by_game.get(game_id, ZERO),
-            Reason.PORTFOLIO_CAP_REACHED: lim.portfolio_cap - self.open_cost,
-            Reason.DAILY_LIMIT_REACHED: lim.daily_spend_cap - self.spend_by_day.get(day, ZERO),
-            Reason.INSUFFICIENT_CASH: self.cash - lim.cash_reserve,
+            - self.open_cost_by_team.get((game_id, team), ZERO) - r_team,
+            Reason.GAME_CAP_REACHED: lim.per_game_cap
+            - self.open_cost_by_game.get(game_id, ZERO) - r_game,
+            Reason.PORTFOLIO_CAP_REACHED: lim.portfolio_cap - self.open_cost - r_all,
+            Reason.DAILY_LIMIT_REACHED: lim.daily_spend_cap
+            - self.spend_by_day.get(day, ZERO) - r_day,
+            Reason.INSUFFICIENT_CASH: self.cash - lim.cash_reserve - r_all,
         }
         room = max(ZERO, min(candidates.values()))
         binding = tuple(r for r, v in candidates.items() if v <= ZERO)
         return room, binding
+
+    def reserve(self, key: str, game_id: str, team: str, day: date, amount: Decimal) -> None:
+        """Reserve exposure for a pending order. Fee estimates may differ by rounding
+        cents from the planned (already room-checked) order, so a few cents are tolerated
+        and clamped; the real purchase is checked against the caps again at fill time."""
+        room, binding = self.remaining(game_id, team, day)
+        if room <= ZERO or amount > room + Decimal("0.05"):
+            raise ExposureError(f"reservation {amount} exceeds remaining room {room} "
+                                f"({', '.join(b.value for b in binding) or 'limits'})")
+        self.reserved[key] = (game_id, team, day, min(amount, room))
+
+    def release(self, key: str) -> None:
+        self.reserved.pop(key, None)
 
     def record_purchase(
         self, game_id: str, team: str, day: date, cost: Decimal, fees: Decimal

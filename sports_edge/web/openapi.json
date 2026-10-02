@@ -633,6 +633,55 @@
     }
    }
   },
+  "/api/paper/history": {
+   "get": {
+    "summary": "History",
+    "description": "Persisted ledger across runs and restarts (empty when no database).",
+    "operationId": "history_api_paper_history_get",
+    "parameters": [
+     {
+      "name": "mode",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "REPLAY",
+          "LIVE"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Mode"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/evaluation": {
    "get": {
     "summary": "Evaluation",
@@ -1563,7 +1612,8 @@
        "ORDER_FILLED",
        "ORDER_PARTIAL",
        "ORDER_REJECTED",
-       "POSITION_SETTLED"
+       "POSITION_SETTLED",
+       "ORDER_ABANDONED"
       ],
       "title": "Kind"
      },
@@ -1845,6 +1895,17 @@
       "type": "string",
       "title": "Decision Id"
      },
+     "expected_contract_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Expected Contract Id"
+     },
      "idempotency_key": {
       "type": "string",
       "maxLength": 100,
@@ -2030,7 +2091,8 @@
        "PENDING",
        "FILLED",
        "PARTIAL",
-       "REJECTED"
+       "REJECTED",
+       "ABANDONED"
       ],
       "title": "Status"
      },

@@ -141,3 +141,28 @@ test("layout has no horizontal page overflow", async ({ page }) => {
     expect(overflow, `${tab} overflows`).toBeLessThanOrEqual(1);
   }
 });
+
+test("a slow preview for a previously selected contract is never shown under the new one", async ({ page, request }) => {
+  await api(request, "post", "/api/session", { mode: "mechanics" });
+  await page.goto("/");
+  await signIn(page);
+  const contract = await stepToSignal(request);
+  const games = await (await request.get("/api/games")).json();
+  const other = games[0].contracts.find((k: any) => k.contract_id !== contract).contract_id;
+  await page.getByRole("button", { name: "Game", exact: true }).click();
+  await page.getByTestId(`tile-${contract}`).click();
+  let released = false;
+  await page.route("**/api/paper/preview", async (route) => {
+    await new Promise((r) => setTimeout(r, 2500));  // slow backend response
+    released = true;
+    await route.continue();
+  });
+  await page.getByTestId("preview-btn").click();
+  await page.getByTestId(`tile-${other}`).click();  // user moves on before the response
+  await expect.poll(() => released, { timeout: 10_000 }).toBe(true);
+  await page.waitForTimeout(800);
+  await expect(page.getByTestId("signal-panel")).toContainText(`${games[0].contracts.find((k: any) => k.contract_id === other).selection} · estimate`);
+  await expect(page.getByTestId("preview")).toHaveCount(0);
+  await expect(page.getByTestId("order-btn")).toHaveCount(0);
+  await page.unroute("**/api/paper/preview");
+});

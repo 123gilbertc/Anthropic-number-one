@@ -17,6 +17,8 @@ TEXT: dict[Reason, str] = {
     Reason.REFERENCE_PRE_EVENT: "The sportsbook quote was published before the latest game event.",
     Reason.REFERENCE_STALE: "The sportsbook quote is too old or has no publication time.",
     Reason.REFERENCE_DISAGREEMENT: "The sportsbook view differs sharply from the model: investigate.",
+    Reason.TIMESTAMP_INCONSISTENT: "A provider timestamp is impossible (e.g. later than our receipt);"
+                                   " the data cannot be aligned.",
     Reason.PENDING_RECONCILIATION: "A late, missing or corrected game event (or unknown goalie)"
                                    " must be confirmed first.",
     Reason.CRITICAL_FEATURE_MISSING: "Key information (score or clock) is missing, so the model abstains.",

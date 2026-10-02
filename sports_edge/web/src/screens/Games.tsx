@@ -114,12 +114,18 @@ function SignalPanel({ g, c }: { g: GameIntel; c: ContractIntel }) {
     [ledger, preview],
   );
 
-  useEffect(() => { setPreview(null); setErr(null); keyRef.current = null; }, [c.contract_id, g.game.game_id]);
+  useEffect(() => { setPreview(null); setErr(null); setBusy(false); keyRef.current = null; }, [c.contract_id, g.game.game_id]);
 
   const doPreview = async () => {
+    const asked = { gameId: g.game.game_id, contractId: c.contract_id };
     setBusy(true); setErr(null);
     try {
-      const p = await command<Preview>("POST", "/api/paper/preview", { game_id: g.game.game_id, contract_id: c.contract_id }, previewSchema);
+      const p = await command<Preview>("POST", "/api/paper/preview", { game_id: asked.gameId, contract_id: asked.contractId }, previewSchema);
+      // A slow response for a game/contract the user has since left is discarded,
+      // never shown under the newly selected one.
+      const now = getState().selection;
+      if (now.gameId !== asked.gameId || now.contractId !== asked.contractId
+          || p.decision.contract_id !== asked.contractId || p.decision.game_id !== asked.gameId) return;
       setPreview(p); setQty(p.max_quantity || "");
       keyRef.current = crypto.randomUUID();
     } catch (x) { setErr(x instanceof ApiError ? `${x.code}: ${x.detail}` : String(x)); }
@@ -132,6 +138,7 @@ function SignalPanel({ g, c }: { g: GameIntel; c: ContractIntel }) {
     try {
       await command("POST", "/api/paper/orders", {
         decision_id: preview.decision.decision_id, idempotency_key: keyRef.current,
+        expected_contract_id: c.contract_id,  // the server refuses a mismatch
         quantity: qty === "" ? null : qty,
       }, orderResponseSchema);
       await refreshAll();  // the tracker updates from backend ledger events

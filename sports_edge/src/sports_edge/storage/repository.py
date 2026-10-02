@@ -96,6 +96,31 @@ class SqlSink:
 
     # ---------------------------------------------------------------- reads
 
+    def latest_orders(self) -> dict:
+        """Latest version of every persisted paper order (append-only table)."""
+        from sports_edge.session import PaperOrder
+        with self.engine.connect() as c:
+            rows = c.execute(select(t.paper_orders.c.order_id, t.paper_orders.c.record)
+                             .order_by(t.paper_orders.c.pk)).all()
+        out: dict = {}
+        for oid, rec in rows:
+            out[oid] = PaperOrder.model_validate(rec)
+        return out
+
+    def ledger_history(self, mode: str | None = None, limit: int = 500) -> list[dict]:
+        q = select(t.ledger_events.c.record).order_by(t.ledger_events.c.pk.desc()).limit(limit)
+        if mode:
+            q = q.where(t.ledger_events.c.mode == mode)
+        with self.engine.connect() as c:
+            return [r[0] for r in c.execute(q).all()][::-1]
+
+    def next_ledger_seq(self, run_id: str) -> int:
+        from sqlalchemy import func
+        with self.engine.connect() as c:
+            n = c.execute(select(func.count()).select_from(t.ledger_events)
+                          .where(t.ledger_events.c.run_id == run_id)).scalar_one()
+        return int(n) + 1
+
     def decisions_for(self, game_id: str) -> list[Decision]:
         with self.engine.connect() as c:
             rows = c.execute(select(t.decisions.c.record).where(t.decisions.c.game_id == game_id)

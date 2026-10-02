@@ -34,7 +34,7 @@ from sports_edge.domain.enums import ModelStatus
 from sports_edge.domain.explain import explain
 from sports_edge.forecast.train import train_synthetic
 from sports_edge.paper.broker import APPROVING
-from sports_edge.session import AppSession, CommandError
+from sports_edge.session import AppSession, CommandError, recover
 from sports_edge.sources import CHECKED, SOURCES
 
 FIXTURES = ROOT / "fixtures"
@@ -71,6 +71,13 @@ class Server:
         self.providers = build_providers(self.settings)
         self.train_games = train_games
         self.db = self._db()
+        # Restart recovery: reload persisted orders; never-filled PENDING orders -> ABANDONED.
+        self.prior_keys: dict = {}
+        self.recovery = {"abandoned": [], "orders_loaded": 0}
+        if self.db is not None:
+            rec = recover(self.db, datetime.now(UTC))
+            self.prior_keys = rec["by_key"]
+            self.recovery = {"abandoned": rec["abandoned"], "orders_loaded": len(rec["orders"])}
         self.session: AppSession = self._new_session("nhl_synthetic_dip.jsonl", "honest")
 
     def _db(self):
@@ -97,6 +104,10 @@ class Server:
             info = fc.version.model_dump(mode="json") | {"test_metrics": rep.test_metrics}
         s = AppSession.replay(path, fc, mode == "mechanics", info, reviewer=self._reviewer())
         s.db = self.db
+        old = getattr(self, "session", None)
+        if old is not None:  # keys from the replaced session stay recognised
+            self.prior_keys.update({o.idempotency_key: o for o in old.orders.values()})
+        s.prior_keys = self.prior_keys
         return s
 
     def _reviewer(self):
@@ -127,6 +138,9 @@ class Server:
         out.append("PAPER ONLY: no real-money execution exists")
         if self.db is None:
             out.append("LEDGER NOT PERSISTED (database unavailable): in-memory only")
+        if self.recovery["abandoned"]:
+            out.append(f"{len(self.recovery['abandoned'])} PAPER ORDER(S) ABANDONED BY A RESTART "
+                       "(never filled)")
         return out
 
 
@@ -289,7 +303,8 @@ def create_app(*, train_games: int = 300) -> FastAPI:
         rt = s.monitor.games.get(req.game_id)
         if rt is None or not any(m.contract_id == req.contract_id for m in rt.mappings):
             raise HTTPException(404, {"code": "UNKNOWN_CONTRACT", "detail": req.contract_id})
-        d = s.monitor.preview(req.game_id, req.contract_id)
+        with s.lock:
+            d = s.monitor.preview(req.game_id, req.contract_id)
         now = s.clock.now()
         eligible = d.action in APPROVING
         return Preview(decision=d, eligible=eligible, expired=now > d.expires_at,
@@ -304,7 +319,7 @@ def create_app(*, train_games: int = 300) -> FastAPI:
     def place_order(req: OrderRequest):
         try:
             o, created = srv.session.place_order(req.decision_id, req.idempotency_key,
-                                                 req.quantity)
+                                                 req.quantity, req.expected_contract_id)
         except CommandError as e:
             return _err(e)
         return OrderResponse(order=o, created=created)
@@ -317,6 +332,14 @@ def create_app(*, train_games: int = 300) -> FastAPI:
                       open_cost=str(led.open_cost),
                       limits={k: str(v) for k, v in led.limits.__dict__.items()},
                       fills=s.monitor.broker.fills)
+
+    @app.get("/api/paper/history")
+    def history(mode: Literal["REPLAY", "LIVE"] | None = None):
+        """Persisted ledger across runs and restarts (empty when no database)."""
+        if srv.db is None:
+            return {"persisted": False, "events": [], "recovery": srv.recovery}
+        return {"persisted": True, "events": srv.db.ledger_history(mode),
+                "recovery": srv.recovery}
 
     @app.get("/api/evaluation")
     def evaluation():
@@ -358,21 +381,26 @@ def create_app(*, train_games: int = 300) -> FastAPI:
                     if srv.session is not sess:
                         yield "event: resync\ndata: {\"reason\": \"session replaced\"}\n\n"
                     return
-                resync, evs = log.since(cursor)
-                if resync:
-                    cursor = log.seq
-                    yield f"id: {cursor}\nevent: resync\ndata: {{\"reason\": \"gap\"}}\n\n"
-                for seq, kind, data in evs:
-                    cursor = seq
-                    yield f"id: {seq}\nevent: {kind}\ndata: {json.dumps(data, default=str)}\n\n"
+                # Register for wake-up BEFORE reading the log; otherwise an event appended
+                # between the read and the registration would sleep until the heartbeat.
                 w = asyncio.Event()
-                log.waiters.add(w)
+                log.add_waiter(w)
                 try:
-                    await asyncio.wait_for(w.wait(), timeout=10)
-                except TimeoutError:
-                    yield ": heartbeat\n\n"
+                    resync, evs = log.since(cursor)
+                    if resync:
+                        cursor = log.seq
+                        yield f"id: {cursor}\nevent: resync\ndata: {{\"reason\": \"gap\"}}\n\n"
+                    for seq, kind, data in evs:
+                        cursor = seq
+                        yield (f"id: {seq}\nevent: {kind}\n"
+                               f"data: {json.dumps(data, default=str)}\n\n")
+                    if not evs and not resync:
+                        try:
+                            await asyncio.wait_for(w.wait(), timeout=10)
+                        except TimeoutError:
+                            yield ": heartbeat\n\n"
                 finally:
-                    log.waiters.discard(w)
+                    log.discard_waiter(w)
 
         return StreamingResponse(gen(), media_type="text/event-stream",
                                  headers={"Cache-Control": "no-store"})

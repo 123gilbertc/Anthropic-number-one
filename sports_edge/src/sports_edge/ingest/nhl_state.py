@@ -302,10 +302,19 @@ class NHLStateReducer:
         return NHLState(snapshot_id=stable_id("nhl", body), **body)
 
 
+CLOCK_TOLERANCE_S = 5.0  # allowed provider/local clock skew before timestamps are rejected
+
+
 def _validate(ev: NormalizedGameEvent) -> None:
     d = ev.data
     if ev.received_time.tzinfo is None:
         raise InvalidEvent("received_time must be timezone-aware")
+    for name, t in (("event_time", ev.event_time), ("published_time", ev.published_time)):
+        if t is not None and (t - ev.received_time).total_seconds() > CLOCK_TOLERANCE_S:
+            raise InvalidEvent(f"TIMESTAMP_INCONSISTENT: {name} is after our receipt time")
+    if ev.event_time and ev.published_time and \
+            (ev.event_time - ev.published_time).total_seconds() > CLOCK_TOLERANCE_S:
+        raise InvalidEvent("TIMESTAMP_INCONSISTENT: published before the event happened")
     p = d.get("period")
     if p is not None and not (1 <= p <= 5 or ev.data.get("playoff")):
         raise InvalidEvent(f"invalid period {p}")

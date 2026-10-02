@@ -90,6 +90,8 @@ class Preview(BaseModel):
 
 class OrderRequest(BaseModel):
     decision_id: str
+    # the contract the UI displayed when the user clicked; mismatch -> 409
+    expected_contract_id: str | None = None
     idempotency_key: str = Field(min_length=1, max_length=100)
     quantity: int | None = Field(default=None, ge=1)
 
