@@ -19,7 +19,10 @@ from sports_edge.domain.enums import SettlementRule
 @dataclass(frozen=True)
 class StrategyConfig:
     strategy_version: str
-    entry_mode: Literal["dip_conditional", "any_edge", "pregame_only"]
+    # dip_conditional: a persistent dip starts evaluation; EV gates decide.
+    # dip_unconditional: COMPARISON BASELINE ONLY - adds on any persistent dip, no EV gate.
+    # any_edge: evaluate on every update (live-only entries).
+    entry_mode: Literal["dip_conditional", "dip_unconditional", "any_edge", "pregame_only"]
     forecast_rule: SettlementRule
     provisional: bool = True
     # freshness / alignment

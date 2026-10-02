@@ -31,6 +31,17 @@ from sports_edge.triggers.engine import USABLE_STATUSES, TriggerEngine
 from sports_edge.triggers.strategy import StrategyConfig, provisional_dip_strategy
 
 
+class TeeSink:
+    def __init__(self, memory: MemorySink, other) -> None:
+        self.memory, self.other = memory, other
+
+    def __getattr__(self, name):
+        def both(rec):
+            getattr(self.memory, name)(rec)
+            getattr(self.other, name)(rec)
+        return both
+
+
 def _t(s: str | None) -> datetime | None:
     return datetime.fromisoformat(s) if s else None
 
@@ -86,7 +97,8 @@ def build_monitor(clock, *, forecaster: ChainForecaster | None, cfg: StrategyCon
 
 def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_demo: bool = False,
                 cfg: StrategyConfig | None = None, limits: RiskLimits | None = None,
-                use_references: bool = True) -> ReplayResult:
+                use_references: bool = True, extra_sink=None) -> ReplayResult:
+    """``extra_sink`` (e.g. a SqlSink) receives every record in addition to memory."""
     lines = [json.loads(x) for x in path.read_text().splitlines() if x.strip()]
     meta = lines[0]
     if meta.get("stream") != "meta":
@@ -104,6 +116,8 @@ def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_dem
     mon = build_monitor(clock, forecaster=forecaster, cfg=cfg or provisional_dip_strategy(rule),
                         limits=limits, status=status, mechanics_demo=mechanics_demo)
     mon.use_references = use_references
+    if extra_sink is not None:
+        mon.sink = TeeSink(MemorySink(), extra_sink)
     mon.add_game(game, mappings, meta.get("pregame_prob"),
                  {k: Decimal(v) for k, v in (meta.get("anchor_price") or {}).items()})
     for name, kind, stale in (("replay_game", "game_feed", 60), ("replay_market", "market", 30),
@@ -133,7 +147,7 @@ def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_dem
                 provider_last_update=_t(q.get("provider_last_update")), received_time=rt,
                 source="replay_odds"))
         mon.tick()
-    sink = mon.sink
+    sink = mon.sink.memory if isinstance(mon.sink, TeeSink) else mon.sink
     assert isinstance(sink, MemorySink)
     digest = hashlib.sha256("\n".join(
         f"{d.decision_time.isoformat()}|{d.contract_id}|{d.action.value}|"

@@ -95,13 +95,14 @@ class PaperBroker:
                                 self.engine.allowed_model_statuses, self.engine.demo_label,
                                 _price_hist=self.engine._price_hist)
         recheck = scratch.evaluate(ctx, now)
-        if recheck.action not in APPROVING or recheck.ev is None or d.ev is None:
+        if recheck.action not in APPROVING or recheck.planned_quantity <= 0 \
+                or d.planned_quantity <= 0:
             return FillAttempt(d.decision_id, None,
                                (Reason.FILL_RECHECK_FAILED, *recheck.reasons), recheck)
         assert ctx.book is not None
         # never pay more than the decision's modeled average price + one tick
-        limit = (d.ev.entry_cost / d.ev.quantity) + ctx.mapping.tick_size
-        est = walk_asks(ctx.book.asks, min(d.ev.quantity, recheck.ev.quantity),
+        limit = (d.planned_cost / d.planned_quantity) + ctx.mapping.tick_size
+        est = walk_asks(ctx.book.asks, min(d.planned_quantity, recheck.planned_quantity),
                         self.engine.fee_model, limit_price=limit,
                         depth_haircut=self.engine.cfg.depth_haircut)
         if est.filled == 0:
@@ -114,7 +115,7 @@ class PaperBroker:
             contract_id=ctx.mapping.contract_id,
             selection_team=ctx.mapping.selection_team,
             game_id=d.game_id,
-            requested_quantity=d.ev.quantity,
+            requested_quantity=d.planned_quantity,
             filled_quantity=est.filled,
             cost=est.cost,
             fees=est.fees,
@@ -138,5 +139,5 @@ class PaperBroker:
             total_fees=(prev.total_fees if prev else Decimal(0)) + est.fees,
         )
         self.fills.append(fill)
-        reasons = (Reason.PARTIAL_FILL,) if est.filled < d.ev.quantity else ()
+        reasons = (Reason.PARTIAL_FILL,) if est.filled < d.planned_quantity else ()
         return FillAttempt(d.decision_id, fill, reasons, recheck)

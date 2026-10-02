@@ -99,7 +99,7 @@ class TriggerEngine:
 
     def _decision(self, ctx: TriggerContext, now: datetime, action: Action,
                   reasons: list[Reason], ev=None, room: Decimal = ZERO,
-                  notes: tuple[str, ...] = ()) -> Decision:
+                  notes: tuple[str, ...] = (), fill=None) -> Decision:
         snap = ctx.state.snapshot_id if ctx.state else None
         pred = ctx.prediction
         key = stable_id("dk", [ctx.mapping.contract_id, snap, self.cfg.strategy_version,
@@ -129,6 +129,8 @@ class TriggerEngine:
             action=action,
             reasons=tuple(dict.fromkeys(reasons)),
             ev=ev,
+            planned_quantity=fill.filled if fill is not None else 0,
+            planned_cost=fill.cost if fill is not None else ZERO,
             max_eligible_addition=room,
             decision_time=now,
             expires_at=expires,
@@ -203,13 +205,18 @@ class TriggerEngine:
         if pred is None and ctx.abstention and ctx.abstention.startswith("CRITICAL"):
             return self._decision(ctx, now, Action.WATCH, [Reason.CRITICAL_FEATURE_MISSING],
                                   notes=(ctx.abstention,))
-        if pred is None or pred.model_status not in self.allowed_model_statuses:
-            return self._decision(ctx, now, Action.WATCH, [Reason.MODEL_NOT_VALIDATED])
-        if (pred.valid_until < now or ctx.state is None
-                or pred.snapshot_id != ctx.state.snapshot_id
-                or pred.selection_team != ctx.mapping.selection_team
-                or pred.settlement_rule != ctx.mapping.settlement_rule):
-            return self._decision(ctx, now, Action.WATCH, [Reason.PREDICTION_STALE])
+        unconditional = cfg.entry_mode == "dip_unconditional"
+        usable_pred = (
+            pred is not None and pred.model_status in self.allowed_model_statuses
+            and pred.valid_until >= now and ctx.state is not None
+            and pred.snapshot_id == ctx.state.snapshot_id
+            and pred.selection_team == ctx.mapping.selection_team
+            and pred.settlement_rule == ctx.mapping.settlement_rule)
+        if not unconditional:
+            if pred is None or pred.model_status not in self.allowed_model_statuses:
+                return self._decision(ctx, now, Action.WATCH, [Reason.MODEL_NOT_VALIDATED])
+            if not usable_pred:
+                return self._decision(ctx, now, Action.WATCH, [Reason.PREDICTION_STALE])
 
         # 3. risk room --------------------------------------------------------
         room, binding = self.ledger.remaining(ctx.game.game_id, ctx.mapping.selection_team,
@@ -220,7 +227,7 @@ class TriggerEngine:
 
         # 4. dip trigger (only starts evaluation) ------------------------------
         reasons: list[Reason] = []
-        if cfg.entry_mode == "dip_conditional":
+        if cfg.entry_mode in ("dip_conditional", "dip_unconditional"):
             detected, persistent = self._dip(ctx, now)
             if not detected:
                 return self._decision(ctx, now, Action.WATCH, [], room=room)
@@ -246,6 +253,19 @@ class TriggerEngine:
         fill = walk_asks(book.asks, qty, self.fee_model, depth_haircut=cfg.depth_haircut)
 
         # 6. value ------------------------------------------------------------
+        if unconditional:
+            # Baseline for comparison: buys the dip with no value test at all.
+            ev_u = (expected_value(fill, pred.probability, pred.probability_low, self.fee_model)
+                    if usable_pred and pred is not None else None)
+            last = self._last_approval.get(ctx.mapping.contract_id)
+            if last is not None and now - last < cfg.cooldown:
+                return self._decision(ctx, now, Action.HOLD, reasons + [Reason.COOLDOWN], ev_u,
+                                      room)
+            self._last_approval[ctx.mapping.contract_id] = now
+            act = Action.PAPER_ADD if ctx.has_position else Action.PAPER_ENTRY
+            return self._decision(ctx, now, act, reasons, ev_u, room,
+                                  notes=("UNCONDITIONAL DIP BASELINE: no EV gate",), fill=fill)
+        assert pred is not None
         ev = expected_value(fill, pred.probability, pred.probability_low, self.fee_model)
         margin = cfg.min_conservative_ev_cents_per_contract / 100 * fill.filled
         if ev.ev_point <= ZERO:
@@ -268,7 +288,8 @@ class TriggerEngine:
             return self._decision(ctx, now, Action.HOLD, reasons + [Reason.COOLDOWN], ev, room)
 
         action = Action.PAPER_ADD if ctx.has_position else Action.PAPER_ENTRY
-        d = self._decision(ctx, now, action, reasons + [Reason.ALL_GATES_PASSED], ev, room)
+        d = self._decision(ctx, now, action, reasons + [Reason.ALL_GATES_PASSED], ev, room,
+                           fill=fill)
         if d.dedupe_key in self._dedupe:
             return self._decision(ctx, now, Action.HOLD, [Reason.DUPLICATE_ALERT], ev, room)
         self._dedupe.add(d.dedupe_key)

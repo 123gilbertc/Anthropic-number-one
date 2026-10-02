@@ -254,6 +254,8 @@ class Decision(Record):
     action: Action
     reasons: tuple[Reason, ...]
     ev: EVBreakdown | None
+    planned_quantity: int = 0  # contracts the decision intends to buy (approvals only)
+    planned_cost: Decimal = Decimal("0")  # modeled executable cost for planned_quantity
     max_eligible_addition: Decimal  # dollars of paper exposure still allowed
     decision_time: datetime
     expires_at: datetime

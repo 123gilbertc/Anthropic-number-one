@@ -1,0 +1,56 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --line: #262b36;
+  --text: #e3e6ec;
+  --muted: #8b93a3;
+  --warn: #c9a227;
+  --bad: #d0574f;
+  --accent: #5b8def;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.app { max-width: 1200px; margin: 0 auto; padding: 16px; }
+header h1 { font-size: 18px; margin: 0 0 8px; }
+h2 { font-size: 16px; margin: 0; }
+h3 { font-size: 14px; margin: 16px 0 8px; }
+.banners { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.banner {
+  display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px;
+  font-weight: 600; letter-spacing: .02em; border: 1px solid;
+}
+.banner.warn { color: var(--warn); border-color: var(--warn); }
+.banner.bad { color: var(--bad); border-color: var(--bad); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+button {
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  padding: 6px 10px; border-radius: 4px; cursor: pointer; font: inherit;
+}
+button:disabled { opacity: .5; }
+nav { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+nav button.active { border-color: var(--accent); color: var(--accent); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px; margin: 12px 0; }
+.row { display: flex; gap: 8px; align-items: baseline; }
+.between { justify-content: space-between; flex-wrap: wrap; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.mono { font-family: ui-monospace, monospace; }
+.hint { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+.state { margin: 6px 0; }
+.kv { display: flex; gap: 24px; flex-wrap: wrap; }
+.kv label { display: block; color: var(--muted); font-size: 11px; letter-spacing: .04em; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+details { margin-top: 8px; }
+@media (max-width: 640px) {
+  .app { padding: 10px; }
+  th, td { padding: 4px; font-size: 12px; }
+}
