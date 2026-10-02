@@ -16,6 +16,16 @@ A live sports probability and market-overreaction **research** system, starting 
 - **Models:** they are **SYNTHETIC_ONLY**, so in normal mode they produce **no value alerts**.
 - **Mechanics demo:** the explicit opt-in `--mechanics-demo` mode shows the full path, with labels everywhere. Its output is not evidence of anything.
 
+## Quick start (try it locally)
+
+```bash
+git clone -b claude/sharp-carson-aeydxp https://github.com/123gilbertc/Anthropic-number-one.git
+cd Anthropic-number-one/sports_edge
+./run.sh
+```
+
+Open http://127.0.0.1:8000 and paste the operator token that `run.sh` prints. PostgreSQL is optional: without it the ledger stays in memory and the UI says so.
+
 ## Setup (reproducible)
 
 Requirements: Python 3.11, [uv](https://docs.astral.sh/uv/), PostgreSQL 16, Node 20+.
