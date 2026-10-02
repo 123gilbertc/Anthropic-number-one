@@ -1,0 +1,1182 @@
+{"anchor_price": {"SYN-NHLGAME-BOS": "0.60"}, "data_label": "SYNTHETIC", "description": "Invented NHL game for plumbing tests. Not real data.", "game": {"away_team": "TOR", "game_id": "SYN-2026-10-10-TOR-BOS", "home_team": "BOS", "scheduled_start": "2026-10-10T23:00:00+00:00", "season": "2026-27", "source": "synthetic_fixture", "sport": "NHL", "status": "SCHEDULED"}, "mappings": [{"contract_id": "SYN-NHLGAME-BOS", "game_id": "SYN-2026-10-10-TOR-BOS", "mapping_id": "map-bos", "rules_text_hash": null, "selection_team": "BOS", "settlement_rule": "NHL_INCLUDING_OT_SO", "tick_size": "0.01", "venue": "SYNTHETIC", "verified_by": "synthetic fixture"}, {"contract_id": "SYN-NHLGAME-TOR", "game_id": "SYN-2026-10-10-TOR-BOS", "mapping_id": "map-tor", "rules_text_hash": null, "selection_team": "TOR", "settlement_rule": "NHL_INCLUDING_OT_SO", "tick_size": "0.01", "venue": "SYNTHETIC", "verified_by": "synthetic fixture"}], "pregame_prob": {"BOS": 0.6, "TOR": 0.4}, "stream": "meta"}
+{"raw": {"msg": {"market_ticker": "SYN-NHLGAME-BOS", "no_dollars_fp": [["0.4000", "120.00"], ["0.3900", "160.00"], ["0.3800", "200.00"]], "yes_dollars_fp": [["0.5800", "120.00"], ["0.5700", "160.00"], ["0.5600", "200.00"]]}, "seq": 1, "sid": 1, "type": "orderbook_snapshot"}, "received_time": "2026-10-10T22:55:00+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"market_ticker": "SYN-NHLGAME-TOR", "no_dollars_fp": [["0.5800", "120.00"], ["0.5700", "160.00"], ["0.5600", "200.00"]], "yes_dollars_fp": [["0.4000", "120.00"], ["0.3900", "160.00"], ["0.3800", "200.00"]]}, "seq": 2, "sid": 1, "type": "orderbook_snapshot"}, "received_time": "2026-10-10T22:55:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:55:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:56:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:57:55+00:00", "stream": "kalshi"}
+{"quote": {"book": "pinnacle", "market": "h2h", "prices_american": {"BOS": -150, "TOR": 135}, "provider_last_update": "2026-10-10T22:57:55+00:00"}, "received_time": "2026-10-10T22:58:00+00:00", "stream": "odds"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:58:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T22:59:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"away_goalie": "Woll", "away_net_empty": false, "away_score": 0, "away_skaters": 5, "home_goalie": "Swayman", "home_net_empty": false, "home_score": 0, "home_skaters": 5, "period": 1, "seconds_remaining": 1200}, "event_time": "2026-10-10T23:00:00+00:00", "provider_event_id": "e1", "published_time": "2026-10-10T23:00:01+00:00", "seq": 1, "type": "SNAPSHOT"}, "received_time": "2026-10-10T23:00:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1170}, "event_time": "2026-10-10T23:00:30+00:00", "provider_event_id": "e2", "published_time": "2026-10-10T23:00:31+00:00", "seq": 2, "type": "CLOCK"}, "received_time": "2026-10-10T23:00:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:00:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1140}, "event_time": "2026-10-10T23:01:00+00:00", "provider_event_id": "e3", "published_time": "2026-10-10T23:01:01+00:00", "seq": 3, "type": "CLOCK"}, "received_time": "2026-10-10T23:01:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1110}, "event_time": "2026-10-10T23:01:30+00:00", "provider_event_id": "e4", "published_time": "2026-10-10T23:01:31+00:00", "seq": 4, "type": "CLOCK"}, "received_time": "2026-10-10T23:01:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:01:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1080}, "event_time": "2026-10-10T23:02:00+00:00", "provider_event_id": "e5", "published_time": "2026-10-10T23:02:01+00:00", "seq": 5, "type": "CLOCK"}, "received_time": "2026-10-10T23:02:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1050}, "event_time": "2026-10-10T23:02:30+00:00", "provider_event_id": "e6", "published_time": "2026-10-10T23:02:31+00:00", "seq": 6, "type": "CLOCK"}, "received_time": "2026-10-10T23:02:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:02:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 1020}, "event_time": "2026-10-10T23:03:00+00:00", "provider_event_id": "e7", "published_time": "2026-10-10T23:03:01+00:00", "seq": 7, "type": "CLOCK"}, "received_time": "2026-10-10T23:03:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 990}, "event_time": "2026-10-10T23:03:30+00:00", "provider_event_id": "e8", "published_time": "2026-10-10T23:03:31+00:00", "seq": 8, "type": "CLOCK"}, "received_time": "2026-10-10T23:03:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:03:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 960}, "event_time": "2026-10-10T23:04:00+00:00", "provider_event_id": "e9", "published_time": "2026-10-10T23:04:01+00:00", "seq": 9, "type": "CLOCK"}, "received_time": "2026-10-10T23:04:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 930}, "event_time": "2026-10-10T23:04:30+00:00", "provider_event_id": "e10", "published_time": "2026-10-10T23:04:31+00:00", "seq": 10, "type": "CLOCK"}, "received_time": "2026-10-10T23:04:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:04:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 900}, "event_time": "2026-10-10T23:05:00+00:00", "provider_event_id": "e11", "published_time": "2026-10-10T23:05:01+00:00", "seq": 11, "type": "CLOCK"}, "received_time": "2026-10-10T23:05:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 870}, "event_time": "2026-10-10T23:05:30+00:00", "provider_event_id": "e12", "published_time": "2026-10-10T23:05:31+00:00", "seq": 12, "type": "CLOCK"}, "received_time": "2026-10-10T23:05:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:05:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 840}, "event_time": "2026-10-10T23:06:00+00:00", "provider_event_id": "e13", "published_time": "2026-10-10T23:06:01+00:00", "seq": 13, "type": "CLOCK"}, "received_time": "2026-10-10T23:06:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 810}, "event_time": "2026-10-10T23:06:30+00:00", "provider_event_id": "e14", "published_time": "2026-10-10T23:06:31+00:00", "seq": 14, "type": "CLOCK"}, "received_time": "2026-10-10T23:06:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:06:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 780, "team": "TOR"}, "event_time": "2026-10-10T23:07:00+00:00", "provider_event_id": "e15", "published_time": "2026-10-10T23:07:01+00:00", "seq": 15, "type": "GOAL"}, "received_time": "2026-10-10T23:07:03+00:00", "stream": "game"}
+{"event": {"data": {"period": 1, "seconds_remaining": 780, "team": "TOR"}, "event_time": "2026-10-10T23:07:00+00:00", "provider_event_id": "e15", "published_time": "2026-10-10T23:07:01+00:00", "seq": 15, "type": "GOAL"}, "received_time": "2026-10-10T23:07:03+00:00", "stream": "game"}
+{"event": {"data": {"period": 1, "seconds_remaining": 780}, "event_time": "2026-10-10T23:07:00+00:00", "provider_event_id": "e16", "published_time": "2026-10-10T23:07:01+00:00", "seq": 16, "type": "CLOCK"}, "received_time": "2026-10-10T23:07:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3200", "side": "yes"}, "seq": 3, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3300", "side": "yes"}, "seq": 4, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3400", "side": "yes"}, "seq": 5, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5600", "side": "yes"}, "seq": 6, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5700", "side": "yes"}, "seq": 7, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5800", "side": "yes"}, "seq": 8, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3800", "side": "no"}, "seq": 9, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3900", "side": "no"}, "seq": 10, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4000", "side": "no"}, "seq": 11, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6200", "side": "no"}, "seq": 12, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6300", "side": "no"}, "seq": 13, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6400", "side": "no"}, "seq": 14, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3800", "side": "yes"}, "seq": 15, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3900", "side": "yes"}, "seq": 16, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.4000", "side": "yes"}, "seq": 17, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6300", "side": "yes"}, "seq": 18, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6400", "side": "yes"}, "seq": 19, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6500", "side": "yes"}, "seq": 20, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3100", "side": "no"}, "seq": 21, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3200", "side": "no"}, "seq": 22, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3300", "side": "no"}, "seq": 23, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5600", "side": "no"}, "seq": 24, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5700", "side": "no"}, "seq": 25, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5800", "side": "no"}, "seq": 26, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:15+00:00", "stream": "kalshi"}
+{"quote": {"book": "pinnacle", "market": "h2h", "prices_american": {"BOS": -150, "TOR": 135}, "provider_last_update": "2026-10-10T23:06:40+00:00"}, "received_time": "2026-10-10T23:07:20+00:00", "stream": "odds"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 750}, "event_time": "2026-10-10T23:07:30+00:00", "provider_event_id": "e17", "published_time": "2026-10-10T23:07:31+00:00", "seq": 17, "type": "CLOCK"}, "received_time": "2026-10-10T23:07:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:07:55+00:00", "stream": "kalshi"}
+{"quote": {"book": "pinnacle", "market": "h2h", "prices_american": {"BOS": 105, "TOR": -120}, "provider_last_update": "2026-10-10T23:07:40+00:00"}, "received_time": "2026-10-10T23:08:00+00:00", "stream": "odds"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 720}, "event_time": "2026-10-10T23:08:00+00:00", "provider_event_id": "e18", "published_time": "2026-10-10T23:08:01+00:00", "seq": 18, "type": "CLOCK"}, "received_time": "2026-10-10T23:08:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 690}, "event_time": "2026-10-10T23:08:30+00:00", "provider_event_id": "e19", "published_time": "2026-10-10T23:08:31+00:00", "seq": 19, "type": "CLOCK"}, "received_time": "2026-10-10T23:08:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:08:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 660}, "event_time": "2026-10-10T23:09:00+00:00", "provider_event_id": "e20", "published_time": "2026-10-10T23:09:01+00:00", "seq": 20, "type": "CLOCK"}, "received_time": "2026-10-10T23:09:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 630}, "event_time": "2026-10-10T23:09:30+00:00", "provider_event_id": "e21", "published_time": "2026-10-10T23:09:31+00:00", "seq": 21, "type": "CLOCK"}, "received_time": "2026-10-10T23:09:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:09:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 600}, "event_time": "2026-10-10T23:10:00+00:00", "provider_event_id": "e22", "published_time": "2026-10-10T23:10:01+00:00", "seq": 22, "type": "CLOCK"}, "received_time": "2026-10-10T23:10:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 570}, "event_time": "2026-10-10T23:10:30+00:00", "provider_event_id": "e23", "published_time": "2026-10-10T23:10:31+00:00", "seq": 23, "type": "CLOCK"}, "received_time": "2026-10-10T23:10:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:10:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 540}, "event_time": "2026-10-10T23:11:00+00:00", "provider_event_id": "e24", "published_time": "2026-10-10T23:11:01+00:00", "seq": 24, "type": "CLOCK"}, "received_time": "2026-10-10T23:11:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 510}, "event_time": "2026-10-10T23:11:30+00:00", "provider_event_id": "e25", "published_time": "2026-10-10T23:11:31+00:00", "seq": 25, "type": "CLOCK"}, "received_time": "2026-10-10T23:11:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:11:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 480}, "event_time": "2026-10-10T23:12:00+00:00", "provider_event_id": "e26", "published_time": "2026-10-10T23:12:01+00:00", "seq": 26, "type": "CLOCK"}, "received_time": "2026-10-10T23:12:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 450}, "event_time": "2026-10-10T23:12:30+00:00", "provider_event_id": "e27", "published_time": "2026-10-10T23:12:31+00:00", "seq": 27, "type": "CLOCK"}, "received_time": "2026-10-10T23:12:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:12:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 420}, "event_time": "2026-10-10T23:13:00+00:00", "provider_event_id": "e28", "published_time": "2026-10-10T23:13:01+00:00", "seq": 28, "type": "CLOCK"}, "received_time": "2026-10-10T23:13:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 390}, "event_time": "2026-10-10T23:13:30+00:00", "provider_event_id": "e29", "published_time": "2026-10-10T23:13:31+00:00", "seq": 29, "type": "CLOCK"}, "received_time": "2026-10-10T23:13:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:13:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 360}, "event_time": "2026-10-10T23:14:00+00:00", "provider_event_id": "e30", "published_time": "2026-10-10T23:14:01+00:00", "seq": 30, "type": "CLOCK"}, "received_time": "2026-10-10T23:14:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 330}, "event_time": "2026-10-10T23:14:30+00:00", "provider_event_id": "e31", "published_time": "2026-10-10T23:14:31+00:00", "seq": 31, "type": "CLOCK"}, "received_time": "2026-10-10T23:14:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:14:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 300, "team": "TOR"}, "event_time": "2026-10-10T23:15:00+00:00", "provider_event_id": "e32", "published_time": "2026-10-10T23:15:01+00:00", "seq": 32, "type": "GOAL"}, "received_time": "2026-10-10T23:15:03+00:00", "stream": "game"}
+{"event": {"data": {"period": 1, "seconds_remaining": 300}, "event_time": "2026-10-10T23:15:00+00:00", "provider_event_id": "e33", "published_time": "2026-10-10T23:15:01+00:00", "seq": 33, "type": "CLOCK"}, "received_time": "2026-10-10T23:15:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 27, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 28, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 29, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3200", "side": "yes"}, "seq": 30, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3300", "side": "yes"}, "seq": 31, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3400", "side": "yes"}, "seq": 32, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6200", "side": "no"}, "seq": 33, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6300", "side": "no"}, "seq": 34, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6400", "side": "no"}, "seq": 35, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 36, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 37, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 38, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6300", "side": "yes"}, "seq": 39, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6400", "side": "yes"}, "seq": 40, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6500", "side": "yes"}, "seq": 41, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 42, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 43, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 44, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 45, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 46, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 47, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3100", "side": "no"}, "seq": 48, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3200", "side": "no"}, "seq": 49, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3300", "side": "no"}, "seq": 50, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:25+00:00", "stream": "kalshi"}
+{"quote": {"book": "pinnacle", "market": "h2h", "prices_american": {"BOS": 160, "TOR": -185}, "provider_last_update": "2026-10-10T23:15:15+00:00"}, "received_time": "2026-10-10T23:15:30+00:00", "stream": "odds"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 270}, "event_time": "2026-10-10T23:15:30+00:00", "provider_event_id": "e34", "published_time": "2026-10-10T23:15:31+00:00", "seq": 34, "type": "CLOCK"}, "received_time": "2026-10-10T23:15:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:15:55+00:00", "stream": "kalshi"}
+{"quote": {"book": "pinnacle", "market": "h2h", "prices_american": {"BOS": 165, "TOR": -190}, "provider_last_update": "2026-10-10T23:15:50+00:00"}, "received_time": "2026-10-10T23:16:00+00:00", "stream": "odds"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 240}, "event_time": "2026-10-10T23:16:00+00:00", "provider_event_id": "e35", "published_time": "2026-10-10T23:16:01+00:00", "seq": 35, "type": "CLOCK"}, "received_time": "2026-10-10T23:16:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 210}, "event_time": "2026-10-10T23:16:30+00:00", "provider_event_id": "e36", "published_time": "2026-10-10T23:16:31+00:00", "seq": 36, "type": "CLOCK"}, "received_time": "2026-10-10T23:16:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:16:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 180}, "event_time": "2026-10-10T23:17:00+00:00", "provider_event_id": "e37", "published_time": "2026-10-10T23:17:01+00:00", "seq": 37, "type": "CLOCK"}, "received_time": "2026-10-10T23:17:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 51, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 52, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 53, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 54, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 55, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 56, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 57, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 58, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 59, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 60, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 61, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 62, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 63, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 64, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 65, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 66, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 150}, "event_time": "2026-10-10T23:17:30+00:00", "provider_event_id": "e38", "published_time": "2026-10-10T23:17:31+00:00", "seq": 38, "type": "CLOCK"}, "received_time": "2026-10-10T23:17:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:17:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 120}, "event_time": "2026-10-10T23:18:00+00:00", "provider_event_id": "e39", "published_time": "2026-10-10T23:18:01+00:00", "seq": 39, "type": "CLOCK"}, "received_time": "2026-10-10T23:18:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 67, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 68, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 69, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 70, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 71, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 72, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 73, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 74, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 75, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 76, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 77, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 78, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 79, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 80, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 81, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 82, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:20+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 100, "team": "BOS"}, "event_time": "2026-10-10T23:18:20+00:00", "provider_event_id": "e40", "published_time": "2026-10-10T23:18:21+00:00", "seq": 40, "type": "PENALTY"}, "received_time": "2026-10-10T23:18:23+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 90}, "event_time": "2026-10-10T23:18:30+00:00", "provider_event_id": "e42", "published_time": "2026-10-10T23:18:31+00:00", "seq": 41, "type": "CLOCK"}, "received_time": "2026-10-10T23:18:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:18:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 60}, "event_time": "2026-10-10T23:19:00+00:00", "provider_event_id": "e43", "published_time": "2026-10-10T23:19:01+00:00", "seq": 42, "type": "CLOCK"}, "received_time": "2026-10-10T23:19:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 83, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 84, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 85, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 86, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 87, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 88, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 89, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 90, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 91, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 92, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 93, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 94, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 95, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 96, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 97, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 98, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 1, "seconds_remaining": 30}, "event_time": "2026-10-10T23:19:30+00:00", "provider_event_id": "e44", "published_time": "2026-10-10T23:19:31+00:00", "seq": 43, "type": "CLOCK"}, "received_time": "2026-10-10T23:19:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:19:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1200}, "event_time": "2026-10-10T23:20:00+00:00", "provider_event_id": "e45", "published_time": "2026-10-10T23:20:01+00:00", "seq": 44, "type": "CLOCK"}, "received_time": "2026-10-10T23:20:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 99, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 100, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 101, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 102, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 103, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 104, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 105, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 106, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 107, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 108, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 109, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 110, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 111, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 112, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 113, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 114, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:20+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1180, "team": "BOS"}, "event_time": "2026-10-10T23:20:20+00:00", "provider_event_id": "e41", "published_time": "2026-10-10T23:20:21+00:00", "seq": 45, "type": "PENALTY_END"}, "received_time": "2026-10-10T23:20:23+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1170}, "event_time": "2026-10-10T23:20:30+00:00", "provider_event_id": "e46", "published_time": "2026-10-10T23:20:31+00:00", "seq": 46, "type": "CLOCK"}, "received_time": "2026-10-10T23:20:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:20:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1140}, "event_time": "2026-10-10T23:21:00+00:00", "provider_event_id": "e47", "published_time": "2026-10-10T23:21:01+00:00", "seq": 47, "type": "CLOCK"}, "received_time": "2026-10-10T23:21:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 115, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 116, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 117, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 118, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 119, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 120, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 121, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 122, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 123, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 124, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 125, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 126, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 127, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 128, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 129, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 130, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1110}, "event_time": "2026-10-10T23:21:30+00:00", "provider_event_id": "e48", "published_time": "2026-10-10T23:21:31+00:00", "seq": 48, "type": "CLOCK"}, "received_time": "2026-10-10T23:21:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:21:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1080}, "event_time": "2026-10-10T23:22:00+00:00", "provider_event_id": "e49", "published_time": "2026-10-10T23:22:01+00:00", "seq": 49, "type": "CLOCK"}, "received_time": "2026-10-10T23:22:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 131, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 132, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 133, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 134, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 135, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 136, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 137, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 138, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 139, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 140, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 141, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 142, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 143, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 144, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 145, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 146, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1050}, "event_time": "2026-10-10T23:22:30+00:00", "provider_event_id": "e50", "published_time": "2026-10-10T23:22:31+00:00", "seq": 50, "type": "CLOCK"}, "received_time": "2026-10-10T23:22:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:22:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 1020}, "event_time": "2026-10-10T23:23:00+00:00", "provider_event_id": "e51", "published_time": "2026-10-10T23:23:01+00:00", "seq": 51, "type": "CLOCK"}, "received_time": "2026-10-10T23:23:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 147, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 148, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 149, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 150, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 151, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 152, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 153, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 154, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 155, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 156, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 157, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 158, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 159, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 160, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 161, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 162, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 990}, "event_time": "2026-10-10T23:23:30+00:00", "provider_event_id": "e52", "published_time": "2026-10-10T23:23:31+00:00", "seq": 52, "type": "CLOCK"}, "received_time": "2026-10-10T23:23:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:23:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 960}, "event_time": "2026-10-10T23:24:00+00:00", "provider_event_id": "e53", "published_time": "2026-10-10T23:24:01+00:00", "seq": 53, "type": "CLOCK"}, "received_time": "2026-10-10T23:24:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 163, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 164, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 165, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2100", "side": "yes"}, "seq": 166, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7500", "side": "no"}, "seq": 167, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 168, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 169, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 170, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7600", "side": "yes"}, "seq": 171, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 172, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 173, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 174, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 175, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 176, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-40.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 177, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.2000", "side": "no"}, "seq": 178, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 930}, "event_time": "2026-10-10T23:24:30+00:00", "provider_event_id": "e54", "published_time": "2026-10-10T23:24:31+00:00", "seq": 54, "type": "CLOCK"}, "received_time": "2026-10-10T23:24:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:24:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 900, "team": "BOS"}, "event_time": "2026-10-10T23:25:00+00:00", "provider_event_id": "e55", "published_time": "2026-10-10T23:25:01+00:00", "seq": 55, "type": "GOAL"}, "received_time": "2026-10-10T23:25:03+00:00", "stream": "game"}
+{"event": {"data": {"period": 2, "seconds_remaining": 900}, "event_time": "2026-10-10T23:25:00+00:00", "provider_event_id": "e56", "published_time": "2026-10-10T23:25:01+00:00", "seq": 56, "type": "CLOCK"}, "received_time": "2026-10-10T23:25:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1800", "side": "yes"}, "seq": 179, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.1900", "side": "yes"}, "seq": 180, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.2000", "side": "yes"}, "seq": 181, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3600", "side": "yes"}, "seq": 182, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3700", "side": "yes"}, "seq": 183, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3800", "side": "yes"}, "seq": 184, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5800", "side": "no"}, "seq": 185, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5900", "side": "no"}, "seq": 186, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6000", "side": "no"}, "seq": 187, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7600", "side": "no"}, "seq": 188, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7700", "side": "no"}, "seq": 189, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.7800", "side": "no"}, "seq": 190, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5900", "side": "yes"}, "seq": 191, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6000", "side": "yes"}, "seq": 192, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6100", "side": "yes"}, "seq": 193, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7700", "side": "yes"}, "seq": 194, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7800", "side": "yes"}, "seq": 195, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.7900", "side": "yes"}, "seq": 196, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1700", "side": "no"}, "seq": 197, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1800", "side": "no"}, "seq": 198, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.1900", "side": "no"}, "seq": 199, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3500", "side": "no"}, "seq": 200, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3600", "side": "no"}, "seq": 201, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3700", "side": "no"}, "seq": 202, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 870}, "event_time": "2026-10-10T23:25:30+00:00", "provider_event_id": "e57", "published_time": "2026-10-10T23:25:31+00:00", "seq": 57, "type": "CLOCK"}, "received_time": "2026-10-10T23:25:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:25:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 840}, "event_time": "2026-10-10T23:26:00+00:00", "provider_event_id": "e58", "published_time": "2026-10-10T23:26:01+00:00", "seq": 58, "type": "CLOCK"}, "received_time": "2026-10-10T23:26:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 810}, "event_time": "2026-10-10T23:26:30+00:00", "provider_event_id": "e59", "published_time": "2026-10-10T23:26:31+00:00", "seq": 59, "type": "CLOCK"}, "received_time": "2026-10-10T23:26:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:26:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 780}, "event_time": "2026-10-10T23:27:00+00:00", "provider_event_id": "e60", "published_time": "2026-10-10T23:27:01+00:00", "seq": 60, "type": "CLOCK"}, "received_time": "2026-10-10T23:27:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 750}, "event_time": "2026-10-10T23:27:30+00:00", "provider_event_id": "e61", "published_time": "2026-10-10T23:27:31+00:00", "seq": 61, "type": "CLOCK"}, "received_time": "2026-10-10T23:27:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:27:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 720}, "event_time": "2026-10-10T23:28:00+00:00", "provider_event_id": "e62", "published_time": "2026-10-10T23:28:01+00:00", "seq": 62, "type": "CLOCK"}, "received_time": "2026-10-10T23:28:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 690}, "event_time": "2026-10-10T23:28:30+00:00", "provider_event_id": "e63", "published_time": "2026-10-10T23:28:31+00:00", "seq": 63, "type": "CLOCK"}, "received_time": "2026-10-10T23:28:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:28:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 660}, "event_time": "2026-10-10T23:29:00+00:00", "provider_event_id": "e64", "published_time": "2026-10-10T23:29:01+00:00", "seq": 64, "type": "CLOCK"}, "received_time": "2026-10-10T23:29:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 630}, "event_time": "2026-10-10T23:29:30+00:00", "provider_event_id": "e65", "published_time": "2026-10-10T23:29:31+00:00", "seq": 65, "type": "CLOCK"}, "received_time": "2026-10-10T23:29:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:29:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 600}, "event_time": "2026-10-10T23:30:00+00:00", "provider_event_id": "e66", "published_time": "2026-10-10T23:30:01+00:00", "seq": 66, "type": "CLOCK"}, "received_time": "2026-10-10T23:30:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 570}, "event_time": "2026-10-10T23:30:30+00:00", "provider_event_id": "e67", "published_time": "2026-10-10T23:30:31+00:00", "seq": 67, "type": "CLOCK"}, "received_time": "2026-10-10T23:30:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:30:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 540}, "event_time": "2026-10-10T23:31:00+00:00", "provider_event_id": "e68", "published_time": "2026-10-10T23:31:01+00:00", "seq": 68, "type": "CLOCK"}, "received_time": "2026-10-10T23:31:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 510}, "event_time": "2026-10-10T23:31:30+00:00", "provider_event_id": "e69", "published_time": "2026-10-10T23:31:31+00:00", "seq": 69, "type": "CLOCK"}, "received_time": "2026-10-10T23:31:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:31:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 480}, "event_time": "2026-10-10T23:32:00+00:00", "provider_event_id": "e70", "published_time": "2026-10-10T23:32:01+00:00", "seq": 70, "type": "CLOCK"}, "received_time": "2026-10-10T23:32:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 450}, "event_time": "2026-10-10T23:32:30+00:00", "provider_event_id": "e71", "published_time": "2026-10-10T23:32:31+00:00", "seq": 71, "type": "CLOCK"}, "received_time": "2026-10-10T23:32:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:32:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 420}, "event_time": "2026-10-10T23:33:00+00:00", "provider_event_id": "e72", "published_time": "2026-10-10T23:33:01+00:00", "seq": 72, "type": "CLOCK"}, "received_time": "2026-10-10T23:33:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:20+00:00", "stream": "kalshi"}
+{"event": {"data": {"goalie": null, "period": 2, "seconds_remaining": 400, "team": "TOR"}, "event_time": "2026-10-10T23:33:20+00:00", "provider_event_id": "e127", "published_time": "2026-10-10T23:33:21+00:00", "seq": 73, "type": "GOALIE_CHANGE"}, "received_time": "2026-10-10T23:33:23+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 390}, "event_time": "2026-10-10T23:33:30+00:00", "provider_event_id": "e73", "published_time": "2026-10-10T23:33:31+00:00", "seq": 74, "type": "CLOCK"}, "received_time": "2026-10-10T23:33:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:33:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 360}, "event_time": "2026-10-10T23:34:00+00:00", "provider_event_id": "e74", "published_time": "2026-10-10T23:34:01+00:00", "seq": 75, "type": "CLOCK"}, "received_time": "2026-10-10T23:34:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 330}, "event_time": "2026-10-10T23:34:30+00:00", "provider_event_id": "e75", "published_time": "2026-10-10T23:34:31+00:00", "seq": 76, "type": "CLOCK"}, "received_time": "2026-10-10T23:34:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:50+00:00", "stream": "kalshi"}
+{"event": {"data": {"goalie": "Stolarz", "period": 2, "seconds_remaining": 310, "team": "TOR"}, "event_time": "2026-10-10T23:34:50+00:00", "provider_event_id": "e128", "published_time": "2026-10-10T23:34:51+00:00", "seq": 77, "type": "GOALIE_CHANGE"}, "received_time": "2026-10-10T23:34:53+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:34:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 300}, "event_time": "2026-10-10T23:35:00+00:00", "provider_event_id": "e76", "published_time": "2026-10-10T23:35:01+00:00", "seq": 78, "type": "CLOCK"}, "received_time": "2026-10-10T23:35:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 270}, "event_time": "2026-10-10T23:35:30+00:00", "provider_event_id": "e77", "published_time": "2026-10-10T23:35:31+00:00", "seq": 79, "type": "CLOCK"}, "received_time": "2026-10-10T23:35:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:35:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 240}, "event_time": "2026-10-10T23:36:00+00:00", "provider_event_id": "e78", "published_time": "2026-10-10T23:36:01+00:00", "seq": 80, "type": "CLOCK"}, "received_time": "2026-10-10T23:36:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 210}, "event_time": "2026-10-10T23:36:30+00:00", "provider_event_id": "e79", "published_time": "2026-10-10T23:36:31+00:00", "seq": 81, "type": "CLOCK"}, "received_time": "2026-10-10T23:36:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:36:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 180}, "event_time": "2026-10-10T23:37:00+00:00", "provider_event_id": "e80", "published_time": "2026-10-10T23:37:01+00:00", "seq": 82, "type": "CLOCK"}, "received_time": "2026-10-10T23:37:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 150}, "event_time": "2026-10-10T23:37:30+00:00", "provider_event_id": "e81", "published_time": "2026-10-10T23:37:31+00:00", "seq": 83, "type": "CLOCK"}, "received_time": "2026-10-10T23:37:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:37:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 120}, "event_time": "2026-10-10T23:38:00+00:00", "provider_event_id": "e82", "published_time": "2026-10-10T23:38:01+00:00", "seq": 84, "type": "CLOCK"}, "received_time": "2026-10-10T23:38:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:15+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4500", "side": "yes"}, "seq": 228, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4600", "side": "yes"}, "seq": 229, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4700", "side": "yes"}, "seq": 230, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5600", "side": "yes"}, "seq": 231, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5700", "side": "yes"}, "seq": 232, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5800", "side": "yes"}, "seq": 233, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3800", "side": "no"}, "seq": 234, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3900", "side": "no"}, "seq": 235, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4000", "side": "no"}, "seq": 236, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4900", "side": "no"}, "seq": 237, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5000", "side": "no"}, "seq": 238, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5100", "side": "no"}, "seq": 239, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:25+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"market_ticker": "SYN-NHLGAME-BOS", "no_dollars_fp": [["0.5100", "120.00"], ["0.5000", "160.00"], ["0.4900", "200.00"]], "yes_dollars_fp": [["0.4700", "120.00"], ["0.4600", "160.00"], ["0.4500", "200.00"]]}, "seq": 240, "sid": 1, "type": "orderbook_snapshot"}, "received_time": "2026-10-10T23:38:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 90}, "event_time": "2026-10-10T23:38:30+00:00", "provider_event_id": "e83", "published_time": "2026-10-10T23:38:31+00:00", "seq": 85, "type": "CLOCK"}, "received_time": "2026-10-10T23:38:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:38:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 60}, "event_time": "2026-10-10T23:39:00+00:00", "provider_event_id": "e84", "published_time": "2026-10-10T23:39:01+00:00", "seq": 86, "type": "CLOCK"}, "received_time": "2026-10-10T23:39:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 2, "seconds_remaining": 30}, "event_time": "2026-10-10T23:39:30+00:00", "provider_event_id": "e85", "published_time": "2026-10-10T23:39:31+00:00", "seq": 87, "type": "CLOCK"}, "received_time": "2026-10-10T23:39:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:39:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1200}, "event_time": "2026-10-10T23:40:00+00:00", "provider_event_id": "e86", "published_time": "2026-10-10T23:40:01+00:00", "seq": 88, "type": "CLOCK"}, "received_time": "2026-10-10T23:40:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1170}, "event_time": "2026-10-10T23:40:30+00:00", "provider_event_id": "e87", "published_time": "2026-10-10T23:40:31+00:00", "seq": 89, "type": "CLOCK"}, "received_time": "2026-10-10T23:40:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:40:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1140}, "event_time": "2026-10-10T23:41:00+00:00", "provider_event_id": "e88", "published_time": "2026-10-10T23:41:01+00:00", "seq": 90, "type": "CLOCK"}, "received_time": "2026-10-10T23:41:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1110}, "event_time": "2026-10-10T23:41:30+00:00", "provider_event_id": "e89", "published_time": "2026-10-10T23:41:31+00:00", "seq": 91, "type": "CLOCK"}, "received_time": "2026-10-10T23:41:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:41:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1080}, "event_time": "2026-10-10T23:42:00+00:00", "provider_event_id": "e90", "published_time": "2026-10-10T23:42:01+00:00", "seq": 92, "type": "CLOCK"}, "received_time": "2026-10-10T23:42:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1050}, "event_time": "2026-10-10T23:42:30+00:00", "provider_event_id": "e91", "published_time": "2026-10-10T23:42:31+00:00", "seq": 93, "type": "CLOCK"}, "received_time": "2026-10-10T23:42:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:42:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 1020}, "event_time": "2026-10-10T23:43:00+00:00", "provider_event_id": "e92", "published_time": "2026-10-10T23:43:01+00:00", "seq": 94, "type": "CLOCK"}, "received_time": "2026-10-10T23:43:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 990}, "event_time": "2026-10-10T23:43:30+00:00", "provider_event_id": "e93", "published_time": "2026-10-10T23:43:31+00:00", "seq": 95, "type": "CLOCK"}, "received_time": "2026-10-10T23:43:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:43:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 960}, "event_time": "2026-10-10T23:44:00+00:00", "provider_event_id": "e94", "published_time": "2026-10-10T23:44:01+00:00", "seq": 96, "type": "CLOCK"}, "received_time": "2026-10-10T23:44:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 930}, "event_time": "2026-10-10T23:44:30+00:00", "provider_event_id": "e95", "published_time": "2026-10-10T23:44:31+00:00", "seq": 97, "type": "CLOCK"}, "received_time": "2026-10-10T23:44:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:44:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 900}, "event_time": "2026-10-10T23:45:00+00:00", "provider_event_id": "e96", "published_time": "2026-10-10T23:45:01+00:00", "seq": 98, "type": "CLOCK"}, "received_time": "2026-10-10T23:45:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 870}, "event_time": "2026-10-10T23:45:30+00:00", "provider_event_id": "e97", "published_time": "2026-10-10T23:45:31+00:00", "seq": 99, "type": "CLOCK"}, "received_time": "2026-10-10T23:45:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:45:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 840}, "event_time": "2026-10-10T23:46:00+00:00", "provider_event_id": "e98", "published_time": "2026-10-10T23:46:01+00:00", "seq": 100, "type": "CLOCK"}, "received_time": "2026-10-10T23:46:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 810}, "event_time": "2026-10-10T23:46:30+00:00", "provider_event_id": "e99", "published_time": "2026-10-10T23:46:31+00:00", "seq": 101, "type": "CLOCK"}, "received_time": "2026-10-10T23:46:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:46:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 780}, "event_time": "2026-10-10T23:47:00+00:00", "provider_event_id": "e100", "published_time": "2026-10-10T23:47:01+00:00", "seq": 102, "type": "CLOCK"}, "received_time": "2026-10-10T23:47:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 750}, "event_time": "2026-10-10T23:47:30+00:00", "provider_event_id": "e101", "published_time": "2026-10-10T23:47:31+00:00", "seq": 103, "type": "CLOCK"}, "received_time": "2026-10-10T23:47:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:47:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 720}, "event_time": "2026-10-10T23:48:00+00:00", "provider_event_id": "e102", "published_time": "2026-10-10T23:48:01+00:00", "seq": 104, "type": "CLOCK"}, "received_time": "2026-10-10T23:48:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 690}, "event_time": "2026-10-10T23:48:30+00:00", "provider_event_id": "e103", "published_time": "2026-10-10T23:48:31+00:00", "seq": 105, "type": "CLOCK"}, "received_time": "2026-10-10T23:48:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:48:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 660}, "event_time": "2026-10-10T23:49:00+00:00", "provider_event_id": "e104", "published_time": "2026-10-10T23:49:01+00:00", "seq": 106, "type": "CLOCK"}, "received_time": "2026-10-10T23:49:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 630}, "event_time": "2026-10-10T23:49:30+00:00", "provider_event_id": "e105", "published_time": "2026-10-10T23:49:31+00:00", "seq": 107, "type": "CLOCK"}, "received_time": "2026-10-10T23:49:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:49:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 600, "team": "BOS"}, "event_time": "2026-10-10T23:50:00+00:00", "provider_event_id": "e106", "published_time": "2026-10-10T23:50:01+00:00", "seq": 108, "type": "GOAL"}, "received_time": "2026-10-10T23:50:03+00:00", "stream": "game"}
+{"event": {"data": {"period": 3, "seconds_remaining": 600}, "event_time": "2026-10-10T23:50:00+00:00", "provider_event_id": "e107", "published_time": "2026-10-10T23:50:01+00:00", "seq": 109, "type": "CLOCK"}, "received_time": "2026-10-10T23:50:03+00:00", "stream": "game"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3600", "side": "yes"}, "seq": 203, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3700", "side": "yes"}, "seq": 204, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3800", "side": "yes"}, "seq": 205, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5600", "side": "yes"}, "seq": 206, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5700", "side": "yes"}, "seq": 207, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5800", "side": "yes"}, "seq": 208, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3800", "side": "no"}, "seq": 209, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.3900", "side": "no"}, "seq": 210, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.4000", "side": "no"}, "seq": 211, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5800", "side": "no"}, "seq": 212, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.5900", "side": "no"}, "seq": 213, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-BOS", "price_dollars": "0.6000", "side": "no"}, "seq": 214, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3900", "side": "yes"}, "seq": 215, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.4000", "side": "yes"}, "seq": 216, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.4100", "side": "yes"}, "seq": 217, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5900", "side": "yes"}, "seq": 218, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6000", "side": "yes"}, "seq": 219, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.6100", "side": "yes"}, "seq": 220, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3500", "side": "no"}, "seq": 221, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3600", "side": "no"}, "seq": 222, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "-120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.3700", "side": "no"}, "seq": 223, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "200.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5500", "side": "no"}, "seq": 224, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "160.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5600", "side": "no"}, "seq": 225, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"msg": {"delta_fp": "120.00", "market_ticker": "SYN-NHLGAME-TOR", "price_dollars": "0.5700", "side": "no"}, "seq": 226, "sid": 1, "type": "orderbook_delta"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 570}, "event_time": "2026-10-10T23:50:30+00:00", "provider_event_id": "e108", "published_time": "2026-10-10T23:50:31+00:00", "seq": 110, "type": "CLOCK"}, "received_time": "2026-10-10T23:50:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:50:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 540}, "event_time": "2026-10-10T23:51:00+00:00", "provider_event_id": "e109", "published_time": "2026-10-10T23:51:01+00:00", "seq": 111, "type": "CLOCK"}, "received_time": "2026-10-10T23:51:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 510}, "event_time": "2026-10-10T23:51:30+00:00", "provider_event_id": "e110", "published_time": "2026-10-10T23:51:31+00:00", "seq": 112, "type": "CLOCK"}, "received_time": "2026-10-10T23:51:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:51:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 480}, "event_time": "2026-10-10T23:52:00+00:00", "provider_event_id": "e111", "published_time": "2026-10-10T23:52:01+00:00", "seq": 113, "type": "CLOCK"}, "received_time": "2026-10-10T23:52:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 450}, "event_time": "2026-10-10T23:52:30+00:00", "provider_event_id": "e112", "published_time": "2026-10-10T23:52:31+00:00", "seq": 114, "type": "CLOCK"}, "received_time": "2026-10-10T23:52:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:52:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 420}, "event_time": "2026-10-10T23:53:00+00:00", "provider_event_id": "e113", "published_time": "2026-10-10T23:53:01+00:00", "seq": 115, "type": "CLOCK"}, "received_time": "2026-10-10T23:53:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 390}, "event_time": "2026-10-10T23:53:30+00:00", "provider_event_id": "e114", "published_time": "2026-10-10T23:53:31+00:00", "seq": 116, "type": "CLOCK"}, "received_time": "2026-10-10T23:53:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:53:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 360}, "event_time": "2026-10-10T23:54:00+00:00", "provider_event_id": "e115", "published_time": "2026-10-10T23:54:01+00:00", "seq": 117, "type": "CLOCK"}, "received_time": "2026-10-10T23:54:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 330}, "event_time": "2026-10-10T23:54:30+00:00", "provider_event_id": "e116", "published_time": "2026-10-10T23:54:31+00:00", "seq": 118, "type": "CLOCK"}, "received_time": "2026-10-10T23:54:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:54:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 300}, "event_time": "2026-10-10T23:55:00+00:00", "provider_event_id": "e117", "published_time": "2026-10-10T23:55:01+00:00", "seq": 119, "type": "CLOCK"}, "received_time": "2026-10-10T23:55:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 270}, "event_time": "2026-10-10T23:55:30+00:00", "provider_event_id": "e118", "published_time": "2026-10-10T23:55:31+00:00", "seq": 120, "type": "CLOCK"}, "received_time": "2026-10-10T23:55:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:55:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 240}, "event_time": "2026-10-10T23:56:00+00:00", "provider_event_id": "e119", "published_time": "2026-10-10T23:56:01+00:00", "seq": 121, "type": "CLOCK"}, "received_time": "2026-10-10T23:56:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 210}, "event_time": "2026-10-10T23:56:30+00:00", "provider_event_id": "e120", "published_time": "2026-10-10T23:56:31+00:00", "seq": 122, "type": "CLOCK"}, "received_time": "2026-10-10T23:56:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:56:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 180}, "event_time": "2026-10-10T23:57:00+00:00", "provider_event_id": "e121", "published_time": "2026-10-10T23:57:01+00:00", "seq": 123, "type": "CLOCK"}, "received_time": "2026-10-10T23:57:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 150}, "event_time": "2026-10-10T23:57:30+00:00", "provider_event_id": "e122", "published_time": "2026-10-10T23:57:31+00:00", "seq": 124, "type": "CLOCK"}, "received_time": "2026-10-10T23:57:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:57:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 120}, "event_time": "2026-10-10T23:58:00+00:00", "provider_event_id": "e123", "published_time": "2026-10-10T23:58:01+00:00", "seq": 125, "type": "CLOCK"}, "received_time": "2026-10-10T23:58:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 90}, "event_time": "2026-10-10T23:58:30+00:00", "provider_event_id": "e124", "published_time": "2026-10-10T23:58:31+00:00", "seq": 126, "type": "CLOCK"}, "received_time": "2026-10-10T23:58:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:58:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 60}, "event_time": "2026-10-10T23:59:00+00:00", "provider_event_id": "e125", "published_time": "2026-10-10T23:59:01+00:00", "seq": 127, "type": "CLOCK"}, "received_time": "2026-10-10T23:59:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:30+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 3, "seconds_remaining": 30}, "event_time": "2026-10-10T23:59:30+00:00", "provider_event_id": "e126", "published_time": "2026-10-10T23:59:31+00:00", "seq": 128, "type": "CLOCK"}, "received_time": "2026-10-10T23:59:33+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-10T23:59:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 4, "seconds_remaining": 300}, "event_time": "2026-10-11T00:00:00+00:00", "provider_event_id": "e129", "published_time": "2026-10-11T00:00:01+00:00", "seq": 129, "type": "CLOCK"}, "received_time": "2026-10-11T00:00:03+00:00", "stream": "game"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:00:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:00+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:05+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:10+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:15+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:20+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:25+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:30+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:35+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:40+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:45+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:50+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:01:55+00:00", "stream": "kalshi"}
+{"raw": {"type": "heartbeat"}, "received_time": "2026-10-11T00:02:00+00:00", "stream": "kalshi"}
+{"event": {"data": {"period": 4, "seconds_remaining": 180, "team": "BOS"}, "event_time": "2026-10-11T00:02:00+00:00", "provider_event_id": "e130", "published_time": "2026-10-11T00:02:01+00:00", "seq": 130, "type": "GOAL"}, "received_time": "2026-10-11T00:02:03+00:00", "stream": "game"}
+{"event": {"data": {"decided_in": "OT", "period": 4, "regulation_away_score": 2, "regulation_home_score": 2, "seconds_remaining": 180}, "event_time": "2026-10-11T00:02:01+00:00", "provider_event_id": "e131", "published_time": "2026-10-11T00:02:02+00:00", "seq": 131, "type": "GAME_END"}, "received_time": "2026-10-11T00:02:04+00:00", "stream": "game"}
