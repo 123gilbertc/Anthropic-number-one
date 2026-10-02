@@ -36,3 +36,24 @@ def test_replay_persists_audit_trail(engine):
     assert n_dec == len(r.sink.decisions) and n_raw == len(r.sink.raws)
     back = sink.decisions_for(r.monitor.games.popitem()[0])
     assert [d.decision_id for d in back] == [d.decision_id for d in r.sink.decisions]
+
+
+def test_paper_orders_and_ledger_persist_with_mode(engine):
+    from sports_edge.forecast.train import train_synthetic
+    from sports_edge.session import AppSession
+
+    fc = train_synthetic(n_games=150).forecaster
+    s = AppSession.replay(FIXTURE, fc, True, {})
+    s.db = SqlSink(engine)
+    while not s.monitor.alerts:
+        s.step(1)
+    o, _ = s.place_order(s.monitor.alerts[-1].decision_id, "k", None)
+    s.step(5000)
+    with engine.connect() as c:
+        rows = c.execute(select(t.ledger_events.c.kind, t.ledger_events.c.mode,
+                                t.ledger_events.c.data_label)).all()
+        statuses = c.execute(select(t.paper_orders.c.status)
+                             .where(t.paper_orders.c.order_id == o.order_id)).scalars().all()
+    assert [r[0] for r in rows][0] == "ORDER_ACCEPTED"
+    assert {(r[1], r[2]) for r in rows} == {("REPLAY", "SYNTHETIC")}
+    assert statuses[0] == "PENDING" and len(statuses) >= 2  # versions appended, not overwritten

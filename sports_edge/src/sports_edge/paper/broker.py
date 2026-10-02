@@ -60,14 +60,28 @@ class PaperBroker:
     fills: list[PaperFill] = field(default_factory=list)
     attempts: list[FillAttempt] = field(default_factory=list)
 
-    def submit(self, decision: Decision, state: NHLState) -> None:
+    def submit(self, decision: Decision, state: NHLState, quantity: int | None = None,
+               now: datetime | None = None) -> PendingOrder:
+        """Queue an approved decision. ``quantity`` may only shrink the planned size.
+
+        The order is matched no earlier than ``decision_delay`` after ``now``
+        (default: the decision time) and only if every gate still passes then.
+        """
         if decision.action not in APPROVING:
             raise ValueError("only approving decisions can be submitted")
         if state.snapshot_id != decision.snapshot_id:
             raise ValueError("state does not match the decision")
-        self.pending.append(PendingOrder(
-            decision, decision.decision_time + self.engine.cfg.decision_delay,
-            material_key(state)))
+        if quantity is not None:
+            if not 0 < quantity <= decision.planned_quantity:
+                raise ValueError("quantity must be between 1 and the eligible size")
+            decision = decision.model_copy(update={
+                "planned_quantity": quantity,
+                "planned_cost": decision.planned_cost * quantity / decision.planned_quantity})
+        start = now or decision.decision_time
+        order = PendingOrder(decision, start + self.engine.cfg.decision_delay,
+                             material_key(state))
+        self.pending.append(order)
+        return order
 
     def has_position(self, game_id: str, contract_id: str) -> bool:
         p = self.positions.get((game_id, contract_id))

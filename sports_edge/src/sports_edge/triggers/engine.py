@@ -261,7 +261,6 @@ class TriggerEngine:
             if last is not None and now - last < cfg.cooldown:
                 return self._decision(ctx, now, Action.HOLD, reasons + [Reason.COOLDOWN], ev_u,
                                       room)
-            self._last_approval[ctx.mapping.contract_id] = now
             act = Action.PAPER_ADD if ctx.has_position else Action.PAPER_ENTRY
             return self._decision(ctx, now, act, reasons, ev_u, room,
                                   notes=("UNCONDITIONAL DIP BASELINE: no EV gate",), fill=fill)
@@ -292,6 +291,15 @@ class TriggerEngine:
                            fill=fill)
         if d.dedupe_key in self._dedupe:
             return self._decision(ctx, now, Action.HOLD, [Reason.DUPLICATE_ALERT], ev, room)
-        self._dedupe.add(d.dedupe_key)
-        self._last_approval[ctx.mapping.contract_id] = now
         return d
+
+    def note_submitted(self, d: Decision) -> None:
+        """Start cooldown / dedupe only when a paper order is actually submitted.
+
+        ``evaluate`` itself is side-effect free (apart from price history), so
+        previews and repeated evaluations never consume a signal.
+        """
+        if d.contract_id is None:
+            return
+        self._dedupe.add(d.dedupe_key)
+        self._last_approval[d.contract_id] = d.decision_time

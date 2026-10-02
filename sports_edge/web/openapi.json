@@ -1,0 +1,2442 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "sports_edge",
+  "version": "0.2.0"
+ },
+ "paths": {
+  "/api/auth/login": {
+   "post": {
+    "summary": "Login",
+    "operationId": "login_api_auth_login_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/logout": {
+   "post": {
+    "summary": "Logout",
+    "operationId": "logout_api_auth_logout_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/health": {
+   "get": {
+    "summary": "Health",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Health"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/connections": {
+   "get": {
+    "summary": "Connections",
+    "operationId": "connections_api_connections_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/connections/{pid}/test": {
+   "post": {
+    "summary": "Test Connection",
+    "operationId": "test_connection_api_connections__pid__test_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/connections/{pid}/disconnect": {
+   "post": {
+    "summary": "Disconnect",
+    "operationId": "disconnect_api_connections__pid__disconnect_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/connections/{pid}/secret": {
+   "put": {
+    "summary": "Set Secret",
+    "operationId": "set_secret_api_connections__pid__secret_put",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SecretRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/connections/{pid}/secret/{name}": {
+   "delete": {
+    "summary": "Delete Secret",
+    "operationId": "delete_secret_api_connections__pid__secret__name__delete",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Name"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/session": {
+   "get": {
+    "summary": "Session Info",
+    "operationId": "session_info_api_session_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionInfo"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "New Session",
+    "operationId": "new_session_api_session_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SessionRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionInfo"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/session/run": {
+   "post": {
+    "summary": "Run",
+    "operationId": "run_api_session_run_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RunRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionInfo"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/session/pause": {
+   "post": {
+    "summary": "Pause",
+    "operationId": "pause_api_session_pause_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionInfo"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/session/step": {
+   "post": {
+    "summary": "Step",
+    "operationId": "step_api_session_step_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/StepRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionInfo"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/games": {
+   "get": {
+    "summary": "Games",
+    "operationId": "games_api_games_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/GameIntel"
+         },
+         "type": "array",
+         "title": "Response Games Api Games Get"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/games/{game_id}": {
+   "get": {
+    "summary": "Game",
+    "operationId": "game_api_games__game_id__get",
+    "parameters": [
+     {
+      "name": "game_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Game Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GameIntel"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/decisions": {
+   "get": {
+    "summary": "Decisions",
+    "operationId": "decisions_api_decisions_get",
+    "parameters": [
+     {
+      "name": "game_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Game Id"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 500,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/signals": {
+   "get": {
+    "summary": "Signals",
+    "operationId": "signals_api_signals_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/paper/preview": {
+   "post": {
+    "summary": "Preview",
+    "operationId": "preview_api_paper_preview_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PreviewRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Preview"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/paper/orders": {
+   "post": {
+    "summary": "Place Order",
+    "operationId": "place_order_api_paper_orders_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OrderRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OrderResponse"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "Not Found"
+     },
+     "409": {
+      "description": "Conflict"
+     },
+     "410": {
+      "description": "Gone"
+     },
+     "422": {
+      "description": "Unprocessable Entity"
+     }
+    }
+   }
+  },
+  "/api/paper/ledger": {
+   "get": {
+    "summary": "Ledger",
+    "operationId": "ledger_api_paper_ledger_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Ledger"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/evaluation": {
+   "get": {
+    "summary": "Evaluation",
+    "operationId": "evaluation_api_evaluation_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/models": {
+   "get": {
+    "summary": "Models",
+    "operationId": "models_api_models_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/reviews": {
+   "get": {
+    "summary": "Reviews",
+    "operationId": "reviews_api_reviews_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/sources": {
+   "get": {
+    "summary": "Sources",
+    "operationId": "sources_api_sources_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/stream": {
+   "get": {
+    "summary": "Stream",
+    "operationId": "stream_api_stream_get",
+    "parameters": [
+     {
+      "name": "since",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Since"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/": {
+   "get": {
+    "summary": "Index",
+    "operationId": "index__get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "Action": {
+    "type": "string",
+    "enum": [
+     "WATCH",
+     "CANDIDATE",
+     "REVIEW",
+     "PAPER_ENTRY",
+     "PAPER_ADD",
+     "HOLD",
+     "NO_ADD",
+     "STOP_BUYING",
+     "DATA_BLOCKED"
+    ],
+    "title": "Action"
+   },
+   "ContractIntel": {
+    "properties": {
+     "contract_id": {
+      "type": "string",
+      "title": "Contract Id"
+     },
+     "selection": {
+      "type": "string",
+      "title": "Selection"
+     },
+     "settlement_rule": {
+      "type": "string",
+      "title": "Settlement Rule"
+     },
+     "probability": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Probability"
+     },
+     "probability_low": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Probability Low"
+     },
+     "probability_high": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Probability High"
+     },
+     "reliability": {
+      "type": "string",
+      "title": "Reliability"
+     },
+     "model_status": {
+      "type": "string",
+      "title": "Model Status"
+     },
+     "abstention": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Abstention"
+     },
+     "best_ask": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Best Ask"
+     },
+     "best_bid": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Best Bid"
+     },
+     "ask_depth": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ask Depth"
+     },
+     "book_valid": {
+      "type": "boolean",
+      "title": "Book Valid"
+     },
+     "reference_age_seconds": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference Age Seconds"
+     },
+     "action": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Action"
+     },
+     "reasons": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Reasons"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes"
+     },
+     "ev": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ev"
+     },
+     "remaining_paper_exposure": {
+      "type": "string",
+      "title": "Remaining Paper Exposure"
+     },
+     "position": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Position"
+     },
+     "decision_expires_at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decision Expires At"
+     },
+     "invalidation": {
+      "type": "string",
+      "title": "Invalidation"
+     },
+     "decision_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Decision Id"
+     },
+     "signal_eligible": {
+      "type": "boolean",
+      "title": "Signal Eligible",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "contract_id",
+     "selection",
+     "settlement_rule",
+     "probability",
+     "probability_low",
+     "probability_high",
+     "reliability",
+     "model_status",
+     "abstention",
+     "best_ask",
+     "best_bid",
+     "ask_depth",
+     "book_valid",
+     "reference_age_seconds",
+     "action",
+     "reasons",
+     "notes",
+     "ev",
+     "remaining_paper_exposure",
+     "position",
+     "decision_expires_at",
+     "invalidation"
+    ],
+    "title": "ContractIntel"
+   },
+   "Decision": {
+    "properties": {
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version",
+      "default": 1
+     },
+     "decision_id": {
+      "type": "string",
+      "title": "Decision Id"
+     },
+     "dedupe_key": {
+      "type": "string",
+      "title": "Dedupe Key"
+     },
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "venue": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Venue"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "contract_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Contract Id"
+     },
+     "selection_team": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Selection Team"
+     },
+     "settlement_rule": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/SettlementRule"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "snapshot_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Snapshot Id"
+     },
+     "book_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Book Id"
+     },
+     "reference_quote_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Reference Quote Ids"
+     },
+     "prediction_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Prediction Id"
+     },
+     "feature_version": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Feature Version"
+     },
+     "model_version": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model Version"
+     },
+     "strategy_version": {
+      "type": "string",
+      "title": "Strategy Version"
+     },
+     "action": {
+      "$ref": "#/components/schemas/Action"
+     },
+     "reasons": {
+      "items": {
+       "$ref": "#/components/schemas/Reason"
+      },
+      "type": "array",
+      "title": "Reasons"
+     },
+     "ev": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/EVBreakdown"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "planned_quantity": {
+      "type": "integer",
+      "title": "Planned Quantity",
+      "default": 0
+     },
+     "planned_cost": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Planned Cost",
+      "default": "0"
+     },
+     "max_eligible_addition": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Max Eligible Addition"
+     },
+     "decision_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Decision Time"
+     },
+     "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Expires At"
+     },
+     "notes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Notes",
+      "default": []
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "decision_id",
+     "dedupe_key",
+     "game_id",
+     "venue",
+     "contract_id",
+     "selection_team",
+     "settlement_rule",
+     "snapshot_id",
+     "book_id",
+     "reference_quote_ids",
+     "prediction_id",
+     "feature_version",
+     "model_version",
+     "strategy_version",
+     "action",
+     "reasons",
+     "ev",
+     "max_eligible_addition",
+     "decision_time",
+     "expires_at"
+    ],
+    "title": "Decision"
+   },
+   "EVBreakdown": {
+    "properties": {
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version",
+      "default": 1
+     },
+     "quantity": {
+      "type": "integer",
+      "title": "Quantity"
+     },
+     "entry_cost": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Entry Cost"
+     },
+     "expected_fees": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Expected Fees"
+     },
+     "probability": {
+      "type": "number",
+      "title": "Probability"
+     },
+     "probability_low": {
+      "type": "number",
+      "title": "Probability Low"
+     },
+     "ev_point": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Ev Point"
+     },
+     "ev_conservative": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Ev Conservative"
+     },
+     "ev_point_cents_per_contract": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Ev Point Cents Per Contract"
+     },
+     "ev_point_return_pct": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Ev Point Return Pct"
+     },
+     "edge_probability_points": {
+      "type": "number",
+      "title": "Edge Probability Points"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "quantity",
+     "entry_cost",
+     "expected_fees",
+     "probability",
+     "probability_low",
+     "ev_point",
+     "ev_conservative",
+     "ev_point_cents_per_contract",
+     "ev_point_return_pct",
+     "edge_probability_points"
+    ],
+    "title": "EVBreakdown"
+   },
+   "Game": {
+    "properties": {
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version",
+      "default": 1
+     },
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "sport": {
+      "$ref": "#/components/schemas/Sport"
+     },
+     "season": {
+      "type": "string",
+      "title": "Season"
+     },
+     "home_team": {
+      "type": "string",
+      "title": "Home Team"
+     },
+     "away_team": {
+      "type": "string",
+      "title": "Away Team"
+     },
+     "scheduled_start": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Scheduled Start"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "SCHEDULED",
+       "LIVE",
+       "FINAL",
+       "POSTPONED",
+       "CANCELLED",
+       "SUSPENDED"
+      ],
+      "title": "Status"
+     },
+     "doubleheader_game_number": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Doubleheader Game Number"
+     },
+     "source": {
+      "type": "string",
+      "title": "Source"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "game_id",
+     "sport",
+     "season",
+     "home_team",
+     "away_team",
+     "scheduled_start",
+     "status",
+     "source"
+    ],
+    "title": "Game"
+   },
+   "GameIntel": {
+    "properties": {
+     "game": {
+      "$ref": "#/components/schemas/Game"
+     },
+     "state": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/NHLState"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "model_favored_team": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model Favored Team"
+     },
+     "value_side": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value Side"
+     },
+     "contracts": {
+      "items": {
+       "$ref": "#/components/schemas/ContractIntel"
+      },
+      "type": "array",
+      "title": "Contracts"
+     },
+     "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "title": "As Of"
+     },
+     "state_age_seconds": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "State Age Seconds"
+     },
+     "event_seq": {
+      "type": "integer",
+      "title": "Event Seq"
+     }
+    },
+    "type": "object",
+    "required": [
+     "game",
+     "state",
+     "model_favored_team",
+     "value_side",
+     "contracts",
+     "as_of",
+     "state_age_seconds",
+     "event_seq"
+    ],
+    "title": "GameIntel"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "Health": {
+    "properties": {
+     "banners": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Banners"
+     },
+     "session": {
+      "$ref": "#/components/schemas/SessionInfo"
+     },
+     "authenticated": {
+      "type": "boolean",
+      "title": "Authenticated"
+     },
+     "event_seq": {
+      "type": "integer",
+      "title": "Event Seq"
+     },
+     "server_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Server Time"
+     }
+    },
+    "type": "object",
+    "required": [
+     "banners",
+     "session",
+     "authenticated",
+     "event_seq",
+     "server_time"
+    ],
+    "title": "Health"
+   },
+   "Ledger": {
+    "properties": {
+     "orders": {
+      "items": {
+       "$ref": "#/components/schemas/PaperOrder"
+      },
+      "type": "array",
+      "title": "Orders"
+     },
+     "events": {
+      "items": {
+       "$ref": "#/components/schemas/LedgerEvent"
+      },
+      "type": "array",
+      "title": "Events"
+     },
+     "cash": {
+      "type": "string",
+      "title": "Cash"
+     },
+     "open_cost": {
+      "type": "string",
+      "title": "Open Cost"
+     },
+     "limits": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Limits"
+     },
+     "fills": {
+      "items": {
+       "$ref": "#/components/schemas/PaperFill"
+      },
+      "type": "array",
+      "title": "Fills"
+     }
+    },
+    "type": "object",
+    "required": [
+     "orders",
+     "events",
+     "cash",
+     "open_cost",
+     "limits",
+     "fills"
+    ],
+    "title": "Ledger"
+   },
+   "LedgerEvent": {
+    "properties": {
+     "ledger_seq": {
+      "type": "integer",
+      "title": "Ledger Seq"
+     },
+     "run_id": {
+      "type": "string",
+      "title": "Run Id"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "REPLAY",
+       "LIVE"
+      ],
+      "title": "Mode"
+     },
+     "data_label": {
+      "type": "string",
+      "title": "Data Label"
+     },
+     "time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Time"
+     },
+     "kind": {
+      "type": "string",
+      "enum": [
+       "ORDER_ACCEPTED",
+       "ORDER_FILLED",
+       "ORDER_PARTIAL",
+       "ORDER_REJECTED",
+       "POSITION_SETTLED"
+      ],
+      "title": "Kind"
+     },
+     "order_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Order Id"
+     },
+     "contract_id": {
+      "type": "string",
+      "title": "Contract Id"
+     },
+     "detail": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Detail"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "ledger_seq",
+     "run_id",
+     "mode",
+     "data_label",
+     "time",
+     "kind",
+     "order_id",
+     "contract_id",
+     "detail"
+    ],
+    "title": "LedgerEvent"
+   },
+   "LoginRequest": {
+    "properties": {
+     "token": {
+      "type": "string",
+      "title": "Token"
+     }
+    },
+    "type": "object",
+    "required": [
+     "token"
+    ],
+    "title": "LoginRequest"
+   },
+   "NHLState": {
+    "properties": {
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version",
+      "default": 1
+     },
+     "snapshot_id": {
+      "type": "string",
+      "title": "Snapshot Id"
+     },
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "source": {
+      "type": "string",
+      "title": "Source"
+     },
+     "source_status": {
+      "$ref": "#/components/schemas/SourceStatus"
+     },
+     "as_of_event_time": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "As Of Event Time"
+     },
+     "as_of_received_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "As Of Received Time"
+     },
+     "last_material_event_time": {
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "date-time"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Material Event Time"
+     },
+     "last_material_event_kind": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Material Event Kind"
+     },
+     "applied_seq": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Applied Seq"
+     },
+     "period": {
+      "type": "integer",
+      "title": "Period"
+     },
+     "seconds_remaining_in_period": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seconds Remaining In Period"
+     },
+     "home_score": {
+      "type": "integer",
+      "title": "Home Score"
+     },
+     "away_score": {
+      "type": "integer",
+      "title": "Away Score"
+     },
+     "home_skaters": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Home Skaters"
+     },
+     "away_skaters": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Away Skaters"
+     },
+     "home_goalie": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Home Goalie"
+     },
+     "away_goalie": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Away Goalie"
+     },
+     "home_net_empty": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Home Net Empty"
+     },
+     "away_net_empty": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Away Net Empty"
+     },
+     "is_final": {
+      "type": "boolean",
+      "title": "Is Final",
+      "default": false
+     },
+     "final_decided_in": {
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "REG",
+         "OT",
+         "SO"
+        ]
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Final Decided In"
+     },
+     "in_review": {
+      "type": "boolean",
+      "title": "In Review",
+      "default": false
+     },
+     "pending_reconciliation": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Pending Reconciliation",
+      "default": []
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "snapshot_id",
+     "game_id",
+     "source",
+     "source_status",
+     "as_of_event_time",
+     "as_of_received_time",
+     "last_material_event_time",
+     "last_material_event_kind",
+     "applied_seq",
+     "period",
+     "seconds_remaining_in_period",
+     "home_score",
+     "away_score",
+     "home_skaters",
+     "away_skaters",
+     "home_goalie",
+     "away_goalie",
+     "home_net_empty",
+     "away_net_empty"
+    ],
+    "title": "NHLState",
+    "description": "Immutable NHL game-state snapshot. Unknown values are ``None``."
+   },
+   "OrderRequest": {
+    "properties": {
+     "decision_id": {
+      "type": "string",
+      "title": "Decision Id"
+     },
+     "idempotency_key": {
+      "type": "string",
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Idempotency Key"
+     },
+     "quantity": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 1.0
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Quantity"
+     }
+    },
+    "type": "object",
+    "required": [
+     "decision_id",
+     "idempotency_key"
+    ],
+    "title": "OrderRequest"
+   },
+   "OrderResponse": {
+    "properties": {
+     "order": {
+      "$ref": "#/components/schemas/PaperOrder"
+     },
+     "created": {
+      "type": "boolean",
+      "title": "Created"
+     }
+    },
+    "type": "object",
+    "required": [
+     "order",
+     "created"
+    ],
+    "title": "OrderResponse"
+   },
+   "Outcome": {
+    "type": "string",
+    "enum": [
+     "WIN",
+     "LOSS",
+     "VOID",
+     "PENDING"
+    ],
+    "title": "Outcome"
+   },
+   "PaperFill": {
+    "properties": {
+     "schema_version": {
+      "type": "integer",
+      "title": "Schema Version",
+      "default": 1
+     },
+     "fill_id": {
+      "type": "string",
+      "title": "Fill Id"
+     },
+     "decision_id": {
+      "type": "string",
+      "title": "Decision Id"
+     },
+     "contract_id": {
+      "type": "string",
+      "title": "Contract Id"
+     },
+     "selection_team": {
+      "type": "string",
+      "title": "Selection Team"
+     },
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "requested_quantity": {
+      "type": "integer",
+      "title": "Requested Quantity"
+     },
+     "filled_quantity": {
+      "type": "integer",
+      "title": "Filled Quantity"
+     },
+     "cost": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Cost"
+     },
+     "fees": {
+      "type": "string",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Fees"
+     },
+     "fill_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Fill Time"
+     },
+     "book_id": {
+      "type": "string",
+      "title": "Book Id"
+     },
+     "assumptions": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Assumptions"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "fill_id",
+     "decision_id",
+     "contract_id",
+     "selection_team",
+     "game_id",
+     "requested_quantity",
+     "filled_quantity",
+     "cost",
+     "fees",
+     "fill_time",
+     "book_id",
+     "assumptions"
+    ],
+    "title": "PaperFill"
+   },
+   "PaperOrder": {
+    "properties": {
+     "order_id": {
+      "type": "string",
+      "title": "Order Id"
+     },
+     "idempotency_key": {
+      "type": "string",
+      "title": "Idempotency Key"
+     },
+     "run_id": {
+      "type": "string",
+      "title": "Run Id"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "REPLAY",
+       "LIVE"
+      ],
+      "title": "Mode"
+     },
+     "data_label": {
+      "type": "string",
+      "title": "Data Label"
+     },
+     "decision_id": {
+      "type": "string",
+      "title": "Decision Id"
+     },
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "contract_id": {
+      "type": "string",
+      "title": "Contract Id"
+     },
+     "selection_team": {
+      "type": "string",
+      "title": "Selection Team"
+     },
+     "requested_quantity": {
+      "type": "integer",
+      "title": "Requested Quantity"
+     },
+     "status": {
+      "type": "string",
+      "enum": [
+       "PENDING",
+       "FILLED",
+       "PARTIAL",
+       "REJECTED"
+      ],
+      "title": "Status"
+     },
+     "created_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Created Time"
+     },
+     "not_before": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Not Before"
+     },
+     "fill": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/PaperFill"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "reasons": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Reasons",
+      "default": []
+     },
+     "outcome": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Outcome"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "settled_pnl": {
+      "anyOf": [
+       {
+        "type": "string",
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Settled Pnl"
+     }
+    },
+    "additionalProperties": false,
+    "type": "object",
+    "required": [
+     "order_id",
+     "idempotency_key",
+     "run_id",
+     "mode",
+     "data_label",
+     "decision_id",
+     "game_id",
+     "contract_id",
+     "selection_team",
+     "requested_quantity",
+     "status",
+     "created_time",
+     "not_before"
+    ],
+    "title": "PaperOrder"
+   },
+   "Preview": {
+    "properties": {
+     "decision": {
+      "$ref": "#/components/schemas/Decision"
+     },
+     "eligible": {
+      "type": "boolean",
+      "title": "Eligible"
+     },
+     "expired": {
+      "type": "boolean",
+      "title": "Expired"
+     },
+     "seconds_to_expiry": {
+      "type": "number",
+      "title": "Seconds To Expiry"
+     },
+     "max_quantity": {
+      "type": "integer",
+      "title": "Max Quantity"
+     },
+     "estimated_cost": {
+      "type": "string",
+      "title": "Estimated Cost"
+     },
+     "estimated_fees": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Estimated Fees"
+     },
+     "explanation": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Explanation"
+     }
+    },
+    "type": "object",
+    "required": [
+     "decision",
+     "eligible",
+     "expired",
+     "seconds_to_expiry",
+     "max_quantity",
+     "estimated_cost",
+     "estimated_fees",
+     "explanation"
+    ],
+    "title": "Preview"
+   },
+   "PreviewRequest": {
+    "properties": {
+     "game_id": {
+      "type": "string",
+      "title": "Game Id"
+     },
+     "contract_id": {
+      "type": "string",
+      "title": "Contract Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "game_id",
+     "contract_id"
+    ],
+    "title": "PreviewRequest"
+   },
+   "Reason": {
+    "type": "string",
+    "enum": [
+     "MAPPING_INVALID",
+     "SETTLEMENT_MISMATCH",
+     "GAME_STATE_STALE",
+     "GAME_STATE_INCOHERENT",
+     "GAME_FEED_NOT_CONNECTED",
+     "MARKET_INACTIVE",
+     "BOOK_INVALID",
+     "BOOK_STALE",
+     "MARKET_SETTLING",
+     "SPREAD_TOO_WIDE",
+     "DEPTH_INSUFFICIENT",
+     "REFERENCE_PRE_EVENT",
+     "REFERENCE_STALE",
+     "REFERENCE_DISAGREEMENT",
+     "PENDING_RECONCILIATION",
+     "CRITICAL_FEATURE_MISSING",
+     "MODEL_NOT_VALIDATED",
+     "PREDICTION_STALE",
+     "EV_BELOW_MARGIN",
+     "CONSERVATIVE_EV_NEGATIVE",
+     "DIP_DETECTED",
+     "DIP_NOT_PERSISTENT",
+     "COOLDOWN",
+     "TEAM_CAP_REACHED",
+     "GAME_CAP_REACHED",
+     "PORTFOLIO_CAP_REACHED",
+     "DAILY_LIMIT_REACHED",
+     "INSUFFICIENT_CASH",
+     "ALL_GATES_PASSED",
+     "DUPLICATE_ALERT",
+     "FILL_RECHECK_FAILED",
+     "NO_FILL",
+     "PARTIAL_FILL"
+    ],
+    "title": "Reason",
+    "description": "Machine-readable reason codes. Every decision carries at least one."
+   },
+   "RunRequest": {
+    "properties": {
+     "speed": {
+      "type": "number",
+      "title": "Speed",
+      "default": 60.0
+     }
+    },
+    "type": "object",
+    "title": "RunRequest"
+   },
+   "SecretRequest": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "value": {
+      "type": "string",
+      "title": "Value"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name",
+     "value"
+    ],
+    "title": "SecretRequest"
+   },
+   "SessionInfo": {
+    "properties": {
+     "run_id": {
+      "type": "string",
+      "title": "Run Id"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "REPLAY",
+       "LIVE"
+      ],
+      "title": "Mode"
+     },
+     "data_label": {
+      "type": "string",
+      "title": "Data Label"
+     },
+     "as_of": {
+      "type": "string",
+      "title": "As Of"
+     },
+     "position": {
+      "type": "integer",
+      "title": "Position"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "running": {
+      "type": "boolean",
+      "title": "Running"
+     },
+     "speed": {
+      "type": "number",
+      "title": "Speed"
+     },
+     "finished": {
+      "type": "boolean",
+      "title": "Finished"
+     },
+     "model": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Model"
+     },
+     "auto_paper": {
+      "type": "boolean",
+      "title": "Auto Paper"
+     }
+    },
+    "type": "object",
+    "required": [
+     "run_id",
+     "mode",
+     "data_label",
+     "as_of",
+     "position",
+     "total",
+     "running",
+     "speed",
+     "finished",
+     "model",
+     "auto_paper"
+    ],
+    "title": "SessionInfo"
+   },
+   "SessionRequest": {
+    "properties": {
+     "fixture": {
+      "type": "string",
+      "title": "Fixture",
+      "default": "nhl_synthetic_dip.jsonl"
+     },
+     "mode": {
+      "type": "string",
+      "enum": [
+       "honest",
+       "mechanics"
+      ],
+      "title": "Mode",
+      "default": "honest"
+     }
+    },
+    "type": "object",
+    "title": "SessionRequest"
+   },
+   "SettlementRule": {
+    "type": "string",
+    "enum": [
+     "NHL_INCLUDING_OT_SO",
+     "NHL_REGULATION_ONLY",
+     "MLB_FULL_GAME_INCL_EXTRAS",
+     "MLB_LISTED_PITCHERS"
+    ],
+    "title": "SettlementRule",
+    "description": "What exactly has to happen for a \"team wins\" contract to pay out.\n\nThese are different products. A regulation-only NHL contract on the home\nteam loses if the game goes to overtime, even if the home team then wins.\nA model that forecasts \"wins the game\" cannot price it."
+   },
+   "SourceStatus": {
+    "type": "string",
+    "enum": [
+     "LIVE",
+     "DELAYED",
+     "REPLAY",
+     "SYNTHETIC_DEMO",
+     "NOT_CONNECTED",
+     "BLOCKED",
+     "STALE"
+    ],
+    "title": "SourceStatus",
+    "description": "Shown prominently in the dashboard. Never upgrade a status without evidence."
+   },
+   "Sport": {
+    "type": "string",
+    "enum": [
+     "NHL",
+     "MLB"
+    ],
+    "title": "Sport"
+   },
+   "StepRequest": {
+    "properties": {
+     "n": {
+      "type": "integer",
+      "title": "N",
+      "default": 1
+     }
+    },
+    "type": "object",
+    "title": "StepRequest"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   },
+   "Venue": {
+    "type": "string",
+    "enum": [
+     "KALSHI",
+     "POLYMARKET_INTL",
+     "POLYMARKET_US",
+     "SYNTHETIC"
+    ],
+    "title": "Venue"
+   }
+  }
+ }
+}

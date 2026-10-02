@@ -102,3 +102,20 @@ games = _record_table(
     Column("sport", String(8), nullable=False),
     Column("scheduled_start", DateTime(timezone=True), nullable=False),
 )
+
+# Paper workflow ledger. ``mode`` + ``data_label`` + ``run_id`` keep replay/demo
+# records isolated from live paper records.
+paper_orders = _record_table(
+    "paper_orders", "order_id",
+    Column("run_id", String(40), nullable=False, index=True),
+    Column("mode", String(8), nullable=False, index=True),
+    Column("data_label", String(32), nullable=False),
+    Column("status", String(16), nullable=False),
+)
+ledger_events = _record_table(
+    "ledger_events", "event_key",
+    Column("run_id", String(40), nullable=False, index=True),
+    Column("mode", String(8), nullable=False, index=True),
+    Column("data_label", String(32), nullable=False),
+    Column("kind", String(24), nullable=False),
+)

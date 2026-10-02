@@ -109,7 +109,11 @@ def test_duplicate_alert_and_cooldown():
     eng = engine()
     st = state()
     c = ctx(st, book("0.45"), prediction(st, 0.60, lo=0.57))
+    d = eng.evaluate(c, NOW)
+    assert d.action == Action.PAPER_ENTRY
+    # evaluation alone is side-effect free: a preview does not consume the signal
     assert eng.evaluate(c, NOW).action == Action.PAPER_ENTRY
+    eng.note_submitted(d)
     second = eng.evaluate(c, NOW + timedelta(seconds=1))
     assert second.action == Action.HOLD and Reason.COOLDOWN in second.reasons
 

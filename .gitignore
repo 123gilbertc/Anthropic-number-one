@@ -10,3 +10,4 @@ sports_edge/web/node_modules/
 sports_edge/web/dist/
 .pytest_cache/
 .ruff_cache/
+sports_edge/secrets.local.json

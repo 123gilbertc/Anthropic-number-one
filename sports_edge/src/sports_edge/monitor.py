@@ -41,6 +41,12 @@ from sports_edge.paper.broker import APPROVING, PaperBroker
 from sports_edge.triggers.engine import TriggerContext, TriggerEngine
 
 
+class SignalError(Exception):
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(f"{code}: {detail}")
+        self.code, self.detail = code, detail
+
+
 class Sink(Protocol):
     def raw(self, r: RawEvent) -> None: ...
     def state(self, s: NHLState) -> None: ...
@@ -99,6 +105,17 @@ class Monitor:
     health: dict[str, SourceHealth] = field(default_factory=dict)
     rejected_events: int = 0
     alerts: list[Decision] = field(default_factory=list)
+    # auto_paper=True: research mode, approvals go straight to the paper broker.
+    # auto_paper=False: approvals become signals; only an explicit command creates an order.
+    auto_paper: bool = True
+    listeners: list = field(default_factory=list)
+    signals: dict[str, Decision] = field(default_factory=dict)  # decision_id -> approval
+    decision_state: dict[str, NHLState] = field(default_factory=dict)
+    _alert_keys: set[str] = field(default_factory=set)
+
+    def _emit(self, kind: str, payload: dict) -> None:
+        for fn in self.listeners:
+            fn(kind, payload)
 
     # --------------------------------------------------------------- setup
 
@@ -144,6 +161,8 @@ class Monitor:
         if h:
             h.gaps, h.duplicates = rt.reducer.gaps, rt.reducer.duplicates
         self.sink.state(res.state)
+        self._emit("state", {"game_id": ev.game_id, "snapshot_id": res.state.snapshot_id,
+                             "applied": res.applied, "note": res.note})
         stale = rt.last_forecast_at is None or now - rt.last_forecast_at >= self.recompute_every
         if res.applied and (res.material or stale) or res.state.pending_reconciliation:
             self._forecast(rt, now)
@@ -190,6 +209,10 @@ class Monitor:
         for att in self.broker.process(now, self._context_for_decision):
             if att.filled:
                 self.sink.fill(att.filled)
+            self._emit("order_result", {
+                "decision_id": att.decision_id,
+                "fill": att.filled.model_dump(mode="json") if att.filled else None,
+                "reasons": [r.value for r in att.reasons]})
 
     # --------------------------------------------------------------- internals
 
@@ -260,12 +283,68 @@ class Monitor:
             changed = prev is None or prev.action != d.action or prev.reasons != d.reasons
             if changed or d.action in APPROVING:
                 self.sink.decision(d)  # audit log: every change and every approval
+                self._emit("decision", {"game_id": rt.game.game_id,
+                                        "contract_id": m.contract_id,
+                                        "decision_id": d.decision_id, "action": d.action.value})
             rt.last_decision[m.contract_id] = d
             if d.action in APPROVING:
-                self.alerts.append(d)
                 assert state is not None
-                self.broker.submit(d, state)
+                self._register_signal(d, state)
+                if self.auto_paper:
+                    self.engine.note_submitted(d)
+                    self.broker.submit(d, state)
         self.tick()
+
+    def _register_signal(self, d: Decision, state: NHLState) -> None:
+        self.signals[d.decision_id] = d
+        self.decision_state[d.decision_id] = state
+        if d.dedupe_key not in self._alert_keys:  # one alert per state/strategy version
+            self._alert_keys.add(d.dedupe_key)
+            self.alerts.append(d)
+            self._emit("signal", {"decision_id": d.decision_id, "game_id": d.game_id,
+                                  "contract_id": d.contract_id,
+                                  "expires_at": d.expires_at.isoformat()})
+
+    # --------------------------------------------------------------- commands
+
+    def preview(self, game_id: str, contract_id: str) -> Decision:
+        """Fresh, side-effect-free evaluation of one contract right now."""
+        rt = self.games[game_id]
+        m = next(x for x in rt.mappings if x.contract_id == contract_id)
+        now = self.clock.now()
+        st = rt.reducer.state
+        p = rt.predictions.get(contract_id)
+        if st is not None and (p is None or p.snapshot_id != st.snapshot_id
+                               or p.valid_until < now):
+            self._forecast(rt, now)
+        d = self.engine.evaluate(self.context(rt, m), now)
+        if d.action in APPROVING and rt.reducer.state is not None:
+            self.signals[d.decision_id] = d
+            self.decision_state[d.decision_id] = rt.reducer.state
+        return d
+
+    def submit_signal(self, decision_id: str, quantity: int | None = None):
+        """Queue a paper order for an approved, unexpired signal. Raises SignalError."""
+        d = self.signals.get(decision_id)
+        if d is None:
+            raise SignalError("UNKNOWN_SIGNAL", "no such approved signal")
+        now = self.clock.now()
+        if now > d.expires_at:
+            raise SignalError("SIGNAL_EXPIRED", f"signal expired at {d.expires_at.isoformat()}")
+        rt = self.games[d.game_id]
+        latest = rt.last_decision.get(d.contract_id or "")
+        if latest is not None and latest.decision_time > d.decision_time \
+                and latest.action not in APPROVING:
+            raise SignalError("SIGNAL_SUPERSEDED",
+                              f"newer decision {latest.action.value}: "
+                              + ",".join(r.value for r in latest.reasons))
+        try:
+            order = self.broker.submit(d, self.decision_state[decision_id], quantity, now)
+        except ValueError as e:
+            raise SignalError("INVALID_QUANTITY", str(e)) from e
+        self.engine.note_submitted(d)
+        return order
+
 
     def _settle(self, rt: GameRuntime, ev: NormalizedGameEvent, now: datetime) -> None:
         s = rt.reducer.state
@@ -290,6 +369,8 @@ class Monitor:
                       Outcome.VOID: pos.total_cost + pos.total_fees}[outcome]
             fee = self.engine.fee_model.settlement_fee(pos.contracts, outcome == Outcome.WIN)
             self.engine.ledger.record_settlement(rt.game.game_id, m.selection_team, payout - fee)
+            self._emit("settlement", {"game_id": rt.game.game_id, "contract_id": m.contract_id,
+                                      "outcome": outcome.value, "payout": str(payout - fee)})
         rt.settled = True
 
     # --------------------------------------------------------------- views
@@ -333,6 +414,8 @@ class Monitor:
                     "average_entry": str(pos.average_entry),
                     "average_entry_all_in": str(pos.average_entry_all_in)} if pos else None,
                 "decision_expires_at": d.expires_at.isoformat() if d else None,
+                "decision_id": d.decision_id if d else None,
+                "signal_eligible": bool(d and d.action in APPROVING and now <= d.expires_at),
                 "invalidation": "Decision invalid after expiry, any material game event, "
                                 "book gap, or stale data.",
             })

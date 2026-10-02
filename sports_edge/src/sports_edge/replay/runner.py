@@ -95,39 +95,66 @@ def build_monitor(clock, *, forecaster: ChainForecaster | None, cfg: StrategyCon
                    books=KalshiBookManager(source_status=status))
 
 
-def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_demo: bool = False,
-                cfg: StrategyConfig | None = None, limits: RiskLimits | None = None,
-                use_references: bool = True, extra_sink=None) -> ReplayResult:
-    """``extra_sink`` (e.g. a SqlSink) receives every record in addition to memory."""
-    lines = [json.loads(x) for x in path.read_text().splitlines() if x.strip()]
-    meta = lines[0]
-    if meta.get("stream") != "meta":
-        raise ValueError("first line must be meta")
-    label = meta.get("data_label", "UNKNOWN")
-    status = SourceStatus.SYNTHETIC_DEMO if label == "SYNTHETIC" else SourceStatus.REPLAY
-    body = lines[1:]
-    times = [x["received_time"] for x in body]
-    if times != sorted(times):
-        raise ValueError("replay lines must be sorted by received_time")
-    game = Game.model_validate(meta["game"])
-    mappings = [MarketMapping.model_validate(m) for m in meta["mappings"]]
-    rule = mappings[0].settlement_rule
-    clock = ReplayClock(_t(body[0]["received_time"]) or game.scheduled_start)
-    mon = build_monitor(clock, forecaster=forecaster, cfg=cfg or provisional_dip_strategy(rule),
-                        limits=limits, status=status, mechanics_demo=mechanics_demo)
-    mon.use_references = use_references
-    if extra_sink is not None:
-        mon.sink = TeeSink(MemorySink(), extra_sink)
-    mon.add_game(game, mappings, meta.get("pregame_prob"),
-                 {k: Decimal(v) for k, v in (meta.get("anchor_price") or {}).items()})
-    for name, kind, stale in (("replay_game", "game_feed", 60), ("replay_market", "market", 30),
-                              ("replay_odds", "reference", 120)):
-        mon.add_source(SourceHealth(name, kind, status, timedelta(seconds=stale),
-                                    note=f"{label} replay"))
-    for x in body:
+class ReplayStream:
+    """A loaded replay file that can be applied all at once or one line at a time."""
+
+    def __init__(self, path: Path) -> None:
+        lines = [json.loads(x) for x in path.read_text().splitlines() if x.strip()]
+        meta = lines[0]
+        if meta.get("stream") != "meta":
+            raise ValueError("first line must be meta")
+        self.path = path
+        self.meta = meta
+        self.label = meta.get("data_label", "UNKNOWN")
+        self.status = SourceStatus.SYNTHETIC_DEMO if self.label == "SYNTHETIC" \
+            else SourceStatus.REPLAY
+        self.body = lines[1:]
+        times = [x["received_time"] for x in self.body]
+        if times != sorted(times):
+            raise ValueError("replay lines must be sorted by received_time")
+        self.game = Game.model_validate(meta["game"])
+        self.mappings = [MarketMapping.model_validate(m) for m in meta["mappings"]]
+        self.rule = self.mappings[0].settlement_rule
+        self.position = 0
+
+    def start_time(self) -> datetime:
+        return _t(self.body[0]["received_time"]) or self.game.scheduled_start
+
+    def time_at(self, i: int) -> datetime:
+        t = _t(self.body[i]["received_time"])
+        assert t is not None
+        return t
+
+    @property
+    def done(self) -> bool:
+        return self.position >= len(self.body)
+
+    def build(self, *, forecaster, cfg=None, limits=None, mechanics_demo=False,
+              use_references=True, extra_sink=None) -> tuple[ReplayClock, Monitor]:
+        clock = ReplayClock(self.start_time())
+        mon = build_monitor(clock, forecaster=forecaster,
+                            cfg=cfg or provisional_dip_strategy(self.rule), limits=limits,
+                            status=self.status, mechanics_demo=mechanics_demo)
+        mon.use_references = use_references
+        if extra_sink is not None:
+            mon.sink = TeeSink(MemorySink(), extra_sink)
+        mon.add_game(self.game, self.mappings, self.meta.get("pregame_prob"),
+                     {k: Decimal(v) for k, v in (self.meta.get("anchor_price") or {}).items()})
+        for name, kind, stale in (("replay_game", "game_feed", 60),
+                                  ("replay_market", "market", 30),
+                                  ("replay_odds", "reference", 120)):
+            mon.add_source(SourceHealth(name, kind, self.status, timedelta(seconds=stale),
+                                        note=f"{self.label} replay"))
+        return clock, mon
+
+    def step(self, clock: ReplayClock, mon: Monitor) -> dict:
+        """Apply the next line. Returns the line."""
+        x = self.body[self.position]
+        self.position += 1
         rt = _t(x["received_time"])
         assert rt is not None
         clock.advance_to(rt)
+        game, rule, status = self.game, self.rule, self.status
         if x["stream"] == "game":
             e = x["event"]
             mon.on_game_event(NormalizedGameEvent(
@@ -147,10 +174,26 @@ def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_dem
                 provider_last_update=_t(q.get("provider_last_update")), received_time=rt,
                 source="replay_odds"))
         mon.tick()
-    sink = mon.sink.memory if isinstance(mon.sink, TeeSink) else mon.sink
-    assert isinstance(sink, MemorySink)
-    digest = hashlib.sha256("\n".join(
+        return x
+
+
+def decision_digest(sink: MemorySink) -> str:
+    return hashlib.sha256("\n".join(
         f"{d.decision_time.isoformat()}|{d.contract_id}|{d.action.value}|"
         f"{','.join(r.value for r in d.reasons)}|{d.ev.ev_point if d.ev else ''}"
         for d in sink.decisions).encode()).hexdigest()
-    return ReplayResult(mon, sink, label, status, digest)
+
+
+def replay_file(path: Path, *, forecaster: ChainForecaster | None, mechanics_demo: bool = False,
+                cfg: StrategyConfig | None = None, limits: RiskLimits | None = None,
+                use_references: bool = True, extra_sink=None) -> ReplayResult:
+    """``extra_sink`` (e.g. a SqlSink) receives every record in addition to memory."""
+    stream = ReplayStream(path)
+    clock, mon = stream.build(forecaster=forecaster, cfg=cfg, limits=limits,
+                              mechanics_demo=mechanics_demo, use_references=use_references,
+                              extra_sink=extra_sink)
+    while not stream.done:
+        stream.step(clock, mon)
+    sink = mon.sink.memory if isinstance(mon.sink, TeeSink) else mon.sink
+    assert isinstance(sink, MemorySink)
+    return ReplayResult(mon, sink, stream.label, stream.status, decision_digest(sink))

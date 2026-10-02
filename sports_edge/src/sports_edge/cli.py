@@ -84,6 +84,14 @@ def cmd_serve(a) -> None:
     uvicorn.run("sports_edge.api.app:app_factory", factory=True, host=a.host, port=a.port)
 
 
+def cmd_openapi(a) -> None:
+    from sports_edge.api.app import create_app
+
+    spec = create_app(train_games=60).openapi()
+    Path(a.out).write_text(json.dumps(spec, indent=1))
+    print(f"wrote {a.out}")
+
+
 def cmd_discover(a) -> None:
     from sports_edge.adapters.kalshi_rest import list_game_markets
 
@@ -133,6 +141,9 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--host", default="127.0.0.1")
     s.add_argument("--port", type=int, default=8000)
     s.set_defaults(fn=cmd_serve)
+    oa = sub.add_parser("openapi")
+    oa.add_argument("--out", default=str(ROOT / "web" / "openapi.json"))
+    oa.set_defaults(fn=cmd_openapi)
     d = sub.add_parser("discover")
     d.add_argument("--series", default="KXNHLGAME")
     d.set_defaults(fn=cmd_discover)

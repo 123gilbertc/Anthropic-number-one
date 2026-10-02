@@ -83,6 +83,17 @@ class SqlSink:
     def model_version(self, v: ModelVersion) -> None:
         self._put(t.model_versions, _row(v, model_version=v.model_version, status=v.status.value))
 
+    def paper_order(self, o) -> None:
+        """Append a version of an order (status changes are new rows)."""
+        self._put(t.paper_orders, {"order_id": o.order_id, "run_id": o.run_id, "mode": o.mode,
+                                   "data_label": o.data_label, "status": o.status,
+                                   "schema_version": 1, "record": o.model_dump(mode="json")})
+
+    def ledger_event(self, e) -> None:
+        self._put(t.ledger_events, {"event_key": f"{e.run_id}:{e.ledger_seq}", "run_id": e.run_id,
+                                    "mode": e.mode, "data_label": e.data_label, "kind": e.kind,
+                                    "schema_version": 1, "record": e.model_dump(mode="json")})
+
     # ---------------------------------------------------------------- reads
 
     def decisions_for(self, game_id: str) -> list[Decision]:
