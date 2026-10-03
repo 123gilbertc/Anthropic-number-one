@@ -13,7 +13,7 @@ from datetime import timedelta
 from decimal import Decimal
 from typing import Literal
 
-from sports_edge.domain.enums import SettlementRule
+from sports_edge.domain.enums import SettlementRule, Sport
 
 
 @dataclass(frozen=True)
@@ -53,6 +53,12 @@ class StrategyConfig:
     # paper execution
     decision_delay: timedelta = timedelta(seconds=2)
     tags: tuple[str, ...] = field(default_factory=tuple)
+    # Multi-sport strategies: the settlement rule each sport's forecaster targets.
+    # Sports not listed fall back to ``forecast_rule``.
+    forecast_rules: tuple[tuple[Sport, SettlementRule], ...] = ()
+
+    def rule_for(self, sport: Sport) -> SettlementRule:
+        return dict(self.forecast_rules).get(sport, self.forecast_rule)
 
 
 def provisional_dip_strategy(rule: SettlementRule = SettlementRule.NHL_INCLUDING_OT_SO,

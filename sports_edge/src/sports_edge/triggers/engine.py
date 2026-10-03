@@ -26,8 +26,8 @@ from sports_edge.domain.enums import Action, ModelStatus, Reason, SourceStatus
 from sports_edge.domain.records import (
     Decision,
     Game,
+    GameStateBase,
     MarketMapping,
-    NHLState,
     OrderBookSnapshot,
     Prediction,
     SportsbookQuote,
@@ -49,7 +49,7 @@ ZERO = Decimal("0")
 class TriggerContext:
     game: Game
     mapping: MarketMapping
-    state: NHLState | None
+    state: GameStateBase | None
     book: OrderBookSnapshot | None
     prediction: Prediction | None
     references: tuple[SportsbookQuote, ...] = ()
@@ -154,10 +154,10 @@ class TriggerEngine:
         # 1. data gates -------------------------------------------------------
         blocked: list[Reason] = []
         try:
-            validate_mapping(ctx.mapping, ctx.game, cfg.forecast_rule)
+            validate_mapping(ctx.mapping, ctx.game, cfg.rule_for(ctx.game.sport))
         except MappingError:
             blocked.append(Reason.SETTLEMENT_MISMATCH
-                           if ctx.mapping.settlement_rule != cfg.forecast_rule
+                           if ctx.mapping.settlement_rule != cfg.rule_for(ctx.game.sport)
                            else Reason.MAPPING_INVALID)
         if not ctx.is_pregame:
             if ctx.state is None or ctx.state.source_status not in self.usable_statuses:
@@ -264,7 +264,8 @@ class TriggerEngine:
         # 6. value ------------------------------------------------------------
         if unconditional:
             # Baseline for comparison: buys the dip with no value test at all.
-            ev_u = (expected_value(fill, pred.probability, pred.probability_low, self.fee_model)
+            ev_u = (expected_value(fill, pred.probability, pred.probability_low, self.fee_model,
+                                   pred.probability_void)
                     if usable_pred and pred is not None else None)
             last = self._last_approval.get(ctx.mapping.contract_id)
             if last is not None and now - last < cfg.cooldown:
@@ -274,7 +275,8 @@ class TriggerEngine:
             return self._decision(ctx, now, act, reasons, ev_u, room,
                                   notes=("UNCONDITIONAL DIP BASELINE: no EV gate",), fill=fill)
         assert pred is not None
-        ev = expected_value(fill, pred.probability, pred.probability_low, self.fee_model)
+        ev = expected_value(fill, pred.probability, pred.probability_low, self.fee_model,
+                            pred.probability_void)
         margin = cfg.min_conservative_ev_cents_per_contract / 100 * fill.filled
         if ev.ev_point <= ZERO:
             return self._decision(ctx, now, Action.NO_ADD, reasons + [Reason.EV_BELOW_MARGIN],

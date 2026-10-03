@@ -2,6 +2,14 @@
 
     expected_net_profit = quantity * p - executable_entry_cost - expected_fees
 
+When the contract can be voided (e.g. an NFL tie under a tie-void rule), the general
+expected-settlement form is used instead:
+
+    expected_net_profit = quantity * p_pay + p_void * refund - cost - fees
+
+ASSUMPTION (venue rules UNKNOWN): a void refunds the contract cost but not the entry
+fees. That is the conservative reading; check each venue's rules.
+
 ``executable_entry_cost`` comes from ``walk_asks`` and already includes the
 spread and any slippage, so they are not subtracted again. Settlement-time
 fees (if a venue charges them on winners only) are weighted by p.
@@ -29,9 +37,12 @@ def expected_value(
     probability: float,
     probability_low: float,
     fee_model: FeeModel,
+    probability_void: float = 0.0,
 ) -> EVBreakdown:
     if not (0.0 <= probability_low <= probability <= 1.0):
         raise ValueError("need 0 <= probability_low <= probability <= 1")
+    if not (0.0 <= probability_void <= 1.0 - probability):
+        raise ValueError("need 0 <= probability_void <= 1 - probability")
     q = fill.filled
     if q == 0:
         raise ValueError("cannot value an empty fill")
@@ -40,9 +51,11 @@ def expected_value(
     win_fee = fee_model.settlement_fee(q, won=True)
     loss_fee = fee_model.settlement_fee(q, won=False)
 
+    pv = Decimal(str(probability_void))
+
     def ev_at(pr: Decimal) -> Decimal:
-        exp_settle_fee = pr * win_fee + (1 - pr) * loss_fee
-        return q * pr - fill.cost - fill.fees - exp_settle_fee
+        exp_settle_fee = pr * win_fee + (1 - pr - pv) * loss_fee
+        return q * pr + pv * fill.cost - fill.cost - fill.fees - exp_settle_fee
 
     ev_point = ev_at(p)
     ev_cons = ev_at(p_lo)
@@ -51,7 +64,7 @@ def expected_value(
     return EVBreakdown(
         quantity=q,
         entry_cost=fill.cost,
-        expected_fees=fill.fees + p * win_fee + (1 - p) * loss_fee,
+        expected_fees=fill.fees + p * win_fee + (1 - p - pv) * loss_fee,
         probability=probability,
         probability_low=probability_low,
         ev_point=ev_point.quantize(_Q),

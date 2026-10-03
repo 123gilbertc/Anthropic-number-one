@@ -107,6 +107,12 @@ class StateModel:
         return col
 
     def _raw(self, x: np.ndarray) -> np.ndarray:
+        if self.kind == "logistic" and all(isinstance(m, LogisticRegression)
+                                           for m in self.members):
+            # same arithmetic as predict_proba, without sklearn's per-call validation cost
+            w = np.column_stack([m.coef_[0] for m in self.members])
+            b = np.array([m.intercept_[0] for m in self.members])
+            return 1.0 / (1.0 + np.exp(-(x @ w + b)))
         return np.column_stack([m.predict_proba(x)[:, 1] for m in self.members])
 
     def predict_matrix(self, x: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:

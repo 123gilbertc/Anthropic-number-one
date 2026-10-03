@@ -16,11 +16,11 @@ from __future__ import annotations
 from datetime import datetime
 
 from sports_edge.domain.enums import Reason
-from sports_edge.domain.records import NHLState, OrderBookSnapshot, SportsbookQuote
+from sports_edge.domain.records import GameStateBase, OrderBookSnapshot, SportsbookQuote
 from sports_edge.triggers.strategy import StrategyConfig
 
 
-def check_reference(q: SportsbookQuote, state: NHLState, now: datetime,
+def check_reference(q: SportsbookQuote, state: GameStateBase, now: datetime,
                     cfg: StrategyConfig) -> Reason | None:
     if q.provider_last_update is None:
         return Reason.REFERENCE_STALE
@@ -56,10 +56,8 @@ def check_book(book: OrderBookSnapshot | None, now: datetime, cfg: StrategyConfi
     return out
 
 
-def check_state(state: NHLState | None, now: datetime, cfg: StrategyConfig,
+def check_state(state: GameStateBase | None, now: datetime, cfg: StrategyConfig,
                 feed_last_seen: datetime | None = None) -> list[Reason]:
-    from sports_edge.ingest.nhl_state import coherent
-
     if state is None:
         return [Reason.GAME_FEED_NOT_CONNECTED]
     out = []
@@ -68,7 +66,7 @@ def check_state(state: NHLState | None, now: datetime, cfg: StrategyConfig,
         seen = max(seen, feed_last_seen)
     if now - seen > cfg.max_state_age:
         out.append(Reason.GAME_STATE_STALE)
-    if not coherent(state):
+    if not state.coherent():
         out.append(Reason.GAME_STATE_INCOHERENT)
     if state.pending_reconciliation or state.in_review:
         out.append(Reason.PENDING_RECONCILIATION)

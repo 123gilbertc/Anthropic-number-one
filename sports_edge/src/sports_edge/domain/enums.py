@@ -6,6 +6,8 @@ from enum import StrEnum
 class Sport(StrEnum):
     NHL = "NHL"
     MLB = "MLB"
+    NFL = "NFL"
+    TENNIS = "TENNIS"
 
 
 class Venue(StrEnum):
@@ -27,6 +29,13 @@ class SettlementRule(StrEnum):
     NHL_REGULATION_ONLY = "NHL_REGULATION_ONLY"  # three-way: home / away / tie-after-60
     MLB_FULL_GAME_INCL_EXTRAS = "MLB_FULL_GAME_INCL_EXTRAS"
     MLB_LISTED_PITCHERS = "MLB_LISTED_PITCHERS"  # void if either listed starter does not start
+    # NFL regular-season games can end tied. Which of these a venue uses is UNKNOWN until
+    # its rules text is read; a mapping must name one explicitly.
+    NFL_INCL_OT_TIE_VOID = "NFL_INCL_OT_TIE_VOID"  # tie refunds the stake
+    NFL_INCL_OT_TIE_LOSES = "NFL_INCL_OT_TIE_LOSES"  # tie: "team wins" pays nothing
+    # Tennis match winner. Retirement handling differs by venue/book (UNKNOWN until read).
+    TENNIS_MATCH_RETIREMENT_ADVANCER_WINS = "TENNIS_MATCH_RETIREMENT_ADVANCER_WINS"
+    TENNIS_MATCH_RETIREMENT_VOID = "TENNIS_MATCH_RETIREMENT_VOID"
 
 
 class SourceStatus(StrEnum):

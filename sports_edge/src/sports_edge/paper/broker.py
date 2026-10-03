@@ -22,7 +22,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sports_edge.domain.enums import Action, Reason
-from sports_edge.domain.records import Decision, NHLState, PaperFill, Position, stable_id
+from sports_edge.domain.records import Decision, GameStateBase, PaperFill, Position, stable_id
 from sports_edge.pricing.fills import walk_asks
 from sports_edge.triggers.engine import TriggerContext, TriggerEngine
 
@@ -36,14 +36,11 @@ class PendingOrder:
     material_key: tuple
 
 
-def material_key(state: NHLState | None) -> tuple:
-    """What must not change between decision and fill (clock ticks may)."""
+def material_key(state: GameStateBase | None) -> tuple:
+    """What must not change between decision and fill (clock ticks may). Sport-specific."""
     if state is None:
         return ("PREGAME",)  # any game state arriving means the game started: recheck fails
-    return (state.home_score, state.away_score, state.period >= 4,
-            state.last_material_event_time, state.last_material_event_kind,
-            state.home_skaters, state.away_skaters, state.home_goalie, state.away_goalie,
-            state.home_net_empty, state.away_net_empty)
+    return state.material_key()
 
 
 @dataclass
@@ -62,7 +59,7 @@ class PaperBroker:
     fills: list[PaperFill] = field(default_factory=list)
     attempts: list[FillAttempt] = field(default_factory=list)
 
-    def submit(self, decision: Decision, state: NHLState | None, quantity: int | None = None,
+    def submit(self, decision: Decision, state: GameStateBase | None, quantity: int | None = None,
                now: datetime | None = None) -> PendingOrder:
         """Queue an approved decision. ``quantity`` may only shrink the planned size.
 

@@ -18,7 +18,7 @@ from pathlib import Path
 
 from sports_edge.adapters.kalshi import KalshiBookManager
 from sports_edge.clock import ReplayClock
-from sports_edge.domain.enums import ModelStatus, SettlementRule, SourceStatus
+from sports_edge.domain.enums import ModelStatus, SettlementRule, SourceStatus, Sport
 from sports_edge.domain.records import Game, MarketMapping, SportsbookQuote, stable_id
 from sports_edge.forecast.models import ChainForecaster
 from sports_edge.health import SourceHealth
@@ -118,9 +118,16 @@ class ReplayStream:
         times = [x["received_time"] for x in self.body]
         if times != sorted(times):
             raise ValueError("replay lines must be sorted by received_time")
-        self.game = Game.model_validate(meta["game"])
-        self.mappings = [MarketMapping.model_validate(m) for m in meta["mappings"]]
-        self.rule = self.mappings[0].settlement_rule
+        # slate_v1: several games of several sports; legacy: one game in "game"
+        specs = meta["games"] if "games" in meta else [
+            {"game": meta["game"], "mappings": meta["mappings"],
+             "pregame_prob": meta.get("pregame_prob"), "anchor_price": meta.get("anchor_price")}]
+        self.games = [Game.model_validate(g["game"]) for g in specs]
+        self.specs = {g.game_id: spec for g, spec in zip(self.games, specs, strict=True)}
+        self.game = self.games[0]
+        self.mappings = [MarketMapping.model_validate(m) for m in specs[0]["mappings"]]
+        self.rule = self.mappings[0].settlement_rule if self.mappings else None
+        self.strength = meta.get("strength", {})
         self.position = 0
 
     def start_time(self) -> datetime:
@@ -135,17 +142,34 @@ class ReplayStream:
     def done(self) -> bool:
         return self.position >= len(self.body)
 
+    def default_strategy(self) -> StrategyConfig:
+        if len(self.games) == 1 and self.rule is not None:
+            return provisional_dip_strategy(self.rule)
+        rules = {}
+        for g in self.games:
+            for m in self.specs[g.game_id]["mappings"]:
+                rules.setdefault(g.sport, SettlementRule(m["settlement_rule"]))
+        base = provisional_dip_strategy(rules.get(Sport.NHL, SettlementRule.NHL_INCLUDING_OT_SO))
+        from dataclasses import replace
+        return replace(base, forecast_rules=tuple(sorted(rules.items())))
+
     def build(self, *, forecaster, cfg=None, limits=None, mechanics_demo=False,
-              use_references=True, extra_sink=None) -> tuple[ReplayClock, Monitor]:
+              use_references=True, extra_sink=None, forecasters=None
+              ) -> tuple[ReplayClock, Monitor]:
         clock = ReplayClock(self.start_time())
         mon = build_monitor(clock, forecaster=forecaster,
-                            cfg=cfg or provisional_dip_strategy(self.rule), limits=limits,
+                            cfg=cfg or self.default_strategy(), limits=limits,
                             status=self.status, mechanics_demo=mechanics_demo)
         mon.use_references = use_references
+        if forecasters:
+            mon.forecasters.update(forecasters)
         if extra_sink is not None:
             mon.sink = TeeSink(MemorySink(), extra_sink)
-        mon.add_game(self.game, self.mappings, self.meta.get("pregame_prob"),
-                     {k: Decimal(v) for k, v in (self.meta.get("anchor_price") or {}).items()})
+        for g in self.games:
+            spec = self.specs[g.game_id]
+            mon.add_game(g, [MarketMapping.model_validate(m) for m in spec["mappings"]],
+                         spec.get("pregame_prob") or None,
+                         {k: Decimal(v) for k, v in (spec.get("anchor_price") or {}).items()})
         for name, kind, stale in (("replay_game", "game_feed", 60),
                                   ("replay_market", "market", 30),
                                   ("replay_odds", "reference", 120)):
@@ -160,7 +184,13 @@ class ReplayStream:
         rt = _t(x["received_time"])
         assert rt is not None
         clock.advance_to(rt)
-        game, rule, status = self.game, self.rule, self.status
+        status = self.status
+        gid = x.get("game_id", self.game.game_id)
+        game = next((g for g in self.games if g.game_id == gid), self.game)
+        rule = None
+        for m in self.specs[game.game_id]["mappings"]:
+            rule = SettlementRule(m["settlement_rule"])
+            break
         if x["stream"] == "game":
             e = x["event"]
             mon.on_game_event(NormalizedGameEvent(
@@ -175,7 +205,8 @@ class ReplayStream:
             mon.on_reference(SportsbookQuote(
                 quote_id=stable_id("q", [q, x["received_time"]]), game_id=game.game_id,
                 book=q["book"], market=q.get("market", "h2h"),
-                settlement_rule=SettlementRule(q.get("settlement_rule", rule.value)),
+                settlement_rule=SettlementRule(q.get("settlement_rule", rule.value if rule
+                                                     else "NHL_INCLUDING_OT_SO")),
                 prices_american=q["prices_american"],
                 provider_last_update=_t(q.get("provider_last_update")), received_time=rt,
                 source="replay_odds"))

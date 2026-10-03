@@ -16,6 +16,9 @@ from sports_edge.domain.records import Game, MarketMapping
 _SPORT_RULES: dict[Sport, set[SettlementRule]] = {
     Sport.NHL: {SettlementRule.NHL_INCLUDING_OT_SO, SettlementRule.NHL_REGULATION_ONLY},
     Sport.MLB: {SettlementRule.MLB_FULL_GAME_INCL_EXTRAS, SettlementRule.MLB_LISTED_PITCHERS},
+    Sport.NFL: {SettlementRule.NFL_INCL_OT_TIE_VOID, SettlementRule.NFL_INCL_OT_TIE_LOSES},
+    Sport.TENNIS: {SettlementRule.TENNIS_MATCH_RETIREMENT_ADVANCER_WINS,
+                   SettlementRule.TENNIS_MATCH_RETIREMENT_VOID},
 }
 
 
@@ -52,6 +55,10 @@ class FinalResult:
     nhl_regulation_away: int | None = None
     mlb_actual_starters: tuple[str, str] | None = None  # (home, away)
     mlb_listed_starters: tuple[str, str] | None = None
+    # NFL / tennis: winner participant id (None for a tie) and how the match ended
+    winner: str | None = None
+    tie: bool = False
+    termination: str | None = None  # tennis: COMPLETED / RETIRED / WALKOVER / DEFAULTED
 
 
 def resolve(mapping: MarketMapping, game: Game, result: FinalResult) -> tuple[Outcome, str]:
@@ -95,6 +102,28 @@ def resolve(mapping: MarketMapping, game: Game, result: FinalResult) -> tuple[Ou
             return Outcome.PENDING, "tied final MLB score: suspended/data error"
         home_won = result.home_score > result.away_score
         return _wl(home_won == sel_home), "full game including extra innings"
+
+    if rule in (SettlementRule.NFL_INCL_OT_TIE_VOID, SettlementRule.NFL_INCL_OT_TIE_LOSES):
+        if result.tie:
+            if rule == SettlementRule.NFL_INCL_OT_TIE_VOID:
+                return Outcome.VOID, "tied game: contract refunded under its tie-void rule"
+            return Outcome.LOSS, "tied game: 'team wins' does not pay under tie-loses rule"
+        if result.winner is None:
+            return Outcome.PENDING, "winner unknown"
+        return _wl(result.winner == mapping.selection_team), "full game including overtime"
+
+    if rule in (SettlementRule.TENNIS_MATCH_RETIREMENT_ADVANCER_WINS,
+                SettlementRule.TENNIS_MATCH_RETIREMENT_VOID):
+        if result.winner is None:
+            return Outcome.PENDING, "winner unknown"
+        if result.termination in ("RETIRED", "WALKOVER", "DEFAULTED") and \
+                rule == SettlementRule.TENNIS_MATCH_RETIREMENT_VOID:
+            return Outcome.VOID, f"match ended by {result.termination}: void under this rule"
+        if result.termination == "WALKOVER" and \
+                rule == SettlementRule.TENNIS_MATCH_RETIREMENT_ADVANCER_WINS:
+            return Outcome.VOID, "walkover before play: treated as void pending venue rules"
+        return _wl(result.winner == mapping.selection_team), \
+            f"match {result.termination or 'COMPLETED'}"
 
     return Outcome.PENDING, f"no resolver for {rule}"
 

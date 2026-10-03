@@ -59,6 +59,15 @@ class Game(Record):
     status: Literal["SCHEDULED", "LIVE", "FINAL", "POSTPONED", "CANCELLED", "SUSPENDED"]
     doubleheader_game_number: int | None = None  # MLB: 1 or 2 when applicable
     source: str
+    # Multi-sport fields. Tennis uses home_team/away_team for player 1 / player 2.
+    competition: str | None = None  # canonical competition id, e.g. "NHL", "ATP-SHANGHAI"
+    participant_kind: Literal["TEAM", "PLAYER"] = "TEAM"
+    names: dict[str, str] = Field(default_factory=dict)  # participant id -> display name
+    round: str | None = None  # tournament round / draw, e.g. "R32", "Q2"
+    venue_name: str | None = None
+    # Sport-specific schedule facts from the provider (tennis format and surface, NFL
+    # season type, MLB park). Absent keys are UNKNOWN; models abstain on missing ones.
+    details: dict[str, Any] = Field(default_factory=dict)
 
 
 class MarketMapping(Record):
@@ -98,8 +107,13 @@ class RawEvent(Record):
     retain_payload: bool  # False when provider terms do not permit storage
 
 
-class NHLState(Record):
-    """Immutable NHL game-state snapshot. Unknown values are ``None``."""
+class GameStateBase(Record):
+    """Fields every sport's state carries. The trigger engine reads only these.
+
+    ``coherent()`` and ``material_key()`` are sport-specific: the engine blocks on an
+    incoherent state, and the paper broker refuses a fill if the material key changed
+    between decision and fill.
+    """
 
     snapshot_id: str
     game_id: str
@@ -107,9 +121,23 @@ class NHLState(Record):
     source_status: SourceStatus
     as_of_event_time: datetime | None
     as_of_received_time: datetime
-    last_material_event_time: datetime | None  # last goal / penalty / goalie change
+    last_material_event_time: datetime | None
     last_material_event_kind: str | None
     applied_seq: int | None
+    is_final: bool = False
+    in_review: bool = False
+    pending_reconciliation: tuple[str, ...] = ()
+
+    def coherent(self) -> bool:
+        return True
+
+    def material_key(self) -> tuple:
+        return (self.last_material_event_time, self.last_material_event_kind, self.is_final)
+
+
+class NHLState(GameStateBase):
+    """Immutable NHL game-state snapshot. Unknown values are ``None``."""
+
     period: int  # 1-3 regulation, 4 = OT, 5 = shootout
     seconds_remaining_in_period: int | None
     home_score: int
@@ -120,10 +148,17 @@ class NHLState(Record):
     away_goalie: str | None
     home_net_empty: bool | None
     away_net_empty: bool | None
-    is_final: bool = False
     final_decided_in: Literal["REG", "OT", "SO"] | None = None
-    in_review: bool = False  # video review / challenge pending
-    pending_reconciliation: tuple[str, ...] = ()  # e.g. ("GOALIE_CHANGE_UNCONFIRMED",)
+
+    def coherent(self) -> bool:
+        from sports_edge.ingest.nhl_state import coherent
+        return coherent(self)
+
+    def material_key(self) -> tuple:
+        return (self.home_score, self.away_score, self.period >= 4,
+                self.last_material_event_time, self.last_material_event_kind,
+                self.home_skaters, self.away_skaters, self.home_goalie, self.away_goalie,
+                self.home_net_empty, self.away_net_empty)
 
 
 class BookLevel(Record):
@@ -218,6 +253,9 @@ class Prediction(Record):
     reliability: Literal["NONE", "LOW", "MEDIUM", "HIGH"]
     created_time: datetime
     valid_until: datetime
+    # P(the contract is voided/refunded), e.g. an NFL tie under a tie-void rule. The
+    # pay-out probability is ``probability``; the loss probability is the remainder.
+    probability_void: float = 0.0
 
 
 # ------------------------------------------------------------ decisions & money

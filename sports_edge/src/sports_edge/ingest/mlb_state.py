@@ -10,19 +10,15 @@ PITCHER_CHANGE, HALF_END, GAME_END, POSTPONED.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from typing import Any, Literal
+from dataclasses import dataclass
+from typing import Any, ClassVar, Literal
 
-from sports_edge.domain.enums import SourceStatus
-from sports_edge.domain.records import FeatureVector, Record, stable_id
+from sports_edge.domain.records import FeatureVector, GameStateBase, stable_id
 from sports_edge.ingest.nhl_state import InvalidEvent, NormalizedGameEvent
+from sports_edge.sports.base import BaseReducer
 
 
-class MLBState(Record):
-    snapshot_id: str
-    game_id: str
-    source: str
-    source_status: SourceStatus
+class MLBState(GameStateBase):
     inning: int
     half: Literal["TOP", "BOTTOM"]
     outs: int
@@ -36,63 +32,46 @@ class MLBState(Record):
     home_pitcher_pitches: int | None
     away_pitcher_pitches: int | None
     lineup_confirmed: bool | None
-    is_final: bool = False
+    home_starter: str | None = None  # first pitcher seen: listed-pitcher settlement
+    away_starter: str | None = None
     postponed: bool = False
-    pending_reconciliation: tuple[str, ...] = ()
+
+    def coherent(self) -> bool:
+        if not 0 <= self.outs <= 3 or self.inning < 1 or self.home_runs < 0 \
+                or self.away_runs < 0:
+            return False
+        if self.balls is not None and not 0 <= self.balls <= 4:
+            return False
+        if self.strikes is not None and not 0 <= self.strikes <= 3:
+            return False
+        return True
+
+    def material_key(self) -> tuple:
+        return (self.inning, self.half, self.outs, self.runners, self.home_runs,
+                self.away_runs, self.home_pitcher, self.away_pitcher, self.is_final,
+                self.postponed)
 
 
-MATERIAL = {"PLAY", "PITCHER_CHANGE", "HALF_END", "SNAPSHOT", "GAME_END", "POSTPONED"}
+MATERIAL = frozenset({"PLAY", "PITCHER_CHANGE", "HALF_END", "SNAPSHOT", "GAME_END",
+                      "POSTPONED"})
 
 
 @dataclass
-class MLBStateReducer:
-    game_id: str
-    home: str
-    away: str
-    state: MLBState | None = None
-    seen: dict[str, str] = field(default_factory=dict)
-    last_seq: int | None = None
+class MLBStateReducer(BaseReducer):
+    state_cls: ClassVar = MLBState
+    prefix: ClassVar[str] = "mlb"
+    material_types: ClassVar[frozenset[str]] = MATERIAL
 
-    def _make(self, src: str, status: SourceStatus, **u: Any) -> MLBState:
-        body = dict(game_id=self.game_id, source=src, source_status=status, **u)
-        return MLBState(snapshot_id=stable_id("mlb", body), **body)
+    def initial_fields(self) -> dict[str, Any]:
+        return dict(inning=1, half="TOP", outs=0, runners=(False, False, False), home_runs=0,
+                    away_runs=0, balls=None, strikes=None, home_pitcher=None,
+                    away_pitcher=None, home_pitcher_pitches=None, away_pitcher_pitches=None,
+                    lineup_confirmed=None)
 
-    def apply(self, ev: NormalizedGameEvent) -> MLBState:
-        if ev.game_id != self.game_id:
-            raise InvalidEvent("event for a different game")
-        if self.state is None:
-            self.state = self._make(ev.source, ev.source_status, inning=1, half="TOP", outs=0,
-                                    runners=(False, False, False), home_runs=0, away_runs=0,
-                                    balls=None, strikes=None, home_pitcher=None,
-                                    away_pitcher=None, home_pitcher_pitches=None,
-                                    away_pitcher_pitches=None, lineup_confirmed=None)
-        s = self.state
-        u = s.model_dump(exclude={"snapshot_id", "game_id", "source", "source_status",
-                                  "schema_version"})
-        flags = set(s.pending_reconciliation)
-        if ev.provider_event_id and ev.type != "SNAPSHOT":
-            h = ev.content_hash()
-            prior = self.seen.get(ev.provider_event_id)
-            if prior == h:
-                return s
-            self.seen[ev.provider_event_id] = h
-            if prior is not None:
-                flags.add("CORRECTION_UNRECONCILED")
-                u["pending_reconciliation"] = tuple(sorted(flags))
-                self.state = self._make(ev.source, ev.source_status, **u)
-                return self.state
-        if ev.type != "SNAPSHOT" and ev.seq is not None and self.last_seq is not None:
-            if ev.seq <= self.last_seq:
-                flags.add("OUT_OF_ORDER")
-                u["pending_reconciliation"] = tuple(sorted(flags))
-                self.state = self._make(ev.source, ev.source_status, **u)
-                return self.state
-            if ev.seq > self.last_seq + 1:
-                flags.add("FEED_GAP")
-        if ev.seq is not None:
-            self.last_seq = ev.seq if self.last_seq is None else max(self.last_seq, ev.seq)
+    def reduce(self, u: dict[str, Any], ev: NormalizedGameEvent) -> None:
         d = ev.data
         t = ev.type
+        flags = set(u["pending_reconciliation"])
         if t == "SNAPSHOT":
             for k in ("inning", "half", "outs", "home_runs", "away_runs", "balls", "strikes",
                       "home_pitcher", "away_pitcher", "home_pitcher_pitches",
@@ -101,7 +80,6 @@ class MLBStateReducer:
                     u[k] = d[k]
             if "runners" in d:
                 u["runners"] = tuple(bool(x) for x in d["runners"])
-            flags = set()
         elif t == "PITCH":
             u["balls"], u["strikes"] = d.get("balls"), d.get("strikes")
             key = "home_pitcher_pitches" if u["half"] == "TOP" else "away_pitcher_pitches"
@@ -111,8 +89,12 @@ class MLBStateReducer:
             u["outs"] = d["outs"]
             u["runners"] = tuple(bool(x) for x in d["runners"])
             runs = int(d.get("runs", 0))
+            batting = self.away if u["half"] == "TOP" else self.home
             u["away_runs" if u["half"] == "TOP" else "home_runs"] += runs
             u["balls"] = u["strikes"] = 0 if d.get("pa_complete") else u["balls"]
+            if runs:
+                self.last_labels.append(
+                    f"{d.get('desc', 'Run' if runs == 1 else 'Runs')}: {batting} +{runs}")
         elif t == "PITCHER_CHANGE":
             side = "home" if d["team"] == self.home else "away"
             u[f"{side}_pitcher"] = d.get("pitcher")
@@ -121,6 +103,8 @@ class MLBStateReducer:
             flags.discard(flag)
             if d.get("pitcher") is None:
                 flags.add(flag)
+            self.last_labels.append(f"Pitching change {d['team']}: "
+                                    f"{d.get('pitcher') or 'UNKNOWN'}")
         elif t == "HALF_END":
             u["outs"], u["runners"] = 0, (False, False, False)
             if u["half"] == "TOP":
@@ -133,11 +117,14 @@ class MLBStateReducer:
             u["postponed"] = True
         else:
             raise InvalidEvent(f"unknown MLB event {t}")
+        if t == "SNAPSHOT":
+            flags = set()
         if not (0 <= u["outs"] <= 3) or u["inning"] < 1:
             raise InvalidEvent("invalid outs/inning")
+        for side in ("home", "away"):
+            if u[f"{side}_starter"] is None and u[f"{side}_pitcher"] is not None:
+                u[f"{side}_starter"] = u[f"{side}_pitcher"]
         u["pending_reconciliation"] = tuple(sorted(flags))
-        self.state = self._make(ev.source, ev.source_status, **u)
-        return self.state
 
 
 MLB_FEATURE_VERSION = "mlb_v1"

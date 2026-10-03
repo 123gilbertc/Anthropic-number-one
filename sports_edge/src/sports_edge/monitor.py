@@ -20,7 +20,7 @@ from typing import Protocol
 from sports_edge.adapters.kalshi import KalshiBookManager
 from sports_edge.clock import Clock
 from sports_edge.contracts.settlement import FinalResult, resolve
-from sports_edge.domain.enums import Action, Outcome
+from sports_edge.domain.enums import Action, Outcome, Sport
 from sports_edge.domain.records import (
     Decision,
     Game,
@@ -33,12 +33,12 @@ from sports_edge.domain.records import (
     SportsbookQuote,
     stable_id,
 )
-from sports_edge.features.nhl import build_features
 from sports_edge.forecast.models import ChainForecaster
 from sports_edge.health import SourceHealth
-from sports_edge.ingest.nhl_state import InvalidEvent, NHLStateReducer, NormalizedGameEvent
+from sports_edge.ingest.nhl_state import InvalidEvent, NormalizedGameEvent
 from sports_edge.paper.broker import APPROVING, PaperBroker
 from sports_edge.risk.exposure import ExposureError
+from sports_edge.sports.base import adapter_for
 from sports_edge.triggers.engine import TriggerContext, TriggerEngine
 
 
@@ -80,7 +80,7 @@ class MemorySink:
 @dataclass
 class GameRuntime:
     game: Game
-    reducer: NHLStateReducer
+    reducer: object  # sport-specific reducer: .apply(ev) -> ApplyResult, .state
     mappings: list[MarketMapping]
     pregame_prob: dict[str, float | None]  # team -> pregame prior, None = unknown
     anchor_price: dict[str, Decimal] = field(default_factory=dict)  # contract -> anchor
@@ -90,6 +90,7 @@ class GameRuntime:
     last_forecast_at: datetime | None = None
     last_decision: dict[str, Decision] = field(default_factory=dict)
     settled: bool = False
+    pregame_predictions: dict[str, Prediction] = field(default_factory=dict)
 
 
 @dataclass
@@ -113,11 +114,26 @@ class Monitor:
     listeners: list = field(default_factory=list)
     signals: dict[str, Decision] = field(default_factory=dict)  # decision_id -> approval
     decision_state: dict[str, NHLState | None] = field(default_factory=dict)
+    # sport -> SportForecaster. NHL falls back to ``forecaster`` (a ChainForecaster).
+    forecasters: dict = field(default_factory=dict)
+    # optional observers: called with (kind, payload) for book/prediction/annotation data
+    observers: list = field(default_factory=list)
     _alert_keys: set[str] = field(default_factory=set)
 
     def _emit(self, kind: str, payload: dict) -> None:
         for fn in self.listeners:
             fn(kind, payload)
+
+    def _observe(self, kind: str, payload: dict) -> None:
+        for fn in self.observers:
+            fn(kind, payload)
+
+    def forecaster_for(self, sport: Sport):
+        f = self.forecasters.get(sport)
+        if f is None and sport == Sport.NHL and self.forecaster is not None:
+            from sports_edge.sports.nhl import NHLForecaster
+            f = self.forecasters[sport] = NHLForecaster(self.forecaster)
+        return f
 
     # --------------------------------------------------------------- setup
 
@@ -126,7 +142,7 @@ class Monitor:
                  anchor_price: dict[str, Decimal] | None = None) -> None:
         self.games[game.game_id] = GameRuntime(
             game=game,
-            reducer=NHLStateReducer(game.game_id, game.home_team, game.away_team),
+            reducer=adapter_for(game.sport).new_reducer(game),
             mappings=mappings,
             pregame_prob=pregame_prob or {game.home_team: None, game.away_team: None},
             anchor_price=dict(anchor_price or {}),
@@ -162,6 +178,17 @@ class Monitor:
             return
         if h:
             h.gaps, h.duplicates = rt.reducer.gaps, rt.reducer.duplicates
+        if res.applied:
+            labels = list(getattr(rt.reducer, "last_labels", []) or [])
+            ad = adapter_for(rt.game.sport)
+            if not labels and hasattr(ad, "annotations"):
+                labels = ad.annotations(ev, rt.game)
+            for label in labels:
+                self._observe("annotation", {
+                    "game_id": ev.game_id, "kind": ev.type, "label": label,
+                    "event_time": ev.event_time, "received_time": ev.received_time,
+                    "provider_event_id": ev.provider_event_id,
+                    "snapshot_id": res.state.snapshot_id, "source": ev.source})
         self.sink.state(res.state)
         self._emit("state", {"game_id": ev.game_id, "snapshot_id": res.state.snapshot_id,
                              "applied": res.applied, "note": res.note})
@@ -186,6 +213,10 @@ class Monitor:
             h.gaps, h.duplicates = self.books.gaps, self.books.duplicates
         if ticker is None:
             return
+        book = self.books.books.get(ticker)
+        if book is not None and book.last_received is not None:
+            self._observe("book", {"contract_id": ticker, "snapshot": book.snapshot(),
+                                   "exchange_time": exch, "received_time": received})
         for rt in self.games.values():
             if any(m.contract_id == ticker for m in rt.mappings):
                 self._evaluate(rt, now, only_contract=ticker)
@@ -223,18 +254,24 @@ class Monitor:
         state = rt.reducer.state
         if state is None:
             return
+        f = self.forecaster_for(rt.game.sport)
         for m in rt.mappings:
-            if self.forecaster is None:
+            if f is None:
                 rt.predictions.pop(m.contract_id, None)
                 rt.abstentions[m.contract_id] = "NO_MODEL_LOADED"
                 continue
-            is_home = m.selection_team == rt.game.home_team
-            fv = build_features(state, is_home, rt.pregame_prob.get(m.selection_team))
-            out = self.forecaster.predict(fv, rt.game.game_id, m.selection_team, now)
+            out = f.predict(state, rt.game, m.selection_team,
+                            rt.pregame_prob.get(m.selection_team),
+                            self.engine.cfg.rule_for(rt.game.sport), now)
             if isinstance(out, Prediction):
+                prev = rt.predictions.get(m.contract_id)
                 rt.predictions[m.contract_id] = out
                 rt.abstentions.pop(m.contract_id, None)
                 self.sink.prediction(out)
+                if prev is None or prev.prediction_id != out.prediction_id:
+                    self._observe("prediction", {"contract_id": m.contract_id,
+                                                 "game_id": rt.game.game_id,
+                                                 "prediction": out})
             else:
                 rt.predictions.pop(m.contract_id, None)
                 rt.abstentions[m.contract_id] = out
@@ -247,9 +284,8 @@ class Monitor:
         now = self.clock.now()
         pregame = rt.reducer.state is None and now < rt.game.scheduled_start
         pred = rt.predictions.get(m.contract_id)
-        if pregame and self.pregame_forecaster is not None:
-            pred = self.pregame_forecaster.predict(  # type: ignore[attr-defined]
-                rt.game.game_id, m.selection_team, rt.pregame_prob.get(m.selection_team), now)
+        if pregame:
+            pred = self._pregame_prediction(rt, m, now)
         return TriggerContext(
             game=rt.game, mapping=m, state=rt.reducer.state, book=snap,
             prediction=pred, is_pregame=pregame,
@@ -260,6 +296,24 @@ class Monitor:
             market_last_seen=self._last_seen("market"),
             game_last_seen=self._last_seen("game_feed"),
         )
+
+    def _pregame_prediction(self, rt: GameRuntime, m: MarketMapping, now: datetime
+                            ) -> Prediction | None:
+        cached = rt.pregame_predictions.get(m.contract_id)
+        if cached is not None and cached.valid_until >= now:
+            return cached
+        pred = None
+        prior = rt.pregame_prob.get(m.selection_team)
+        if self.pregame_forecaster is not None and prior is not None:
+            pred = self.pregame_forecaster.predict(  # type: ignore[attr-defined]
+                rt.game.game_id, m.selection_team, prior, now)
+        elif (f := self.forecaster_for(rt.game.sport)) is not None:
+            out = f.predict(None, rt.game, m.selection_team, prior,
+                            self.engine.cfg.rule_for(rt.game.sport), now)
+            pred = out if isinstance(out, Prediction) else None
+        if pred is not None:
+            rt.pregame_predictions[m.contract_id] = pred
+        return pred
 
     def _last_seen(self, kind: str) -> datetime | None:
         seen = [h.last_received for h in self.health.values()
@@ -358,12 +412,7 @@ class Monitor:
     def _settle(self, rt: GameRuntime, ev: NormalizedGameEvent, now: datetime) -> None:
         s = rt.reducer.state
         assert s is not None
-        res = FinalResult(
-            home_score=s.home_score, away_score=s.away_score, status="FINAL",
-            nhl_decided_in=s.final_decided_in,  # type: ignore[arg-type]
-            nhl_regulation_home=ev.data.get("regulation_home_score"),
-            nhl_regulation_away=ev.data.get("regulation_away_score"),
-        )
+        res = self._final_result(rt, s, ev)
         for m in rt.mappings:
             pos = self.broker.positions.get((rt.game.game_id, m.contract_id))
             outcome, detail = resolve(m, rt.game, res)
@@ -381,6 +430,27 @@ class Monitor:
             self._emit("settlement", {"game_id": rt.game.game_id, "contract_id": m.contract_id,
                                       "outcome": outcome.value, "payout": str(payout - fee)})
         rt.settled = True
+
+    def _final_result(self, rt: GameRuntime, s, ev: NormalizedGameEvent) -> FinalResult:
+        sport = rt.game.sport
+        if sport == Sport.NHL:
+            return FinalResult(
+                home_score=s.home_score, away_score=s.away_score, status="FINAL",
+                nhl_decided_in=s.final_decided_in,
+                nhl_regulation_home=ev.data.get("regulation_home_score"),
+                nhl_regulation_away=ev.data.get("regulation_away_score"))
+        out = adapter_for(sport).final_outcome(s, rt.game, ev.data)
+        if sport == Sport.MLB:
+            listed = rt.game.details.get("listed_pitchers")
+            return FinalResult(
+                home_score=s.home_runs, away_score=s.away_runs,
+                status=out.status,  # type: ignore[arg-type]
+                mlb_actual_starters=(s.home_starter, s.away_starter),
+                mlb_listed_starters=tuple(listed) if listed else None)
+        extra = dict(out.extra)
+        return FinalResult(home_score=0, away_score=0, status=out.status,  # type: ignore[arg-type]
+                           winner=out.winner, tie=out.tie,
+                           termination=extra.get("termination"))
 
     # --------------------------------------------------------------- views
 
@@ -437,6 +507,7 @@ class Monitor:
         return {
             "game": rt.game.model_dump(mode="json"),
             "state": s.model_dump(mode="json") if s else None,
+            "scoreboard": adapter_for(rt.game.sport).scoreboard(s, rt.game),
             "model_favored_team": favored,
             "value_side": value_side[0] if value_side else None,
             "contracts": rows,
