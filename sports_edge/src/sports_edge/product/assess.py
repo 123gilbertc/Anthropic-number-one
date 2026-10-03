@@ -262,7 +262,6 @@ class Assessor:
         value = [c for c in contracts if c["state"] in ("PAPER ENTRY ELIGIBLE",
                                                         "VALUE CANDIDATE")]
         value_side = value[0] if value else None
-        states = [c["state"] for c in contracts]
         label = board_label(contracts, bool(probs), bool(rt.mappings))
         if st is not None and st.is_final:
             label = "FINAL"
@@ -407,7 +406,8 @@ class Assessor:
         for m in rt.mappings:
             a = rt.abstentions.get(m.contract_id)
             if a:
-                out.append({"label": f"Forecast unavailable for {g.names.get(m.selection_team, m.selection_team)}: {a}",
+                who = g.names.get(m.selection_team, m.selection_team)
+                out.append({"label": f"Forecast unavailable for {who}: {a}",
                             "severity": "BLOCKING"})
         if target is not None and st is not None:
             feats = adapter_for(g.sport).features(st, g, target["participant"],
