@@ -57,6 +57,7 @@ class PaperOrder(BaseModel):
     reasons: list[str] = []
     outcome: Outcome | None = None
     settled_pnl: Decimal | None = None
+    user_id: str = "operator"  # owner of the paper portfolio (customer id or operator)
 
 
 class LedgerEvent(BaseModel):
@@ -71,6 +72,7 @@ class LedgerEvent(BaseModel):
     order_id: str | None
     contract_id: str
     detail: dict[str, Any]
+    user_id: str = "operator"
 
 
 class CommandError(Exception):
@@ -190,10 +192,12 @@ class AppSession:
         elif kind == "signal" and self.reviewer is not None:
             self._schedule_review(payload["decision_id"])
 
-    def _ledger(self, kind, contract_id: str, order_id: str | None, detail: dict) -> None:
+    def _ledger(self, kind, contract_id: str, order_id: str | None, detail: dict,
+                user_id: str = "operator") -> None:
         ev = LedgerEvent(ledger_seq=len(self.ledger) + 1, run_id=self.run_id, mode=self.mode,
                          data_label=self.data_label, time=self.clock.now(), kind=kind,
-                         order_id=order_id, contract_id=contract_id, detail=detail)
+                         order_id=order_id, contract_id=contract_id, detail=detail,
+                         user_id=user_id)
         self.ledger.append(ev)
         self.events.append("ledger", ev.model_dump(mode="json"))
         if self.db is not None:
@@ -222,7 +226,8 @@ class AppSession:
         self._ledger(kind, o.contract_id, oid, {
             "reasons": p["reasons"],
             "filled_quantity": fill.filled_quantity if fill else 0,
-            "cost": str(fill.cost) if fill else "0", "fees": str(fill.fees) if fill else "0"})
+            "cost": str(fill.cost) if fill else "0", "fees": str(fill.fees) if fill else "0"},
+            o.user_id)
 
     def _settled(self, p: dict) -> None:
         outcome = Outcome(p["outcome"])
@@ -234,7 +239,8 @@ class AppSession:
                    Outcome.LOSS: -outlay, Outcome.VOID: Decimal(0)}.get(outcome)
             self.orders[oid] = o.model_copy(update={"outcome": outcome, "settled_pnl": pnl})
             self._ledger("POSITION_SETTLED", o.contract_id, oid,
-                         {"outcome": outcome.value, "pnl": None if pnl is None else str(pnl)})
+                         {"outcome": outcome.value, "pnl": None if pnl is None else str(pnl)},
+                         o.user_id)
 
     def _schedule_review(self, decision_id: str) -> None:
         try:
@@ -327,7 +333,8 @@ class AppSession:
     # ------------------------------------------------------------------ commands
 
     def place_order(self, decision_id: str, idempotency_key: str, quantity: int | None,
-                    expected_contract_id: str | None = None) -> tuple[PaperOrder, bool]:
+                    expected_contract_id: str | None = None, owner: str = "operator"
+                    ) -> tuple[PaperOrder, bool]:
         """Returns (order, created). Same key -> same order (duplicate click safe).
 
         Serialized with every other state change, so concurrent requests cannot race.
@@ -335,12 +342,16 @@ class AppSession:
         """
         with self.lock:
             return self._place_order(decision_id, idempotency_key, quantity,
-                                     expected_contract_id)
+                                     expected_contract_id, owner)
 
     def _place_order(self, decision_id: str, idempotency_key: str, quantity: int | None,
-                     expected_contract_id: str | None) -> tuple[PaperOrder, bool]:
+                     expected_contract_id: str | None, owner: str = "operator"
+                     ) -> tuple[PaperOrder, bool]:
         if not idempotency_key or len(idempotency_key) > 100:
             raise CommandError(422, "BAD_IDEMPOTENCY_KEY", "1-100 characters required")
+        # keys are per owner: two customers can never collide on (or see) each other's key
+        if owner != "operator":
+            idempotency_key = f"{owner}:{idempotency_key}"
         if idempotency_key in self.by_key:
             o = self.orders[self.by_key[idempotency_key]]
             if o.decision_id != decision_id:
@@ -361,12 +372,13 @@ class AppSession:
                                f"signal is for {sig.contract_id}, not {expected_contract_id}")
         if sig is not None:
             busy = [o for o in self.orders.values()
-                    if o.contract_id == sig.contract_id and o.status == "PENDING"]
+                    if o.contract_id == sig.contract_id and o.status == "PENDING"
+                    and o.user_id == owner]
             if busy:
                 raise CommandError(409, "ORDER_PENDING_FOR_CONTRACT",
                                    f"order {busy[0].order_id} is still pending for this contract")
         try:
-            pending = self.monitor.submit_signal(decision_id, quantity)
+            pending = self.monitor.submit_signal(decision_id, quantity, owner)
         except SignalError as e:
             status = 410 if e.code == "SIGNAL_EXPIRED" else 409 if e.code in (
                 "SIGNAL_SUPERSEDED", "EXPOSURE_LIMIT") else 404 if e.code == "UNKNOWN_SIGNAL" else 422
@@ -378,14 +390,16 @@ class AppSession:
                        game_id=d.game_id, contract_id=d.contract_id or "",
                        selection_team=d.selection_team or "",
                        requested_quantity=d.planned_quantity, status="PENDING",
-                       created_time=self.clock.now(), not_before=pending.not_before)
+                       created_time=self.clock.now(), not_before=pending.not_before,
+                       user_id=owner)
         self.orders[oid] = o
         self.by_key[idempotency_key] = oid
         self.by_decision[decision_id] = oid
         self._ledger("ORDER_ACCEPTED", o.contract_id, oid,
                      {"requested_quantity": o.requested_quantity,
                       "not_before": pending.not_before.isoformat(),
-                      "note": "Fill is simulated only if every gate still passes after the delay."})
+                      "note": "Fill is simulated only if every gate still passes after the delay."},
+                     owner)
         return o, True
 
     # ------------------------------------------------------------------ views
@@ -406,10 +420,11 @@ class AppSession:
                 "seconds_to_expiry": (d.expires_at - now).total_seconds(),
                 "order_id": oid}
 
-    def evaluation(self) -> dict:
+    def evaluation(self, owner: str | None = None) -> dict:
         from sports_edge.evaluation.metrics import conditional_win_rate
 
-        filled = [o for o in self.orders.values() if o.fill is not None]
+        mine = [o for o in self.orders.values() if owner is None or o.user_id == owner]
+        filled = [o for o in mine if o.fill is not None]
         settled = [o for o in filled if o.outcome in (Outcome.WIN, Outcome.LOSS)]
         spend = sum((o.fill.cost + o.fill.fees for o in filled if o.fill), Decimal(0))
         pnl = sum((o.settled_pnl or Decimal(0) for o in settled), Decimal(0))
@@ -419,8 +434,8 @@ class AppSession:
             "warning": "Single replay run. Not evidence of an edge."
             if self.mode == "REPLAY" else None,
             "signals": len(approvals),
-            "orders": len(self.orders),
-            "rejected_orders": sum(1 for o in self.orders.values() if o.status == "REJECTED"),
+            "orders": len(mine),
+            "rejected_orders": sum(1 for o in mine if o.status == "REJECTED"),
             "filled_orders": len(filled),
             "settled_orders": len(settled),
             "total_spend_all_in": str(spend),

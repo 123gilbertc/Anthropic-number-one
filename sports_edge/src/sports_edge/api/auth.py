@@ -18,10 +18,13 @@ from pathlib import Path
 
 from fastapi import HTTPException, Request
 
-COOKIE = "se_session"
+COOKIE = "se_session"  # operator session
+USER_COOKIE = "se_user"  # customer session (see accounts.py)
 
 
 class Auth:
+    accounts = None  # set by the server: accounts.Accounts
+
     def __init__(self, runs_dir: Path) -> None:
         tok = os.environ.get("SPORTS_EDGE_API_TOKEN")
         if not tok:
@@ -62,3 +65,26 @@ class Auth:
             raise HTTPException(401, {"code": "NOT_AUTHENTICATED", "detail": "log in first"})
         if request.headers.get("x-se-request") != "1":
             raise HTTPException(403, {"code": "CSRF", "detail": "missing X-SE-Request header"})
+
+    # ------------------------------------------------------------------ customers
+
+    def actor(self, request: Request) -> tuple[str, str] | None:
+        """(owner, role) for the caller, or None. Operator wins if both are present."""
+        if self.is_authenticated(request):
+            return "operator", "operator"
+        if self.accounts is None:
+            return None
+        uid = self.accounts.sessions.user_id(request.cookies.get(USER_COOKIE))
+        if uid and self.accounts.store.user(uid):
+            return uid, "customer"
+        return None
+
+    def require_actor(self, request: Request) -> tuple[str, str]:
+        a = self.actor(request)
+        if a is None:
+            raise HTTPException(401, {"code": "NOT_AUTHENTICATED", "detail": "sign in first"})
+        bearer = request.headers.get("authorization", "").lower().startswith("bearer ")
+        if not bearer and request.method not in ("GET", "HEAD") and \
+                request.headers.get("x-se-request") != "1":
+            raise HTTPException(403, {"code": "CSRF", "detail": "missing X-SE-Request header"})
+        return a

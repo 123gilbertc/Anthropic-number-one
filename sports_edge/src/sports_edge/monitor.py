@@ -41,6 +41,19 @@ from sports_edge.risk.exposure import ExposureError
 from sports_edge.sports.base import adapter_for
 from sports_edge.triggers.engine import TriggerContext, TriggerEngine
 
+DEFAULT_OWNER = "operator"
+
+
+@dataclass
+class Portfolio:
+    """One owner's paper book: its own exposure ledger, cooldowns, dedupe and broker.
+
+    Game state, forecasts, order books and price history are shared; money is not."""
+
+    owner: str
+    engine: TriggerEngine
+    broker: PaperBroker
+
 
 class SignalError(Exception):
     def __init__(self, code: str, detail: str) -> None:
@@ -116,6 +129,8 @@ class Monitor:
     decision_state: dict[str, NHLState | None] = field(default_factory=dict)
     # sport -> SportForecaster. NHL falls back to ``forecaster`` (a ChainForecaster).
     forecasters: dict = field(default_factory=dict)
+    portfolios: dict = field(default_factory=dict)  # owner -> Portfolio (customers)
+    signal_owner: dict = field(default_factory=dict)  # decision_id -> owner
     # optional observers: called with (kind, payload) for book/prediction/annotation data
     observers: list = field(default_factory=list)
     _alert_keys: set[str] = field(default_factory=set)
@@ -127,6 +142,24 @@ class Monitor:
     def _observe(self, kind: str, payload: dict) -> None:
         for fn in self.observers:
             fn(kind, payload)
+
+    def portfolio(self, owner: str = DEFAULT_OWNER) -> Portfolio:
+        if owner == DEFAULT_OWNER:
+            return Portfolio(owner, self.engine, self.broker)
+        p = self.portfolios.get(owner)
+        if p is None:
+            from dataclasses import replace
+
+            from sports_edge.risk.exposure import ExposureLedger
+            eng = replace(self.engine, ledger=ExposureLedger(self.engine.ledger.limits),
+                          scope=owner, _dedupe=set(), _last_approval={})
+            # price history (dip detection) is market data: shared, not per portfolio
+            eng._price_hist = self.engine._price_hist
+            p = self.portfolios[owner] = Portfolio(owner, eng, PaperBroker(eng))
+        return p
+
+    def all_portfolios(self) -> list[Portfolio]:
+        return [self.portfolio(DEFAULT_OWNER), *self.portfolios.values()]
 
     def forecaster_for(self, sport: Sport):
         f = self.forecasters.get(sport)
@@ -242,13 +275,14 @@ class Monitor:
     def tick(self) -> None:
         """Periodic housekeeping (replay calls it per event; live on a timer)."""
         now = self.clock.now()
-        for att in self.broker.process(now, self._context_for_decision):
-            if att.filled:
-                self.sink.fill(att.filled)
-            self._emit("order_result", {
-                "decision_id": att.decision_id,
-                "fill": att.filled.model_dump(mode="json") if att.filled else None,
-                "reasons": [r.value for r in att.reasons]})
+        for pf in self.all_portfolios():
+            for att in pf.broker.process(now, self._context_for_decision):
+                if att.filled:
+                    self.sink.fill(att.filled)
+                self._emit("order_result", {
+                    "decision_id": att.decision_id, "owner": pf.owner,
+                    "fill": att.filled.model_dump(mode="json") if att.filled else None,
+                    "reasons": [r.value for r in att.reasons]})
 
     # --------------------------------------------------------------- internals
 
@@ -279,7 +313,8 @@ class Monitor:
                 rt.predictions.pop(m.contract_id, None)
                 rt.abstentions[m.contract_id] = out
 
-    def context(self, rt: GameRuntime, m: MarketMapping) -> TriggerContext:
+    def context(self, rt: GameRuntime, m: MarketMapping,
+                owner: str = DEFAULT_OWNER) -> TriggerContext:
         book = self.books.books.get(m.contract_id)
         snap = None
         if book is not None and book.last_received is not None:
@@ -293,7 +328,8 @@ class Monitor:
             game=rt.game, mapping=m, state=rt.reducer.state, book=snap,
             prediction=pred, is_pregame=pregame,
             references=tuple(rt.references.values()) if self.use_references else (),
-            has_position=self.broker.has_position(rt.game.game_id, m.contract_id),
+            has_position=self.portfolio(owner).broker.has_position(rt.game.game_id,
+                                                                   m.contract_id),
             anchor_price=rt.anchor_price.get(m.contract_id),
             abstention=rt.abstentions.get(m.contract_id),
             market_last_seen=self._last_seen("market"),
@@ -331,7 +367,7 @@ class Monitor:
         p = rt.predictions.get(m.contract_id)
         if state is not None and (p is None or p.snapshot_id != state.snapshot_id):
             self._forecast(rt, self.clock.now())
-        return self.context(rt, m)
+        return self.context(rt, m, self.signal_owner.get(d.decision_id, DEFAULT_OWNER))
 
     def _evaluate(self, rt: GameRuntime, now: datetime, only_contract: str | None = None) -> None:
         state = rt.reducer.state
@@ -361,6 +397,7 @@ class Monitor:
 
     def _register_signal(self, d: Decision, state: NHLState | None) -> None:
         self.signals[d.decision_id] = d
+        self.signal_owner[d.decision_id] = DEFAULT_OWNER
         self.decision_state[d.decision_id] = state
         if d.dedupe_key not in self._alert_keys:  # one alert per state/strategy version
             self._alert_keys.add(d.dedupe_key)
@@ -371,7 +408,8 @@ class Monitor:
 
     # --------------------------------------------------------------- commands
 
-    def preview(self, game_id: str, contract_id: str, register: bool = True) -> Decision:
+    def preview(self, game_id: str, contract_id: str, register: bool = True,
+                owner: str = DEFAULT_OWNER) -> Decision:
         """Fresh evaluation of one contract right now. Does not submit anything.
 
         ``register=True`` (a user's preview) makes an approval orderable for its TTL;
@@ -384,17 +422,21 @@ class Monitor:
         if st is not None and (p is None or p.snapshot_id != st.snapshot_id
                                or p.valid_until < now):
             self._forecast(rt, now)
-        d = self.engine.evaluate(self.context(rt, m), now)
+        pf = self.portfolio(owner)
+        d = pf.engine.evaluate(self.context(rt, m, owner), now)
         if register and d.action in APPROVING:
             self.signals[d.decision_id] = d
+            self.signal_owner[d.decision_id] = owner
             self.decision_state[d.decision_id] = rt.reducer.state
         return d
 
-    def submit_signal(self, decision_id: str, quantity: int | None = None):
+    def submit_signal(self, decision_id: str, quantity: int | None = None,
+                      owner: str = DEFAULT_OWNER):
         """Queue a paper order for an approved, unexpired signal. Raises SignalError."""
         d = self.signals.get(decision_id)
-        if d is None:
+        if d is None or self.signal_owner.get(decision_id, DEFAULT_OWNER) != owner:
             raise SignalError("UNKNOWN_SIGNAL", "no such approved signal")
+        pf = self.portfolio(owner)
         now = self.clock.now()
         if now > d.expires_at:
             raise SignalError("SIGNAL_EXPIRED", f"signal expired at {d.expires_at.isoformat()}")
@@ -406,12 +448,12 @@ class Monitor:
                               f"newer decision {latest.action.value}: "
                               + ",".join(r.value for r in latest.reasons))
         try:
-            order = self.broker.submit(d, self.decision_state.get(decision_id), quantity, now)
+            order = pf.broker.submit(d, self.decision_state.get(decision_id), quantity, now)
         except ExposureError as e:
             raise SignalError("EXPOSURE_LIMIT", str(e)) from e
         except ValueError as e:
             raise SignalError("INVALID_QUANTITY", str(e)) from e
-        self.engine.note_submitted(d)
+        pf.engine.note_submitted(d)
         return order
 
 
@@ -420,21 +462,25 @@ class Monitor:
         assert s is not None
         res = self._final_result(rt, s, ev)
         for m in rt.mappings:
-            pos = self.broker.positions.get((rt.game.game_id, m.contract_id))
             outcome, detail = resolve(m, rt.game, res)
             self.sink.settlement(Settlement(
                 settlement_id=stable_id("set", [rt.game.game_id, m.contract_id]),
                 game_id=rt.game.game_id, contract_id=m.contract_id,
                 selection_team=m.selection_team, outcome=outcome, settled_time=now,
                 detail=detail))
-            if pos is None or pos.contracts == 0 or outcome == Outcome.PENDING:
-                continue
-            payout = {Outcome.WIN: Decimal(pos.contracts), Outcome.LOSS: Decimal(0),
-                      Outcome.VOID: pos.total_cost + pos.total_fees}[outcome]
-            fee = self.engine.fee_model.settlement_fee(pos.contracts, outcome == Outcome.WIN)
-            self.engine.ledger.record_settlement(rt.game.game_id, m.selection_team, payout - fee)
             self._emit("settlement", {"game_id": rt.game.game_id, "contract_id": m.contract_id,
-                                      "outcome": outcome.value, "payout": str(payout - fee)})
+                                      "outcome": outcome.value})
+            if outcome == Outcome.PENDING:
+                continue
+            for pf in self.all_portfolios():
+                pos = pf.broker.positions.get((rt.game.game_id, m.contract_id))
+                if pos is None or pos.contracts == 0:
+                    continue
+                payout = {Outcome.WIN: Decimal(pos.contracts), Outcome.LOSS: Decimal(0),
+                          Outcome.VOID: pos.total_cost + pos.total_fees}[outcome]
+                fee = pf.engine.fee_model.settlement_fee(pos.contracts, outcome == Outcome.WIN)
+                pf.engine.ledger.record_settlement(rt.game.game_id, m.selection_team,
+                                                   payout - fee)
         rt.settled = True
 
     def _final_result(self, rt: GameRuntime, s, ev: NormalizedGameEvent) -> FinalResult:

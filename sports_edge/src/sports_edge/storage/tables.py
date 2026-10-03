@@ -119,3 +119,43 @@ ledger_events = _record_table(
     Column("data_label", String(32), nullable=False),
     Column("kind", String(24), nullable=False),
 )
+
+# Customer accounts. Mutable documents (preferences, watchlist, subscription) live in
+# user_docs; every change is also written to audit_log. Billing events are stored by
+# provider event id so each is processed at most once.
+from sqlalchemy import Boolean, PrimaryKeyConstraint  # noqa: E402
+
+users = Table(
+    "users", metadata,
+    Column("user_id", String(40), primary_key=True),
+    Column("email", String(260), nullable=False, unique=True),
+    Column("password_hash", String(200), nullable=False),
+    Column("role", String(16), nullable=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("deleted_at", DateTime(timezone=True)),
+)
+user_docs = Table(
+    "user_docs", metadata,
+    Column("user_id", String(40), nullable=False),
+    Column("kind", String(40), nullable=False),
+    Column("doc", J, nullable=False),
+    Column("updated_at", DateTime(timezone=True), server_default=func.now(), nullable=False),
+    PrimaryKeyConstraint("user_id", "kind"),
+)
+billing_events = Table(
+    "billing_events", metadata,
+    Column("event_id", String(120), primary_key=True),
+    Column("kind", String(80), nullable=False),
+    Column("payload_sha256", String(64), nullable=False),
+    Column("processed", Boolean, nullable=False, default=True),
+    Column("received_at", DateTime(timezone=True), server_default=func.now(), nullable=False),
+)
+audit_log = Table(
+    "audit_log", metadata,
+    Column("pk", BigInteger().with_variant(Integer, "sqlite"), primary_key=True,
+           autoincrement=True),
+    Column("t", DateTime(timezone=True), server_default=func.now(), nullable=False),
+    Column("user_id", String(40), index=True),
+    Column("action", String(60), nullable=False),
+    Column("detail", J, nullable=False),
+)

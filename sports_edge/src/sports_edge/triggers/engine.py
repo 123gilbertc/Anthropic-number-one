@@ -70,6 +70,10 @@ class TriggerEngine:
     usable_statuses: frozenset[SourceStatus] = USABLE_STATUSES
     allowed_model_statuses: frozenset[ModelStatus] = frozenset({ModelStatus.VALIDATED})
     demo_label: str | None = None  # set only for synthetic mechanics demos; added to every note
+    # Portfolio scope: each customer's paper portfolio evaluates with its own exposure
+    # ledger, cooldowns and dedupe. The scope enters every decision id so two
+    # portfolios can never share (or collide on) a decision.
+    scope: str = ""
     _price_hist: dict[str, deque[tuple[datetime, Decimal]]] = field(default_factory=dict)
     _dedupe: set[str] = field(default_factory=set)
     _last_approval: dict[str, datetime] = field(default_factory=dict)
@@ -102,8 +106,11 @@ class TriggerEngine:
                   notes: tuple[str, ...] = (), fill=None) -> Decision:
         snap = ctx.state.snapshot_id if ctx.state else None
         pred = ctx.prediction
-        key = stable_id("dk", [ctx.mapping.contract_id, snap, self.cfg.strategy_version,
-                               action.value, sorted(r.value for r in reasons)])
+        parts = [ctx.mapping.contract_id, snap, self.cfg.strategy_version, action.value,
+                 sorted(r.value for r in reasons)]
+        if self.scope:
+            parts.append(self.scope)
+        key = stable_id("dk", parts)
         expires = now + self.cfg.alert_ttl
         if pred is not None and pred.valid_until < expires:
             expires = pred.valid_until

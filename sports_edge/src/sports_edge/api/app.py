@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -88,7 +89,28 @@ class Server:
             self.recovery = {"abandoned": rec["abandoned"], "orders_loaded": len(rec["orders"])}
         from sports_edge.product.discovery import DiscoveryService, default_sources
         self.discovery = DiscoveryService(default_sources(self.settings, self.store))
+        self.accounts = self._accounts()
+        self.auth.accounts = self.accounts
+        from sports_edge.billing import Billing
+        self.billing = Billing(self.accounts,
+                               self.store.get("BILLING_WEBHOOK_SECRET_TEST")
+                               or os.environ.get("BILLING_WEBHOOK_SECRET_TEST"),
+                               self.store.get("BILLING_TEST_SECRET_KEY")
+                               or os.environ.get("BILLING_TEST_SECRET_KEY"))
+        self.alerts = None
         self.session: AppSession = self._new_session(default_fixture, default_mode)
+
+    def _accounts(self):
+        from sports_edge.accounts import Accounts, MemoryAccountStore, SqlAccountStore
+        if self.db is not None:
+            try:
+                from sqlalchemy import text
+                with self.db.engine.connect() as c:
+                    c.execute(text("select 1 from users limit 1"))
+                return Accounts(SqlAccountStore(self.db.engine))
+            except Exception:
+                pass
+        return Accounts(MemoryAccountStore())
 
     def _db(self):
         """Persist paper orders + ledger if Postgres is reachable and migrated; else memory."""
@@ -123,6 +145,12 @@ class Server:
         if sport_fc:
             from sports_edge.sports.models import describe
             s.model_cards = describe(sport_fc)
+        from sports_edge.product.alerting import AlertCenter
+        old_alerts = getattr(self, "alerts", None)
+        self.alerts = AlertCenter(s, self.accounts)
+        if old_alerts is not None:
+            self.alerts.subscribers = set(old_alerts.subscribers)
+        self.alerts.attach()
         s.db = self.db
         old = getattr(self, "session", None)
         if old is not None:  # keys from the replaced session stay recognised
@@ -158,10 +186,21 @@ class Server:
         out.append("PAPER ONLY: no real-money execution exists")
         if self.db is None:
             out.append("LEDGER NOT PERSISTED (database unavailable): in-memory only")
+        if not self.accounts.store.persisted:
+            out.append("ACCOUNTS NOT PERSISTED (database unavailable): in-memory only")
         if self.recovery["abandoned"]:
             out.append(f"{len(self.recovery['abandoned'])} PAPER ORDER(S) ABANDONED BY A RESTART "
                        "(never filled)")
         return out
+
+
+def stream_visible(kind: str, data: dict, me: str | None) -> bool:
+    """Paper records are private: only their owner's update stream carries them."""
+    if kind == "ledger":
+        return data.get("user_id", "operator") == me
+    if kind == "order_result":
+        return data.get("owner", "operator") == me
+    return True
 
 
 def _err(e: CommandError) -> JSONResponse:
@@ -187,8 +226,11 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
     holder["srv"] = srv
     app.state.server = srv
 
-    def authed(request: Request) -> None:
+    def authed(request: Request) -> None:  # operator only
         srv.auth.require(request)
+
+    def actor(request: Request) -> tuple[str, str]:  # any signed-in customer or operator
+        return srv.auth.require_actor(request)
 
     # ------------------------------------------------------------------ auth
 
@@ -332,14 +374,14 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
 
     # ------------------------------------------------------------------ paper workflow
 
-    @app.post("/api/paper/preview", dependencies=[Depends(authed)], response_model=Preview)
-    def preview(req: PreviewRequest):
+    @app.post("/api/paper/preview", response_model=Preview)
+    def preview(req: PreviewRequest, who: tuple[str, str] = Depends(actor)):
         s = srv.session
         rt = s.monitor.games.get(req.game_id)
         if rt is None or not any(m.contract_id == req.contract_id for m in rt.mappings):
             raise HTTPException(404, {"code": "UNKNOWN_CONTRACT", "detail": req.contract_id})
         with s.lock:
-            d = s.monitor.preview(req.game_id, req.contract_id)
+            d = s.monitor.preview(req.game_id, req.contract_id, owner=who[0])
         now = s.clock.now()
         eligible = d.action in APPROVING
         return Preview(decision=d, eligible=eligible, expired=now > d.expires_at,
@@ -349,36 +391,46 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
                        estimated_fees=str(d.ev.expected_fees) if d.ev else None,
                        explanation=explain(d.reasons))
 
-    @app.post("/api/paper/orders", dependencies=[Depends(authed)], response_model=OrderResponse,
+    @app.post("/api/paper/orders", response_model=OrderResponse,
               responses={404: {}, 409: {}, 410: {}, 422: {}})
-    def place_order(req: OrderRequest):
+    def place_order(req: OrderRequest, who: tuple[str, str] = Depends(actor)):
         try:
             o, created = srv.session.place_order(req.decision_id, req.idempotency_key,
-                                                 req.quantity, req.expected_contract_id)
+                                                 req.quantity, req.expected_contract_id,
+                                                 owner=who[0])
         except CommandError as e:
             return _err(e)
         return OrderResponse(order=o, created=created)
 
     @app.get("/api/paper/ledger", response_model=Ledger)
-    def ledger():
+    def ledger(request: Request):
+        """The caller's own paper portfolio only. Anonymous callers get an empty view."""
         s = srv.session
-        led = s.monitor.engine.ledger
-        return Ledger(orders=list(s.orders.values()), events=s.ledger, cash=str(led.cash),
-                      open_cost=str(led.open_cost),
+        a = srv.auth.actor(request)
+        owner = a[0] if a else None
+        pf = s.monitor.portfolio(owner) if owner else None
+        led = pf.engine.ledger if pf else s.monitor.engine.ledger
+        return Ledger(orders=[o for o in s.orders.values() if o.user_id == owner],
+                      events=[e for e in s.ledger if e.user_id == owner],
+                      cash=str(led.cash) if pf else "0",
+                      open_cost=str(led.open_cost) if pf else "0",
                       limits={k: str(v) for k, v in led.limits.__dict__.items()},
-                      fills=s.monitor.broker.fills)
+                      fills=pf.broker.fills if pf else [])
 
     @app.get("/api/paper/history")
-    def history(mode: Literal["REPLAY", "LIVE"] | None = None):
+    def history(request: Request, mode: Literal["REPLAY", "LIVE"] | None = None):
         """Persisted ledger across runs and restarts (empty when no database)."""
-        if srv.db is None:
-            return {"persisted": False, "events": [], "recovery": srv.recovery}
-        return {"persisted": True, "events": srv.db.ledger_history(mode),
-                "recovery": srv.recovery}
+        a = srv.auth.actor(request)
+        if srv.db is None or a is None:
+            return {"persisted": srv.db is not None, "events": [], "recovery": srv.recovery}
+        evs = [e for e in srv.db.ledger_history(mode, limit=5000)
+               if e.get("user_id", "operator") == a[0]]
+        return {"persisted": True, "events": evs[:500], "recovery": srv.recovery}
 
     @app.get("/api/evaluation")
-    def evaluation():
-        return srv.session.evaluation()
+    def evaluation(request: Request):
+        a = srv.auth.actor(request)
+        return srv.session.evaluation(a[0] if a else "__nobody__")
 
     @app.get("/api/models")
     def models():
@@ -462,7 +514,7 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
                 "meta": _demo_meta(),
             }
 
-    @app.post("/api/events/{game_id}/whatif", dependencies=[Depends(authed)])
+    @app.post("/api/events/{game_id}/whatif", dependencies=[Depends(actor)])
     def event_whatif(game_id: str, req: WhatIfRequest):
         rt = _rt(game_id)
         s = srv.session
@@ -488,6 +540,9 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
     async def discovery_run():
         return [r.view() for r in await srv.discovery.run_once()]
 
+    from sports_edge.api.account_routes import register as register_accounts
+    register_accounts(app, srv)
+
     # ------------------------------------------------------------------ live stream
 
     @app.get("/api/stream")
@@ -495,6 +550,11 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
         last = request.headers.get("last-event-id")
         cursor = since if since is not None else int(last) if last and last.isdigit() else None
         sess = srv.session
+        who = srv.auth.actor(request)
+        me = who[0] if who else None
+
+        def visible(kind: str, data: dict) -> bool:
+            return stream_visible(kind, data, me)
 
         async def gen():
             nonlocal cursor
@@ -518,6 +578,9 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
                         yield f"id: {cursor}\nevent: resync\ndata: {{\"reason\": \"gap\"}}\n\n"
                     for seq, kind, data in evs:
                         cursor = seq
+                        if not visible(kind, data):
+                            yield f"id: {seq}\nevent: private\ndata: {{}}\n\n"
+                            continue
                         yield (f"id: {seq}\nevent: {kind}\n"
                                f"data: {json.dumps(data, default=str)}\n\n")
                     if not evs and not resync:
