@@ -94,6 +94,12 @@ def _apply_score(u: dict[str, Any], sc: Score) -> None:
 @dataclass
 class TennisReducer(BaseReducer):
     details: dict[str, Any] = field(default_factory=dict)
+    names: dict[str, str] = field(default_factory=dict)  # "P1"/"P2" -> display name
+
+    def _label(self, text: str) -> str:
+        for k in ("P1", "P2"):
+            text = text.replace(k, self.names.get(k, k))
+        return text
 
     state_cls: ClassVar = TennisState
     prefix: ClassVar[str] = "ten"
@@ -157,7 +163,7 @@ class TennisReducer(BaseReducer):
             sc = start_set(fmt, st.score())
             r = play_point(fmt, sc, w)
             _apply_score(u, r.score)
-            self.last_labels.extend(r.labels)
+            self.last_labels.extend(self._label(x) for x in r.labels)
             exp = d.get("expect")  # provider's own score after the point, when sent
             if exp is not None:
                 mine = {"games": [r.score.games[0], r.score.games[1]],
@@ -177,7 +183,7 @@ class TennisReducer(BaseReducer):
                 raise InvalidEvent(f"{t} needs player P1/P2")
             u.update(winner=other(quitter), termination=t if t != "RETIRED" else "RETIRED",
                      is_final=True)
-            self.last_labels.append(f"{t.title()}: {quitter}")
+            self.last_labels.append(self._label(f"{t.title()}: {quitter}"))
         elif t == "SUSPENDED":
             u["suspended"] = True
             self.last_labels.append("Match suspended")
@@ -311,7 +317,9 @@ class TennisAdapter:
 
     def new_reducer(self, game: Game) -> TennisReducer:
         return TennisReducer(game.game_id, game.home_team, game.away_team,
-                             details=dict(game.details))
+                             details=dict(game.details),
+                             names={"P1": game.names.get(game.home_team, game.home_team),
+                                    "P2": game.names.get(game.away_team, game.away_team)})
 
     def final_outcome(self, state: TennisState, game: Game, data: dict) -> FinalOutcome:
         w = {P1: game.home_team, P2: game.away_team}.get(state.winner or "")

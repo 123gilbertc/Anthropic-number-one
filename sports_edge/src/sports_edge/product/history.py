@@ -87,6 +87,7 @@ class ContractSeries:
     contract_id: str
     game_id: str
     selection: str
+    name: str = ""
     book: list[BookObs] = field(default_factory=list)
     preds: list[PredObs] = field(default_factory=list)
     gaps: list[list] = field(default_factory=list)  # [start, end|None, reason]
@@ -103,8 +104,10 @@ class LineHistory:
     annotations: dict[str, list[Annotation]] = field(default_factory=dict)
     last_material: dict[str, datetime] = field(default_factory=dict)  # game_id -> time
 
-    def register(self, game_id: str, contract_id: str, selection: str) -> None:
-        self.contracts.setdefault(contract_id, ContractSeries(contract_id, game_id, selection))
+    def register(self, game_id: str, contract_id: str, selection: str,
+                 name: str | None = None) -> None:
+        self.contracts.setdefault(contract_id, ContractSeries(contract_id, game_id, selection,
+                                                              name or selection))
 
     # ---------------------------------------------------------------- observer
 
@@ -162,7 +165,7 @@ class LineHistory:
                                 pr.snapshot_id))
         if prev is not None and abs(pr.probability - prev.p) * 100 >= self.revision_pp:
             self._annotate({"game_id": cs.game_id, "kind": "FORECAST_REVISION",
-                            "label": f"Estimate for {cs.selection} "
+                            "label": f"Estimate for {cs.name or cs.selection} "
                                      f"{prev.p * 100:.0f}% → {pr.probability * 100:.0f}%",
                             "event_time": pr.created_time, "received_time": pr.created_time,
                             "snapshot_id": pr.snapshot_id, "source": pr.model_version,

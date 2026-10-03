@@ -175,7 +175,8 @@ class AppSession:
         s.history = LineHistory(mon.engine.fee_model, mon.engine.cfg.max_order_dollars)
         for rt in mon.games.values():
             for m in rt.mappings:
-                s.history.register(rt.game.game_id, m.contract_id, m.selection_team)
+                s.history.register(rt.game.game_id, m.contract_id, m.selection_team,
+                                   rt.game.names.get(m.selection_team))
         mon.observers.append(s.history.observe)
         mon.listeners.append(s._on_monitor_event)
         s.events.append("session", s.summary())

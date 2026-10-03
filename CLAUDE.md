@@ -3,7 +3,7 @@
 This repo holds two unrelated projects:
 
 - `workflows/`, `docker-compose.yml`, root `.env.example`: an n8n Facebook Ads automation. Leave it alone unless asked.
-- `sports_edge/`: a live sports probability and market-overreaction research system (NHL first, Kalshi first).
+- `sports_edge/`: True Edge, a multi-sport (NHL, NFL, tennis, MLB) live probability analytics and paper-tracking product (scope change recorded in `sports_edge/SPEC.md`).
 
 ## sports_edge rules
 

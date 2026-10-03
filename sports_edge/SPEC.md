@@ -1,5 +1,24 @@
 # sports_edge specification
 
+> **Scope change, 2026-10-03 (True Edge commercial multi-sport upgrade).** This section
+> supersedes the V1 limits in §2 where they conflict:
+> - **Sports:** NHL, NFL, tennis and MLB are all in scope. They share infrastructure and
+>   interface conventions, but each has its own rules, state reducer, features, model,
+>   calibration and evaluation (`src/sports_edge/sports/`).
+> - **Product:** a customer-facing subscription product (Live Board, Watchlist, Paper
+>   Portfolio, Performance, Research), with accounts, plan entitlements and test-mode
+>   billing. The earlier "no redesign" instruction no longer applies; the former dashboard
+>   now lives under Research.
+> - **Commercial use** means selling access to analytics, explanations, alerts and paper
+>   tracking. It never means accepting wagers or executing real-money trades.
+> - **Unchanged:** paper-only; evidence labels; no silent fallbacks; one code path
+>   (injected Clock); LLMs have zero decision weight; thresholds stay provisional until
+>   frozen; approval before destructive migrations, purchases or public deployment.
+> - **Winner markets** remain the forecasting scope. Spreads and totals are separate
+>   contracts that would need their own rules and evaluation.
+> - The $500/month figure is a prototype planning ceiling only. Commercial costs are
+>   quote-dependent and listed as UNKNOWN in `docs/COMMERCIAL_READINESS.md`.
+
 ## 1. Objective
 
 Answer two separate questions for every live game:

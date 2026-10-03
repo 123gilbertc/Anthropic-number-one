@@ -1,5 +1,48 @@
 # Progress log (for resuming in a new session)
 
+## 2026-10-03: True Edge commercial multi-sport upgrade
+
+The scope change is recorded at the top of SPEC.md. The evidence map and the three verdicts are in `docs/TRUE_EDGE_TRACE.md`; rights, costs and the launch gate are in `docs/COMMERCIAL_READINESS.md`. Screenshots are in `docs/screenshots/`.
+
+**Built:**
+- **Multi-sport engine** (`src/sports_edge/sports/`):
+  - shared `GameStateBase` and `BaseReducer` across sports;
+  - tennis: exact point-game-set-match Markov model and scorer;
+  - NFL: state, rules, and win + tie models (tie-void EV);
+  - MLB: base-out Markov model;
+  - one Monitor runs all four sports;
+  - synthetic multi-sport slate fixture (`scripts/make_slate.py`).
+- **Product backend** (`src/sports_edge/product/`): catalog, discovery, coverage, line history, assessments with evidence and what-if, board.
+- **Accounts:** per-user portfolios, alerts, entitlements, test-mode billing webhooks (migration `b6c4f7a508fc`).
+- **Frontend** (`web/`), fully redesigned:
+  - Live Board, game workspace with probability-vs-price chart;
+  - Watchlist, Paper Portfolio, Performance;
+  - Research (the old dashboard), Settings, Admin;
+  - mobile bottom navigation.
+
+**Verified:**
+- 119 Python tests pass.
+- Browser suite: 19 passed, 1 skipped by design, desktop + mobile (`web/e2e/product.spec.ts`).
+- `scripts/load_test.py`: 25 clients, board p50 38 ms / p95 156 ms, 0 errors, on 4 vCPU.
+
+**Bugs found and fixed this pass:**
+- adapter registry lazy-load KeyError;
+- render loop on Research;
+- update stream kept the anonymous identity after sign-in (private fills never arrived);
+- stale stored decisions on displays (now re-evaluated, pure);
+- rate limiter counted successful logins.
+
+**Blocked:**
+- live provider access (egress blocked here; no keys; no licences);
+- every model is SYNTHETIC_ONLY;
+- commercial launch (rights, payments, legal, deployment approval).
+
+**Next:**
+1. Licensed live-data quotes per sport.
+2. Verify endpoint versions and a recorded payload, then enable the parsers.
+3. Start prospective forecast logging.
+
+
 ## 2026-10-03: clickable recorded replay
 
 - The user cannot reach a server running in the build container, and public hosting needs their approval and an account.

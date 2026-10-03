@@ -1,23 +1,35 @@
-// One shared server-data cache + selection state for every screen.
+// One shared server-data cache for every screen.
 //
-// Screens never keep their own copies of predictions or ledger data: they
-// read from this store, which is filled only from backend responses. The
-// live event stream (SSE) tells the store what changed; on any gap or
-// reconnect the store refetches everything (reconciliation).
+// Screens never compute probabilities, prices, fees, risk or fills: they read what the
+// backend returned. The update stream (SSE) says *what changed*; the store refetches the
+// affected views. On a gap or reconnect it refetches everything (reconciliation).
+// Every key has a request generation counter so a slow, older response can never
+// overwrite a newer one.
 import { useSyncExternalStore } from "react";
 import {
   ApiError, GameIntel, Health, Ledger, get, gameIntelSchema, healthSchema,
 } from "./api";
+import type { Board, Workspace } from "./types";
 
 export type StreamState = "CONNECTING" | "CONNECTED" | "RECONNECTING" | "CLOSED";
+export type DataMode = "live" | "demo";
 
-export interface Selection {
-  gameId: string | null;
-  contractId: string | null;
-}
+export interface Selection { gameId: string | null; contractId: string | null; }
+export interface Interest { boardMode: DataMode | null; gameId: string | null; window: string; date: string | null; tz: string; }
 
 export interface State {
   health: Health | null;
+  me: any | null;
+  mode: DataMode;
+  boards: Partial<Record<DataMode, Board>>;
+  workspaces: Record<string, Workspace>;
+  histories: Record<string, any>;
+  decisionsByGame: Record<string, any[]>;
+  portfolio: any | null;
+  alerts: any | null;
+  coverage: any | null;
+  billing: any | null;
+  // legacy research screens
   games: GameIntel[];
   signals: any[];
   ledger: Ledger | null;
@@ -30,12 +42,20 @@ export interface State {
   lastSeq: number;
   errors: Record<string, string>;
   loading: boolean;
+  interest: Interest;
+}
+
+function savedMode(): DataMode {
+  try { return (localStorage.getItem("te.mode") as DataMode) || "demo"; } catch { return "demo"; }
 }
 
 let state: State = {
-  health: null, games: [], signals: [], ledger: null, connections: null, evaluation: null,
-  decisions: [], selection: { gameId: null, contractId: null }, stream: "CONNECTING",
-  lastEventAt: null, lastSeq: 0, errors: {}, loading: true,
+  health: null, me: null, mode: savedMode(), boards: {}, workspaces: {}, histories: {},
+  decisionsByGame: {}, portfolio: null, alerts: null, coverage: null, billing: null,
+  games: [], signals: [], ledger: null, connections: null, evaluation: null, decisions: [],
+  selection: { gameId: null, contractId: null }, stream: "CONNECTING", lastEventAt: null,
+  lastSeq: 0, errors: {}, loading: true,
+  interest: { boardMode: null, gameId: null, window: "all", date: null, tz: "UTC" },
 };
 const subs = new Set<() => void>();
 
@@ -45,10 +65,7 @@ function set(patch: Partial<State>) {
 }
 
 export function useStore<T>(sel: (s: State) => T): T {
-  return useSyncExternalStore(
-    (f) => { subs.add(f); return () => subs.delete(f); },
-    () => sel(state),
-  );
+  return useSyncExternalStore((f) => { subs.add(f); return () => subs.delete(f); }, () => sel(state));
 }
 export const getState = () => state;
 
@@ -57,33 +74,84 @@ export function select(gameId: string | null, contractId: string | null = null) 
   try { sessionStorage.setItem("se.selection", JSON.stringify({ gameId, contractId })); } catch { /* optional */ }
 }
 
-// Responses can arrive out of order (slow network, reconnect). Each key keeps a
-// request counter and only the newest request may write; older ones are dropped.
+export function setMode(mode: DataMode) {
+  try { localStorage.setItem("te.mode", mode); } catch { /* per-viewer convenience only */ }
+  set({ mode });
+  if (state.interest.boardMode) setInterest({ boardMode: mode });
+}
+
 const generation: Record<string, number> = {};
-async function load<K extends keyof State>(key: K, fn: () => Promise<State[K]>) {
-  const gen = (generation[key as string] = (generation[key as string] ?? 0) + 1);
+async function loadKey(key: string, fn: () => Promise<any>, write: (v: any) => Partial<State>) {
+  const gen = (generation[key] = (generation[key] ?? 0) + 1);
   try {
     const v = await fn();
-    if (generation[key as string] !== gen) return;  // a newer request superseded this one
+    if (generation[key] !== gen) return;  // a newer request superseded this one
     const errors = { ...state.errors };
-    delete errors[key as string];
-    set({ [key]: v, errors } as Partial<State>);
+    delete errors[key];
+    set({ ...write(v), errors });
   } catch (e) {
-    if (generation[key as string] !== gen) return;
+    if (generation[key] !== gen) return;
     const msg = e instanceof ApiError ? `${e.code}: ${e.detail}` : String(e);
-    set({ errors: { ...state.errors, [key as string]: msg } });
+    set({ errors: { ...state.errors, [key]: msg } });
   }
+}
+async function load<K extends keyof State>(key: K, fn: () => Promise<State[K]>) {
+  return loadKey(key as string, fn, (v) => ({ [key]: v }) as Partial<State>);
+}
+
+export const loaders = {
+  health: () => load("health", () => get("/api/health", healthSchema)),
+  me: () => load("me", () => get("/api/account/me")),
+  board: (mode: DataMode) => {
+    const i = state.interest;
+    const q = new URLSearchParams({ mode, tz: i.tz });
+    if (i.date) q.set("date", i.date);
+    return loadKey(`board:${mode}`, () => get(`/api/board?${q}`),
+      (v) => ({ boards: { ...state.boards, [mode]: v } }));
+  },
+  workspace: (id: string) => loadKey(`ws:${id}`, () => get(`/api/events/${encodeURIComponent(id)}/workspace`),
+    (v) => ({ workspaces: { ...state.workspaces, [id]: v } })),
+  history: (id: string, window: string) => loadKey(`hist:${id}`,
+    () => get(`/api/events/${encodeURIComponent(id)}/history?window=${window}&max_points=700`),
+    (v) => ({ histories: { ...state.histories, [id]: v } })),
+  decisions: (id: string) => loadKey(`dec:${id}`, () => get(`/api/decisions?game_id=${encodeURIComponent(id)}&limit=200`),
+    (v) => ({ decisionsByGame: { ...state.decisionsByGame, [id]: v } })),
+  portfolio: () => load("portfolio", () => get("/api/paper/portfolio")),
+  alerts: () => load("alerts", () => get("/api/alerts")),
+  coverage: () => load("coverage", () => get("/api/coverage")),
+  billing: () => load("billing", () => get("/api/billing")),
+  // legacy
+  games: () => load("games", () => get("/api/games", gameIntelSchema.array())),
+  signals: () => load("signals", () => get("/api/signals")),
+  ledger: () => load("ledger", () => get("/api/paper/ledger")),
+  connections: () => load("connections", () => get("/api/connections")),
+  evaluation: () => load("evaluation", () => get("/api/evaluation")),
+  legacyDecisions: () => load("decisions", () => get("/api/decisions?limit=300")),
+};
+
+/** Screens declare what they show; the stream keeps exactly that fresh. */
+export function setInterest(patch: Partial<Interest>) {
+  const next = { ...state.interest, ...patch };
+  const changed = JSON.stringify(next) !== JSON.stringify(state.interest);
+  set({ interest: next });
+  if (changed) refreshInterest();
+}
+
+export async function refreshInterest() {
+  const i = state.interest;
+  const jobs: Promise<void>[] = [];
+  if (i.boardMode) jobs.push(loaders.board(i.boardMode));
+  if (i.gameId) {
+    jobs.push(loaders.workspace(i.gameId), loaders.history(i.gameId, i.window), loaders.decisions(i.gameId));
+  }
+  await Promise.all(jobs);
 }
 
 export async function refreshAll() {
   await Promise.all([
-    load("health", () => get("/api/health", healthSchema)),
-    load("games", () => get("/api/games", gameIntelSchema.array())),
-    load("signals", () => get("/api/signals")),
-    load("ledger", () => get("/api/paper/ledger")),
-    load("connections", () => get("/api/connections")),
-    load("evaluation", () => get("/api/evaluation")),
-    load("decisions", () => get("/api/decisions?limit=300")),
+    loaders.health(), loaders.me(), loaders.portfolio(), loaders.alerts(),
+    loaders.games(), loaders.signals(), loaders.ledger(), loaders.connections(), loaders.evaluation(),
+    loaders.legacyDecisions(), refreshInterest(),
   ]);
   const s = state;
   if (!s.selection.gameId && s.games.length) {
@@ -95,7 +163,7 @@ export async function refreshAll() {
   set({ loading: false });
 }
 
-// Coalesce bursts of events into one refetch per animation frame-ish window.
+// Coalesce bursts of events into one refetch per short window.
 const dirty = new Set<string>();
 let timer: number | null = null;
 function invalidate(...keys: string[]) {
@@ -105,16 +173,13 @@ function invalidate(...keys: string[]) {
     timer = null;
     const ks = [...dirty];
     dirty.clear();
-    const jobs: Promise<void>[] = [load("health", () => get("/api/health", healthSchema))];
-    if (ks.includes("games")) jobs.push(load("games", () => get("/api/games", gameIntelSchema.array())));
-    if (ks.includes("signals")) jobs.push(load("signals", () => get("/api/signals")));
-    if (ks.includes("ledger")) {
-      jobs.push(load("ledger", () => get("/api/paper/ledger")));
-      jobs.push(load("evaluation", () => get("/api/evaluation")));
-    }
-    if (ks.includes("decisions")) jobs.push(load("decisions", () => get("/api/decisions?limit=300")));
+    const jobs: Promise<void>[] = [loaders.health()];
+    if (ks.includes("games")) { jobs.push(loaders.games()); jobs.push(refreshInterest()); }
+    if (ks.includes("signals")) jobs.push(loaders.signals());
+    if (ks.includes("ledger")) { jobs.push(loaders.ledger(), loaders.evaluation(), loaders.portfolio(), loaders.alerts()); }
+    if (ks.includes("decisions")) jobs.push(loaders.legacyDecisions());
     await Promise.all(jobs);
-  }, 150);
+  }, 250);
 }
 
 let es: EventSource | null = null;
@@ -132,6 +197,7 @@ export function connectStream() {
   const on = (name: string, keys: string[]) =>
     es!.addEventListener(name, (e) => { seen(e as MessageEvent); invalidate(...keys); });
   on("hello", []);
+  on("private", []);
   on("state", ["games"]);
   on("clock", ["games"]);
   on("decision", ["games", "decisions"]);
@@ -142,6 +208,13 @@ export function connectStream() {
   on("llm_review", []);
   on("session", ["games", "signals", "ledger", "decisions"]);
   es.addEventListener("resync", () => { set({ lastSeq: 0 }); refreshAll(); });
+}
+
+/** The stream's identity is fixed when it opens: reopen it after sign-in or sign-out so
+ *  the caller's own private paper records start (or stop) arriving. */
+export async function identityChanged() {
+  connectStream();
+  await refreshAll();
 }
 
 export function disconnectStream() {

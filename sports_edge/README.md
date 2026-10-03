@@ -1,6 +1,10 @@
-# sports_edge
+# sports_edge (True Edge by Odds Brain)
 
-A live sports probability and market-overreaction **research** system, starting with NHL on Kalshi. It covers research, monitoring and **paper trading only**: there is no order submission, no deposits and no wallet code.
+A multi-sport (NHL, NFL, tennis, MLB) live probability and market-overreaction analytics product with paper tracking. It covers research, monitoring and **paper trading only**: there is no order submission, no deposits and no wallet code.
+
+- Customer app: Live Board, Watchlist, Paper Portfolio, Performance, Research (+ Settings, Admin)
+- Commercial readiness, rights and costs: [docs/COMMERCIAL_READINESS.md](docs/COMMERCIAL_READINESS.md)
+- Requirement → code → test map and the three verdicts: [docs/TRUE_EDGE_TRACE.md](docs/TRUE_EDGE_TRACE.md)
 
 - Specification: [SPEC.md](SPEC.md)
 - Data sources and verification status: [DATA_SOURCES.md](DATA_SOURCES.md)
@@ -24,7 +28,22 @@ cd Anthropic-number-one/sports_edge
 ./run.sh
 ```
 
-Open http://127.0.0.1:8000 and paste the operator token that `run.sh` prints. PostgreSQL is optional: without it the ledger stays in memory and the UI says so.
+Open http://127.0.0.1:8000. The Live Board opens on the labelled **demo slate** (synthetic, fictional teams). Create a customer account under *Sign in* to keep a paper portfolio and watchlist. The operator token that `run.sh` prints unlocks Admin and Research replay controls. PostgreSQL is optional: without it the ledger and accounts stay in memory and the UI says so.
+
+### Configuration (operator)
+
+| Setting | Where | Effect |
+|---|---|---|
+| `SPORTS_EDGE_API_TOKEN` | env | operator token (else generated into `runs/api_token`) |
+| `SPORTS_EDGE_DEMO_FIXTURE`, `SPORTS_EDGE_DEMO_MODE` | env | demo session (default `slate_synthetic.jsonl`, `mechanics`) |
+| `SPORTS_EDGE_WORKERS` | env | `1` runs supervised schedule/market discovery in the server (default) |
+| `SPORTRADAR_API_KEY`, `SPORTRADAR_<SPORT>_SCHEDULE_URL` | Admin → Connections or env | schedule source. Stays NOT_CONFIGURED until you verify the current endpoint version; parsing stays BLOCKED until a recorded payload is checked |
+| `SPORTSDATAIO_API_KEY`, `SPORTSDATAIO_<SPORT>_SCHEDULE_URL` | same | same |
+| `KALSHI_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH` | Admin → Connections | order-book WebSocket |
+| `ODDS_API_KEY` | Admin → Connections | sportsbook reference |
+| `BILLING_WEBHOOK_SECRET_TEST`, `BILLING_TEST_SECRET_KEY` (`sk_test_…` only) | env / secret store | test-mode billing webhooks; live keys are never read |
+
+Customers never enter provider keys: the operator configures shared licensed feeds.
 
 ## Setup (reproducible)
 

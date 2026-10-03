@@ -11,6 +11,7 @@ import asyncio
 import json
 import os
 from datetime import UTC, datetime
+from decimal import Decimal
 from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
@@ -417,6 +418,65 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
                       limits={k: str(v) for k, v in led.limits.__dict__.items()},
                       fills=pf.broker.fills if pf else [])
 
+    @app.get("/api/paper/portfolio")
+    def portfolio(request: Request):
+        """The caller's paper portfolio with marks. Anonymous callers get nothing."""
+        a = srv.auth.actor(request)
+        s = srv.session
+        if a is None:
+            return {"signed_in": False}
+        owner = a[0]
+        with s.lock:
+            pf = s.monitor.portfolio(owner)
+            led = pf.engine.ledger
+            reserved = sum((amt for *_, amt in led.reserved.values()), Decimal(0))
+            orders = [o for o in s.orders.values() if o.user_id == owner]
+            positions = []
+            unrealized = Decimal(0)
+            for (gid, cid), pos in pf.broker.positions.items():
+                if pos.contracts == 0:
+                    continue
+                settled = [o for o in orders if o.contract_id == cid and o.outcome is not None]
+                if settled and all(o.outcome is not None for o in orders
+                                   if o.contract_id == cid and o.fill):
+                    continue  # closed by settlement: counted in realized results
+                book = s.monitor.books.books.get(cid)
+                snap = book.snapshot() if book is not None and book.last_received else None
+                bid = snap.best_bid if snap is not None and snap.valid else None
+                mark = None if bid is None else bid * pos.contracts
+                pnl = None if mark is None else mark - pos.total_cost - pos.total_fees
+                if pnl is not None:
+                    unrealized += pnl
+                rt = s.monitor.games.get(gid)
+                positions.append({
+                    "game_id": gid, "contract_id": cid, "participant": pos.selection_team,
+                    "name": rt.game.names.get(pos.selection_team, pos.selection_team)
+                    if rt else pos.selection_team,
+                    "sport": rt.game.sport.value if rt else None,
+                    "contracts": pos.contracts, "cost": str(pos.total_cost),
+                    "fees": str(pos.total_fees),
+                    "average_entry": str(pos.average_entry),
+                    "average_entry_all_in": str(pos.average_entry_all_in),
+                    "mark_bid": None if bid is None else str(bid),
+                    "unrealized": None if pnl is None else str(pnl.quantize(Decimal("0.01")))})
+            realized = sum((o.settled_pnl or Decimal(0) for o in orders
+                            if o.outcome is not None), Decimal(0))
+            fees_paid = sum((o.fill.fees for o in orders if o.fill), Decimal(0))
+            return {
+                "signed_in": True, "owner": owner, "mode": s.mode, "data_label": s.data_label,
+                "cash": str(led.cash), "reserved_pending": str(reserved),
+                "open_cost": str(led.open_cost), "fees_paid": str(fees_paid),
+                "realized": str(realized), "unrealized": str(unrealized.quantize(Decimal("0.01"))),
+                "unrealized_note": "Marked at the current best bid for the full quantity; a "
+                                   "real exit would walk the bid ladder and pay fees.",
+                "limits": {k: str(v) for k, v in led.limits.__dict__.items()},
+                "positions": positions,
+                "pending": [o.model_dump(mode="json") for o in orders if o.status == "PENDING"],
+                "orders": [o.model_dump(mode="json") for o in orders],
+                "rules": ["No martingale: stake never increases after a loss.",
+                          "Additions count toward the same game and portfolio caps.",
+                          "A preview or an alert is never a fill."]}
+
     @app.get("/api/paper/history")
     def history(request: Request, mode: Literal["REPLAY", "LIVE"] | None = None):
         """Persisted ledger across runs and restarts (empty when no database)."""
@@ -456,6 +516,22 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
     from sports_edge.product.coverage import coverage
     from sports_edge.product.explain import WhatIfError, what_if
 
+    # Views are pure functions of (session run, event sequence, request): cache them so
+    # many viewers of the same state share one computation (bounded, newest first).
+    view_cache: dict = {}
+
+    def cached(key: tuple, fn):
+        s = srv.session
+        k = (s.run_id, s.events.seq, *key)
+        hit = view_cache.get(k)
+        if hit is not None:
+            return hit
+        out = fn()
+        if len(view_cache) > 256:
+            view_cache.clear()
+        view_cache[k] = out
+        return out
+
     def _assessor() -> Assessor:
         s = srv.session
         return Assessor(s.monitor, s.history)
@@ -470,9 +546,10 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
               tz: str = "UTC"):
         if mode == "demo":
             s = srv.session
-            with s.lock:
-                out = demo_board(s, _assessor(), date, tz)
-            return out | {"meta": _demo_meta()}
+            def build():
+                with s.lock:
+                    return demo_board(s, _assessor(), date, tz) | {"meta": _demo_meta()}
+            return cached(("board", date, tz), build)
         out = live_board(srv.discovery, datetime.now(UTC), date, tz)
         return out | {"meta": {"mode": "live", "data_label": "LIVE",
                                "banners": ["PAPER ONLY: no real-money execution exists"]}}
@@ -487,9 +564,12 @@ def create_app(*, train_games: int = 300, default_fixture: str = "slate_syntheti
     def workspace(game_id: str):
         _rt(game_id)
         s = srv.session
-        with s.lock:
-            out = _assessor().game(game_id, s.clock.now())
-        return out | {"meta": _demo_meta(), "model_cards": s.model_cards}
+
+        def build():
+            with s.lock:
+                return _assessor().game(game_id, s.clock.now()) | {
+                    "meta": _demo_meta(), "model_cards": s.model_cards}
+        return cached(("ws", game_id), build)
 
     @app.get("/api/events/{game_id}/history")
     def event_history(game_id: str, window: str = "all", max_points: int = 600):

@@ -2,7 +2,7 @@
  "openapi": "3.1.0",
  "info": {
   "title": "sports_edge",
-  "version": "0.2.0"
+  "version": "0.3.0"
  },
  "paths": {
   "/api/auth/login": {
@@ -618,6 +618,7 @@
   "/api/paper/ledger": {
    "get": {
     "summary": "Ledger",
+    "description": "The caller's own paper portfolio only. Anonymous callers get an empty view.",
     "operationId": "ledger_api_paper_ledger_get",
     "responses": {
      "200": {
@@ -627,6 +628,23 @@
         "schema": {
          "$ref": "#/components/schemas/Ledger"
         }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/paper/portfolio": {
+   "get": {
+    "summary": "Portfolio",
+    "description": "The caller's paper portfolio with marks. Anonymous callers get nothing.",
+    "operationId": "portfolio_api_paper_portfolio_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
        }
       }
      }
@@ -746,6 +764,649 @@
     }
    }
   },
+  "/api/board": {
+   "get": {
+    "summary": "Board",
+    "operationId": "board_api_board_get",
+    "parameters": [
+     {
+      "name": "mode",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "live",
+        "demo"
+       ],
+       "type": "string",
+       "default": "live",
+       "title": "Mode"
+      }
+     },
+     {
+      "name": "date",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Date"
+      }
+     },
+     {
+      "name": "tz",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "UTC",
+       "title": "Tz"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/events/{game_id}/workspace": {
+   "get": {
+    "summary": "Workspace",
+    "operationId": "workspace_api_events__game_id__workspace_get",
+    "parameters": [
+     {
+      "name": "game_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Game Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/events/{game_id}/history": {
+   "get": {
+    "summary": "Event History",
+    "operationId": "event_history_api_events__game_id__history_get",
+    "parameters": [
+     {
+      "name": "game_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Game Id"
+      }
+     },
+     {
+      "name": "window",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "all",
+       "title": "Window"
+      }
+     },
+     {
+      "name": "max_points",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 600,
+       "title": "Max Points"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/events/{game_id}/whatif": {
+   "post": {
+    "summary": "Event Whatif",
+    "operationId": "event_whatif_api_events__game_id__whatif_post",
+    "parameters": [
+     {
+      "name": "game_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Game Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/WhatIfRequest"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/coverage": {
+   "get": {
+    "summary": "Coverage View",
+    "operationId": "coverage_view_api_coverage_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/discovery/run": {
+   "post": {
+    "summary": "Discovery Run",
+    "operationId": "discovery_run_api_discovery_run_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/signup": {
+   "post": {
+    "summary": "Signup",
+    "operationId": "signup_api_account_signup_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Credentials"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/login": {
+   "post": {
+    "summary": "Login",
+    "operationId": "login_api_account_login_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Credentials"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/logout": {
+   "post": {
+    "summary": "Logout",
+    "operationId": "logout_api_account_logout_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/me": {
+   "get": {
+    "summary": "Me",
+    "operationId": "me_api_account_me_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account": {
+   "delete": {
+    "summary": "Delete Account",
+    "operationId": "delete_account_api_account_delete",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DeleteRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/export": {
+   "get": {
+    "summary": "Export",
+    "description": "Every user may export their own data (not a paid feature).",
+    "operationId": "export_api_account_export_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/preferences": {
+   "put": {
+    "summary": "Prefs",
+    "operationId": "prefs_api_account_preferences_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PrefsPatch"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/account/watchlist": {
+   "put": {
+    "summary": "Watchlist",
+    "operationId": "watchlist_api_account_watchlist_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Watchlist"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/alerts": {
+   "get": {
+    "summary": "Alerts",
+    "operationId": "alerts_api_alerts_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/alerts/rules": {
+   "post": {
+    "summary": "Add Rule",
+    "operationId": "add_rule_api_alerts_rules_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Rule"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/alerts/rules/{rule_id}": {
+   "delete": {
+    "summary": "Delete Rule",
+    "operationId": "delete_rule_api_alerts_rules__rule_id__delete",
+    "parameters": [
+     {
+      "name": "rule_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rule Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/billing": {
+   "get": {
+    "summary": "Billing Status",
+    "operationId": "billing_status_api_billing_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/billing/checkout": {
+   "post": {
+    "summary": "Checkout",
+    "operationId": "checkout_api_billing_checkout_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CheckoutRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/billing/webhook": {
+   "post": {
+    "summary": "Webhook",
+    "operationId": "webhook_api_billing_webhook_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/export/paper-ledger.csv": {
+   "get": {
+    "summary": "Export Csv",
+    "operationId": "export_csv_api_export_paper_ledger_csv_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/stream": {
    "get": {
     "summary": "Stream",
@@ -823,6 +1484,19 @@
      "DATA_BLOCKED"
     ],
     "title": "Action"
+   },
+   "CheckoutRequest": {
+    "properties": {
+     "plan": {
+      "type": "string",
+      "title": "Plan"
+     }
+    },
+    "type": "object",
+    "required": [
+     "plan"
+    ],
+    "title": "CheckoutRequest"
    },
    "ContractIntel": {
     "properties": {
@@ -1050,6 +1724,24 @@
     ],
     "title": "ContractIntel"
    },
+   "Credentials": {
+    "properties": {
+     "email": {
+      "type": "string",
+      "title": "Email"
+     },
+     "password": {
+      "type": "string",
+      "title": "Password"
+     }
+    },
+    "type": "object",
+    "required": [
+     "email",
+     "password"
+    ],
+    "title": "Credentials"
+   },
    "Decision": {
     "properties": {
      "schema_version": {
@@ -1258,6 +1950,19 @@
     ],
     "title": "Decision"
    },
+   "DeleteRequest": {
+    "properties": {
+     "password": {
+      "type": "string",
+      "title": "Password"
+     }
+    },
+    "type": "object",
+    "required": [
+     "password"
+    ],
+    "title": "DeleteRequest"
+   },
    "EVBreakdown": {
     "properties": {
      "schema_version": {
@@ -1385,6 +2090,60 @@
      "source": {
       "type": "string",
       "title": "Source"
+     },
+     "competition": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Competition"
+     },
+     "participant_kind": {
+      "type": "string",
+      "enum": [
+       "TEAM",
+       "PLAYER"
+      ],
+      "title": "Participant Kind",
+      "default": "TEAM"
+     },
+     "names": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Names"
+     },
+     "round": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Round"
+     },
+     "venue_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Venue Name"
+     },
+     "details": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Details"
      }
     },
     "additionalProperties": false,
@@ -1409,12 +2168,20 @@
      "state": {
       "anyOf": [
        {
-        "$ref": "#/components/schemas/NHLState"
+        "additionalProperties": true,
+        "type": "object"
        },
        {
         "type": "null"
        }
-      ]
+      ],
+      "title": "State"
+     },
+     "scoreboard": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Scoreboard",
+      "default": {}
      },
      "model_favored_team": {
       "anyOf": [
@@ -1636,6 +2403,11 @@
       "additionalProperties": true,
       "type": "object",
       "title": "Detail"
+     },
+     "user_id": {
+      "type": "string",
+      "title": "User Id",
+      "default": "operator"
      }
     },
     "additionalProperties": false,
@@ -1665,229 +2437,6 @@
      "token"
     ],
     "title": "LoginRequest"
-   },
-   "NHLState": {
-    "properties": {
-     "schema_version": {
-      "type": "integer",
-      "title": "Schema Version",
-      "default": 1
-     },
-     "snapshot_id": {
-      "type": "string",
-      "title": "Snapshot Id"
-     },
-     "game_id": {
-      "type": "string",
-      "title": "Game Id"
-     },
-     "source": {
-      "type": "string",
-      "title": "Source"
-     },
-     "source_status": {
-      "$ref": "#/components/schemas/SourceStatus"
-     },
-     "as_of_event_time": {
-      "anyOf": [
-       {
-        "type": "string",
-        "format": "date-time"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "As Of Event Time"
-     },
-     "as_of_received_time": {
-      "type": "string",
-      "format": "date-time",
-      "title": "As Of Received Time"
-     },
-     "last_material_event_time": {
-      "anyOf": [
-       {
-        "type": "string",
-        "format": "date-time"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Last Material Event Time"
-     },
-     "last_material_event_kind": {
-      "anyOf": [
-       {
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Last Material Event Kind"
-     },
-     "applied_seq": {
-      "anyOf": [
-       {
-        "type": "integer"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Applied Seq"
-     },
-     "period": {
-      "type": "integer",
-      "title": "Period"
-     },
-     "seconds_remaining_in_period": {
-      "anyOf": [
-       {
-        "type": "integer"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Seconds Remaining In Period"
-     },
-     "home_score": {
-      "type": "integer",
-      "title": "Home Score"
-     },
-     "away_score": {
-      "type": "integer",
-      "title": "Away Score"
-     },
-     "home_skaters": {
-      "anyOf": [
-       {
-        "type": "integer"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Home Skaters"
-     },
-     "away_skaters": {
-      "anyOf": [
-       {
-        "type": "integer"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Away Skaters"
-     },
-     "home_goalie": {
-      "anyOf": [
-       {
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Home Goalie"
-     },
-     "away_goalie": {
-      "anyOf": [
-       {
-        "type": "string"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Away Goalie"
-     },
-     "home_net_empty": {
-      "anyOf": [
-       {
-        "type": "boolean"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Home Net Empty"
-     },
-     "away_net_empty": {
-      "anyOf": [
-       {
-        "type": "boolean"
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Away Net Empty"
-     },
-     "is_final": {
-      "type": "boolean",
-      "title": "Is Final",
-      "default": false
-     },
-     "final_decided_in": {
-      "anyOf": [
-       {
-        "type": "string",
-        "enum": [
-         "REG",
-         "OT",
-         "SO"
-        ]
-       },
-       {
-        "type": "null"
-       }
-      ],
-      "title": "Final Decided In"
-     },
-     "in_review": {
-      "type": "boolean",
-      "title": "In Review",
-      "default": false
-     },
-     "pending_reconciliation": {
-      "items": {
-       "type": "string"
-      },
-      "type": "array",
-      "title": "Pending Reconciliation",
-      "default": []
-     }
-    },
-    "additionalProperties": false,
-    "type": "object",
-    "required": [
-     "snapshot_id",
-     "game_id",
-     "source",
-     "source_status",
-     "as_of_event_time",
-     "as_of_received_time",
-     "last_material_event_time",
-     "last_material_event_kind",
-     "applied_seq",
-     "period",
-     "seconds_remaining_in_period",
-     "home_score",
-     "away_score",
-     "home_skaters",
-     "away_skaters",
-     "home_goalie",
-     "away_goalie",
-     "home_net_empty",
-     "away_net_empty"
-    ],
-    "title": "NHLState",
-    "description": "Immutable NHL game-state snapshot. Unknown values are ``None``."
    },
    "OrderRequest": {
     "properties": {
@@ -2145,6 +2694,11 @@
        }
       ],
       "title": "Settled Pnl"
+     },
+     "user_id": {
+      "type": "string",
+      "title": "User Id",
+      "default": "operator"
      }
     },
     "additionalProperties": false,
@@ -2165,6 +2719,20 @@
      "not_before"
     ],
     "title": "PaperOrder"
+   },
+   "PrefsPatch": {
+    "properties": {
+     "patch": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Patch"
+     }
+    },
+    "type": "object",
+    "required": [
+     "patch"
+    ],
+    "title": "PrefsPatch"
    },
    "Preview": {
     "properties": {
@@ -2258,6 +2826,7 @@
      "REFERENCE_PRE_EVENT",
      "REFERENCE_STALE",
      "REFERENCE_DISAGREEMENT",
+     "TIMESTAMP_INCONSISTENT",
      "PENDING_RECONCILIATION",
      "CRITICAL_FEATURE_MISSING",
      "MODEL_NOT_VALIDATED",
@@ -2280,6 +2849,20 @@
     ],
     "title": "Reason",
     "description": "Machine-readable reason codes. Every decision carries at least one."
+   },
+   "Rule": {
+    "properties": {
+     "rule": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Rule"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rule"
+    ],
+    "title": "Rule"
    },
    "RunRequest": {
     "properties": {
@@ -2388,18 +2971,30 @@
    "SessionRequest": {
     "properties": {
      "fixture": {
-      "type": "string",
-      "title": "Fixture",
-      "default": "nhl_synthetic_dip.jsonl"
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Fixture"
      },
      "mode": {
-      "type": "string",
-      "enum": [
-       "honest",
-       "mechanics"
+      "anyOf": [
+       {
+        "type": "string",
+        "enum": [
+         "honest",
+         "mechanics"
+        ]
+       },
+       {
+        "type": "null"
+       }
       ],
-      "title": "Mode",
-      "default": "honest"
+      "title": "Mode"
      }
     },
     "type": "object",
@@ -2411,30 +3006,22 @@
      "NHL_INCLUDING_OT_SO",
      "NHL_REGULATION_ONLY",
      "MLB_FULL_GAME_INCL_EXTRAS",
-     "MLB_LISTED_PITCHERS"
+     "MLB_LISTED_PITCHERS",
+     "NFL_INCL_OT_TIE_VOID",
+     "NFL_INCL_OT_TIE_LOSES",
+     "TENNIS_MATCH_RETIREMENT_ADVANCER_WINS",
+     "TENNIS_MATCH_RETIREMENT_VOID"
     ],
     "title": "SettlementRule",
     "description": "What exactly has to happen for a \"team wins\" contract to pay out.\n\nThese are different products. A regulation-only NHL contract on the home\nteam loses if the game goes to overtime, even if the home team then wins.\nA model that forecasts \"wins the game\" cannot price it."
-   },
-   "SourceStatus": {
-    "type": "string",
-    "enum": [
-     "LIVE",
-     "DELAYED",
-     "REPLAY",
-     "SYNTHETIC_DEMO",
-     "NOT_CONNECTED",
-     "BLOCKED",
-     "STALE"
-    ],
-    "title": "SourceStatus",
-    "description": "Shown prominently in the dashboard. Never upgrade a status without evidence."
    },
    "Sport": {
     "type": "string",
     "enum": [
      "NHL",
-     "MLB"
+     "MLB",
+     "NFL",
+     "TENNIS"
     ],
     "title": "Sport"
    },
@@ -2498,6 +3085,37 @@
      "SYNTHETIC"
     ],
     "title": "Venue"
+   },
+   "Watchlist": {
+    "properties": {
+     "items": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Items"
+     }
+    },
+    "type": "object",
+    "required": [
+     "items"
+    ],
+    "title": "Watchlist"
+   },
+   "WhatIfRequest": {
+    "properties": {
+     "edits": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Edits"
+     }
+    },
+    "type": "object",
+    "required": [
+     "edits"
+    ],
+    "title": "WhatIfRequest"
    }
   }
  }

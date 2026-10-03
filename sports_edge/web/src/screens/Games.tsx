@@ -55,7 +55,7 @@ export function GameScreen() {
 }
 
 function GameHeader({ g }: { g: GameIntel }) {
-  const s = g.state;
+  const s = g.state as any;  // sport-specific record; this legacy inspector renders NHL fields
   const stale = g.state_age_seconds != null && g.state_age_seconds > 45;
   return (
     <section className="card">
@@ -63,7 +63,9 @@ function GameHeader({ g }: { g: GameIntel }) {
         <h2>{g.game.away_team} @ {g.game.home_team}</h2>
         <span className="muted small">{g.game.game_id}</span>
       </div>
-      {s ? (
+      {s && g.game.sport !== "NHL" ? (
+        <p className="state small" data-testid="game-state">{g.game.sport} · {JSON.stringify(g.scoreboard)}</p>
+      ) : s ? (
         <p className="state" data-testid="game-state">
           P{s.period} · {s.seconds_remaining_in_period ?? "?"}s left · {g.game.away_team} {s.away_score} – {s.home_score} {g.game.home_team}
           {" "}· skaters {s.away_skaters ?? "?"}v{s.home_skaters ?? "?"} · goalies {s.away_goalie ?? "UNKNOWN"} / {s.home_goalie ?? "UNKNOWN"}
@@ -74,7 +76,7 @@ function GameHeader({ g }: { g: GameIntel }) {
         <span className={`banner ${stale ? "bad" : "ok"}`}>
           GAME STATE AGE {g.state_age_seconds == null ? "—" : `${Math.round(g.state_age_seconds)}s`} (replay clock {time(g.as_of)})
         </span>
-        {s && s.pending_reconciliation.length > 0 && <span className="banner warn">PENDING: {s.pending_reconciliation.join(", ")}</span>}
+        {s && s.pending_reconciliation?.length > 0 && <span className="banner warn">PENDING: {s.pending_reconciliation.join(", ")}</span>}
         {s?.in_review && <span className="banner warn">VIDEO REVIEW</span>}
       </div>
       <div className="kv">

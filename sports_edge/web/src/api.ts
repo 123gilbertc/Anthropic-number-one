@@ -51,7 +51,7 @@ export const previewSchema = z.object({
 }).passthrough();
 export const orderResponseSchema = z.object({
   created: z.boolean(),
-  order: z.object({ order_id: z.string(), status: z.enum(["PENDING", "FILLED", "PARTIAL", "REJECTED"]) }).passthrough(),
+  order: z.object({ order_id: z.string(), status: z.enum(["PENDING", "FILLED", "PARTIAL", "REJECTED", "ABANDONED"]) }).passthrough(),
 });
 
 async function parse(r: Response) {
