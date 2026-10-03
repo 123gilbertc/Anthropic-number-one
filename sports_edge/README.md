@@ -39,7 +39,7 @@ Open http://127.0.0.1:8000. The Live Board opens on the labelled **demo slate** 
 | `SPORTS_EDGE_WORKERS` | env | `1` runs supervised schedule/market discovery in the server (default) |
 | `SPORTRADAR_API_KEY`, `SPORTRADAR_<SPORT>_SCHEDULE_URL` | Admin → Connections or env | schedule source. Stays NOT_CONFIGURED until you verify the current endpoint version; parsing stays BLOCKED until a recorded payload is checked |
 | `SPORTSDATAIO_API_KEY`, `SPORTSDATAIO_<SPORT>_SCHEDULE_URL` | same | same |
-| `KALSHI_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH` | Admin → Connections | order-book WebSocket |
+| `KALSHI_KEY_ID` + `KALSHI_PRIVATE_KEY_PATH` (a .pem file) or `KALSHI_PRIVATE_KEY` (the PEM text, for cloud environments) | Admin → Connections or env | order-book WebSocket; market data is read-only, nothing is ever traded |
 | `ODDS_API_KEY` | Admin → Connections | sportsbook reference |
 | `BILLING_WEBHOOK_SECRET_TEST`, `BILLING_TEST_SECRET_KEY` (`sk_test_…` only) | env / secret store | test-mode billing webhooks; live keys are never read |
 

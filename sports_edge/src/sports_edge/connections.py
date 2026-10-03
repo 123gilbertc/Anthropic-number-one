@@ -52,6 +52,30 @@ class SecretStore:
         os.chmod(self.path, 0o600)
 
 
+def materialize_kalshi_key(runs_dir: Path) -> Path | None:
+    """Allow the Kalshi private key to arrive as PEM text in ``KALSHI_PRIVATE_KEY``
+    (cloud environments can only inject variables, not files).
+
+    The text is written once to ``runs/kalshi_private_key.pem`` with mode 0600 and
+    ``KALSHI_PRIVATE_KEY_PATH`` is pointed at it for this process. The key is never
+    logged, never returned by the API and never sent to the browser.
+    """
+    pem = os.environ.get("KALSHI_PRIVATE_KEY")
+    if not pem or os.environ.get("KALSHI_PRIVATE_KEY_PATH"):
+        return None
+    pem = pem.replace("\\n", "\n").strip() + "\n"  # tolerate single-line "\n" escapes
+    if "PRIVATE KEY" not in pem:
+        raise ValueError("KALSHI_PRIVATE_KEY does not look like a PEM private key")
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    path = runs_dir / "kalshi_private_key.pem"
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as f:
+        f.write(pem)
+    os.chmod(path, 0o600)
+    os.environ["KALSHI_PRIVATE_KEY_PATH"] = str(path)
+    return path
+
+
 @dataclass
 class TestResult:
     ok: bool

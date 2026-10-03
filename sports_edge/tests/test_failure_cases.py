@@ -164,3 +164,22 @@ def test_event_log_wakes_waiter_registered_before_append_from_another_thread():
         return log.since(0)
 
     assert asyncio.run(run()) == (False, [(1, "x", {})])
+
+
+def test_kalshi_private_key_from_environment_is_written_privately(tmp_path, monkeypatch):
+    """Cloud environments inject variables, not files: PEM text becomes a 0600 file."""
+    import os
+    import stat
+
+    from sports_edge.connections import materialize_kalshi_key
+    monkeypatch.delenv("KALSHI_PRIVATE_KEY_PATH", raising=False)
+    monkeypatch.setenv("KALSHI_PRIVATE_KEY",
+                       "-----BEGIN PRIVATE KEY-----\\nabc\\n-----END PRIVATE KEY-----")
+    p = materialize_kalshi_key(tmp_path)
+    assert p is not None and os.environ["KALSHI_PRIVATE_KEY_PATH"] == str(p)
+    assert stat.S_IMODE(p.stat().st_mode) == 0o600
+    assert p.read_text().splitlines()[1] == "abc"  # single-line "\n" escapes restored
+    monkeypatch.setenv("KALSHI_PRIVATE_KEY", "not a key")
+    monkeypatch.delenv("KALSHI_PRIVATE_KEY_PATH")
+    with pytest.raises(ValueError):
+        materialize_kalshi_key(tmp_path)

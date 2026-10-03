@@ -137,6 +137,9 @@ def cmd_record(a) -> None:
     from sports_edge.adapters.kalshi_record import record
 
     s = settings()
+    from sports_edge.connections import materialize_kalshi_key
+    if materialize_kalshi_key(s.runs_dir):
+        s = settings()
     if not s.kalshi_key_id or not s.kalshi_private_key_path:
         sys.exit("BLOCKED: KALSHI_KEY_ID and KALSHI_PRIVATE_KEY_PATH are required for the "
                  "Kalshi WebSocket (it needs a signed handshake even for public data).")

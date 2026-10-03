@@ -72,6 +72,8 @@ class WhatIfRequest(BaseModel):
 class Server:
     def __init__(self, *, train_games: int = 300, default_fixture: str = "slate_synthetic.jsonl",
                  default_mode: str = "mechanics", nfl_games: int = 400) -> None:
+        from sports_edge.connections import materialize_kalshi_key
+        materialize_kalshi_key(settings().runs_dir)
         self.settings = settings()
         self.default_fixture = default_fixture
         self.default_mode = default_mode
