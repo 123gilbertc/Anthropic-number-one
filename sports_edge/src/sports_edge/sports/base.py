@@ -212,8 +212,8 @@ def register(adapter: SportAdapter) -> SportAdapter:
 
 
 def adapter_for(sport: Sport) -> SportAdapter:
-    if not _REGISTRY:
-        from sports_edge.sports import mlb, nfl, nhl, tennis  # noqa: F401  (registers)
+    if sport not in _REGISTRY:  # importing a sport module registers its adapter
+        from sports_edge.sports import mlb, nfl, nhl, tennis  # noqa: F401
     try:
         return _REGISTRY[sport]
     except KeyError:
