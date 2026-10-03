@@ -21,7 +21,8 @@ H = {"X-SE-Request": "1"}
 
 @pytest.fixture(scope="module")
 def app():
-    a = create_app(train_games=150)
+    a = create_app(train_games=150, default_fixture="nhl_synthetic_dip.jsonl",
+                     default_mode="honest")
     a.state.server.db = None  # keep tests out of the developer's database
     a.state.server.session.db = None
     return a

@@ -153,17 +153,28 @@ class AppSession:
     # idempotency keys from earlier runs / before a restart (key -> order), read-only
     prior_keys: dict[str, PaperOrder] = field(default_factory=dict)
     lock: Any = field(default_factory=threading.RLock)  # serializes all state changes
+    history: Any = None  # product.history.LineHistory (recorded line movement)
+    model_cards: list = field(default_factory=list)
 
     # ------------------------------------------------------------------ build
 
     @classmethod
     def replay(cls, path: Path, forecaster: ChainForecaster | None, mechanics_demo: bool,
-               model_info: dict | None, reviewer=None) -> AppSession:
+               model_info: dict | None, reviewer=None, forecasters: dict | None = None
+               ) -> AppSession:
+        from sports_edge.product.history import LineHistory
+
         stream = ReplayStream(path)
-        clock, mon = stream.build(forecaster=forecaster, mechanics_demo=mechanics_demo)
+        clock, mon = stream.build(forecaster=forecaster, mechanics_demo=mechanics_demo,
+                                  forecasters=forecasters)
         mon.auto_paper = False  # orders only from explicit, authenticated commands
         s = cls(stream=stream, monitor=mon, clock=clock, mode="REPLAY",
                 data_label=stream.label, model_info=model_info, reviewer=reviewer)
+        s.history = LineHistory(mon.engine.fee_model, mon.engine.cfg.max_order_dollars)
+        for rt in mon.games.values():
+            for m in rt.mappings:
+                s.history.register(rt.game.game_id, m.contract_id, m.selection_team)
+        mon.observers.append(s.history.observe)
         mon.listeners.append(s._on_monitor_event)
         s.events.append("session", s.summary())
         return s
@@ -205,6 +216,9 @@ class AppSession:
             status, kind = "FILLED", "ORDER_FILLED"
         self.orders[oid] = o.model_copy(update={"status": status, "fill": fill,
                                                 "reasons": p["reasons"]})
+        if fill is not None and self.history is not None:
+            self.history.paper_fill(o.game_id, o.contract_id, fill.fill_time,
+                                    fill.filled_quantity, fill.cost, oid)
         self._ledger(kind, o.contract_id, oid, {
             "reasons": p["reasons"],
             "filled_quantity": fill.filled_quantity if fill else 0,

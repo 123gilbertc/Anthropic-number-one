@@ -46,8 +46,8 @@ class LoginRequest(BaseModel):
 
 
 class SessionRequest(BaseModel):
-    fixture: str = "nhl_synthetic_dip.jsonl"
-    mode: Literal["honest", "mechanics"] = "honest"
+    fixture: str | None = None  # None: the server's default demo fixture
+    mode: Literal["honest", "mechanics"] | None = None
 
 
 class RunRequest(BaseModel):
@@ -63,9 +63,17 @@ class SecretRequest(BaseModel):
     value: str
 
 
+class WhatIfRequest(BaseModel):
+    edits: dict
+
+
 class Server:
-    def __init__(self, *, train_games: int = 300) -> None:
+    def __init__(self, *, train_games: int = 300, default_fixture: str = "slate_synthetic.jsonl",
+                 default_mode: str = "mechanics", nfl_games: int = 400) -> None:
         self.settings = settings()
+        self.default_fixture = default_fixture
+        self.default_mode = default_mode
+        self.nfl_games = nfl_games
         self.auth = Auth(self.settings.runs_dir)
         self.store = SecretStore(ROOT / "secrets.local.json")
         self.providers = build_providers(self.settings)
@@ -78,7 +86,9 @@ class Server:
             rec = recover(self.db, datetime.now(UTC))
             self.prior_keys = rec["by_key"]
             self.recovery = {"abandoned": rec["abandoned"], "orders_loaded": len(rec["orders"])}
-        self.session: AppSession = self._new_session("nhl_synthetic_dip.jsonl", "honest")
+        from sports_edge.product.discovery import DiscoveryService, default_sources
+        self.discovery = DiscoveryService(default_sources(self.settings, self.store))
+        self.session: AppSession = self._new_session(default_fixture, default_mode)
 
     def _db(self):
         """Persist paper orders + ledger if Postgres is reachable and migrated; else memory."""
@@ -97,12 +107,22 @@ class Server:
         path = (FIXTURES / fixture).resolve()
         if path.parent != FIXTURES.resolve() or not path.exists():
             raise HTTPException(404, {"code": "UNKNOWN_FIXTURE", "detail": fixture})
-        fc, info = None, None
+        fc, info, sport_fc = None, None, None
+        from sports_edge.replay.runner import ReplayStream
+        multi = len(ReplayStream(path).games) > 1
         if mode == "mechanics":
             rep = train_synthetic(n_games=self.train_games)
             fc = rep.forecaster
             info = fc.version.model_dump(mode="json") | {"test_metrics": rep.test_metrics}
-        s = AppSession.replay(path, fc, mode == "mechanics", info, reviewer=self._reviewer())
+            if multi:
+                from sports_edge.sports.models import synthetic_forecasters
+                sport_fc = synthetic_forecasters(ReplayStream(path).strength, nhl=fc,
+                                                 nfl_games=self.nfl_games)
+        s = AppSession.replay(path, fc, mode == "mechanics", info, reviewer=self._reviewer(),
+                              forecasters=sport_fc)
+        if sport_fc:
+            from sports_edge.sports.models import describe
+            s.model_cards = describe(sport_fc)
         s.db = self.db
         old = getattr(self, "session", None)
         if old is not None:  # keys from the replaced session stay recognised
@@ -148,9 +168,23 @@ def _err(e: CommandError) -> JSONResponse:
     return JSONResponse({"code": e.code, "detail": e.detail}, status_code=e.status)
 
 
-def create_app(*, train_games: int = 300) -> FastAPI:
-    app = FastAPI(title="sports_edge", version="0.2.0")
-    srv = Server(train_games=train_games)
+def create_app(*, train_games: int = 300, default_fixture: str = "slate_synthetic.jsonl",
+               default_mode: str = "mechanics", start_workers: bool = False,
+               nfl_games: int = 400) -> FastAPI:
+    from contextlib import asynccontextmanager
+
+    holder: dict = {}
+
+    @asynccontextmanager
+    async def lifespan(_app):
+        if start_workers:  # supervised discovery: independent of any browser tab
+            holder["srv"].discovery.start()
+        yield
+
+    app = FastAPI(title="sports_edge", version="0.3.0", lifespan=lifespan)
+    srv = Server(train_games=train_games, default_fixture=default_fixture,
+                 default_mode=default_mode, nfl_games=nfl_games)
+    holder["srv"] = srv
     app.state.server = srv
 
     def authed(request: Request) -> None:
@@ -240,7 +274,8 @@ def create_app(*, train_games: int = 300) -> FastAPI:
     @app.post("/api/session", dependencies=[Depends(authed)], response_model=SessionInfo)
     def new_session(req: SessionRequest):
         srv.session.pause()
-        srv.session = srv._new_session(req.fixture, req.mode)
+        srv.session = srv._new_session(req.fixture or srv.default_fixture,
+                                       req.mode or ("honest" if req.fixture else srv.default_mode))
         return SessionInfo(**srv.session.summary())
 
     @app.post("/api/session/run", dependencies=[Depends(authed)], response_model=SessionInfo)
@@ -362,6 +397,97 @@ def create_app(*, train_games: int = 300) -> FastAPI:
         return {"checked": CHECKED, "registry": SOURCES,
                 "runtime": [h.summary(now) for h in s.monitor.health.values()]}
 
+    # ------------------------------------------------------------------ product views
+
+    from sports_edge.product.assess import Assessor
+    from sports_edge.product.board import demo_board, live_board
+    from sports_edge.product.coverage import coverage
+    from sports_edge.product.explain import WhatIfError, what_if
+
+    def _assessor() -> Assessor:
+        s = srv.session
+        return Assessor(s.monitor, s.history)
+
+    def _demo_meta() -> dict:
+        s = srv.session
+        return {"mode": "demo", "data_label": s.data_label, "banners": srv.banners(),
+                "run_id": s.run_id, "session_mode": s.mode}
+
+    @app.get("/api/board")
+    def board(mode: Literal["live", "demo"] = "live", date: str | None = None,
+              tz: str = "UTC"):
+        if mode == "demo":
+            s = srv.session
+            with s.lock:
+                out = demo_board(s, _assessor(), date, tz)
+            return out | {"meta": _demo_meta()}
+        out = live_board(srv.discovery, datetime.now(UTC), date, tz)
+        return out | {"meta": {"mode": "live", "data_label": "LIVE",
+                               "banners": ["PAPER ONLY: no real-money execution exists"]}}
+
+    def _rt(game_id: str):
+        rt = srv.session.monitor.games.get(game_id)
+        if rt is None:
+            raise HTTPException(404, {"code": "UNKNOWN_GAME", "detail": game_id})
+        return rt
+
+    @app.get("/api/events/{game_id}/workspace")
+    def workspace(game_id: str):
+        _rt(game_id)
+        s = srv.session
+        with s.lock:
+            out = _assessor().game(game_id, s.clock.now())
+        return out | {"meta": _demo_meta(), "model_cards": s.model_cards}
+
+    @app.get("/api/events/{game_id}/history")
+    def event_history(game_id: str, window: str = "all", max_points: int = 600):
+        rt = _rt(game_id)
+        s = srv.session
+        now = s.clock.now()
+        h = s.history
+        since = None if window in ("all", "pregame_to_live") else \
+            h.window(game_id, now, window, None)[0]
+        max_points = max(50, min(max_points, 5000))
+        with s.lock:
+            return {
+                "game_id": game_id, "window": window, "as_of": now.isoformat(),
+                "scheduled_start": rt.game.scheduled_start.isoformat(),
+                "contracts": [h.series(m.contract_id, since, now, max_points)
+                              | {"summary": h.summary(m.contract_id, now)}
+                              for m in rt.mappings],
+                "references": h.references(game_id, since, now),
+                "annotations": h.annotations_for(game_id, since, now),
+                "render_note": "Charts may thin points for display; every recorded "
+                               "observation is kept.",
+                "meta": _demo_meta(),
+            }
+
+    @app.post("/api/events/{game_id}/whatif", dependencies=[Depends(authed)])
+    def event_whatif(game_id: str, req: WhatIfRequest):
+        rt = _rt(game_id)
+        s = srv.session
+        f = s.monitor.forecaster_for(rt.game.sport)
+        if f is None:
+            raise HTTPException(409, {"code": "NO_MODEL", "detail": "no model loaded"})
+        with s.lock:
+            st = rt.reducer.state
+            try:
+                return what_if(f, rt.game, st, req.edits, rt.pregame_prob,
+                               s.monitor.engine.cfg.rule_for(rt.game.sport), s.clock.now())
+            except WhatIfError as e:
+                raise HTTPException(422, {"code": "INVALID_WHATIF", "detail": str(e)}) from e
+
+    @app.get("/api/coverage")
+    def coverage_view():
+        return {"competitions": coverage(), "discovery": [
+            r.view() for r in srv.discovery.results.values()],
+            "note": "Unknown coverage is not zero games. Competitions not listed are not "
+                    "covered."}
+
+    @app.post("/api/discovery/run", dependencies=[Depends(authed)])
+    async def discovery_run():
+        return [r.view() for r in await srv.discovery.run_once()]
+
     # ------------------------------------------------------------------ live stream
 
     @app.get("/api/stream")
@@ -418,4 +544,8 @@ def create_app(*, train_games: int = 300) -> FastAPI:
 
 
 def app_factory() -> FastAPI:  # uvicorn --factory entry point
-    return create_app()
+    import os
+    return create_app(
+        default_fixture=os.environ.get("SPORTS_EDGE_DEMO_FIXTURE", "slate_synthetic.jsonl"),
+        default_mode=os.environ.get("SPORTS_EDGE_DEMO_MODE", "mechanics"),
+        start_workers=os.environ.get("SPORTS_EDGE_WORKERS", "1") == "1")

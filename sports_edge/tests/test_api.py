@@ -6,7 +6,8 @@ H = {"X-SE-Request": "1"}
 
 
 def test_api_honest_mode_shows_limitations_and_no_alerts():
-    app = create_app(train_games=150)
+    app = create_app(train_games=150, default_fixture="nhl_synthetic_dip.jsonl",
+                     default_mode="honest")
     app.state.server.db = app.state.server.session.db = None
     c = TestClient(app)
     h = c.get("/api/health").json()
@@ -20,7 +21,8 @@ def test_api_honest_mode_shows_limitations_and_no_alerts():
 
 
 def test_api_mechanics_mode_is_labelled():
-    app = create_app(train_games=150)
+    app = create_app(train_games=150, default_fixture="nhl_synthetic_dip.jsonl",
+                     default_mode="honest")
     app.state.server.db = app.state.server.session.db = None
     c = TestClient(app)
     c.post("/api/auth/login", json={"token": app.state.server.auth.token})

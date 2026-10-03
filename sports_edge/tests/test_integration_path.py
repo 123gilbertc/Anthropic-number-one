@@ -40,7 +40,8 @@ def odds_api_payload(last_update_iso: str, bos: int, tor: int) -> list[dict]:
 
 @pytest.fixture(scope="module")
 def client():
-    app = create_app(train_games=150)
+    app = create_app(train_games=150, default_fixture="nhl_synthetic_dip.jsonl",
+                     default_mode="honest")
     app.state.server.db = app.state.server.session.db = None
     c = TestClient(app)
     c.post("/api/auth/login", json={"token": app.state.server.auth.token})

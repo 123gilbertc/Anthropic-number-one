@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from sports_edge.domain.records import Decision, Game, NHLState, PaperFill
+from sports_edge.domain.records import Decision, Game, PaperFill
 from sports_edge.session import LedgerEvent, PaperOrder
 
 
@@ -41,7 +41,8 @@ class ContractIntel(BaseModel):
 
 class GameIntel(BaseModel):
     game: Game
-    state: NHLState | None
+    state: dict[str, Any] | None  # sport-specific state record (NHL/NFL/TENNIS/MLB)
+    scoreboard: dict[str, Any] = {}
     model_favored_team: str | None
     value_side: str | None
     contracts: list[ContractIntel]

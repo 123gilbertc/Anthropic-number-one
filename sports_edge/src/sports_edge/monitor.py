@@ -230,6 +230,9 @@ class Monitor:
         rt = self.games.get(q.game_id)
         if rt is None:
             return
+        st = rt.reducer.state
+        self._observe("reference", {"quote": q, "last_material_event_time":
+                                    st.last_material_event_time if st else None})
         rt.references[q.book] = q
         self._evaluate(rt, now)
 
@@ -368,8 +371,11 @@ class Monitor:
 
     # --------------------------------------------------------------- commands
 
-    def preview(self, game_id: str, contract_id: str) -> Decision:
-        """Fresh, side-effect-free evaluation of one contract right now."""
+    def preview(self, game_id: str, contract_id: str, register: bool = True) -> Decision:
+        """Fresh evaluation of one contract right now. Does not submit anything.
+
+        ``register=True`` (a user's preview) makes an approval orderable for its TTL;
+        ``register=False`` is a pure read for displays (board, workspace)."""
         rt = self.games[game_id]
         m = next(x for x in rt.mappings if x.contract_id == contract_id)
         now = self.clock.now()
@@ -379,7 +385,7 @@ class Monitor:
                                or p.valid_until < now):
             self._forecast(rt, now)
         d = self.engine.evaluate(self.context(rt, m), now)
-        if d.action in APPROVING:
+        if register and d.action in APPROVING:
             self.signals[d.decision_id] = d
             self.decision_state[d.decision_id] = rt.reducer.state
         return d
