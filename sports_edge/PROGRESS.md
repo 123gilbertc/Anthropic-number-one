@@ -1,5 +1,11 @@
 # Progress log (for resuming in a new session)
 
+## 2026-10-03: clickable recorded replay
+
+- The user cannot reach a server running in the build container, and public hosting needs their approval and an account.
+- `scripts/record_demo.py` runs the real backend over the synthetic fixture and records every changed frame, every preview, and the real outcome of a paper order placed at each of the 147 eligible (moment, contract) pairs. A static page plays the recording back and computes nothing.
+- Published as a private Claude Artifact (recorded replay, not the live app). A live hosted app is still pending the user's approval and a hosting account.
+
 ## 2026-10-02: integration-validation pass
 
 The three referenced `CLAUDE_TRUE_EDGE_*.md` specs and the True Edge app are still not in any accessible location. This pass worked from the requirements in chat; see `docs/REQUIREMENTS_TRACE.md` for the requirement-by-requirement trace and both verdicts.
