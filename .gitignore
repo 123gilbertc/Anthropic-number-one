@@ -1,3 +1,15 @@
 .env
 n8n_data/
 node_modules/
+__pycache__/
+*.pyc
+.venv/
+sports_edge/artifacts/
+sports_edge/runs/
+sports_edge/web/node_modules/
+sports_edge/web/dist/
+.pytest_cache/
+.ruff_cache/
+sports_edge/secrets.local.json
+sports_edge/web/test-results/
+sports_edge/web/playwright-report/
