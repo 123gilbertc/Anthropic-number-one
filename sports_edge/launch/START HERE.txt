@@ -1,0 +1,32 @@
+TRUE EDGE ON YOUR SANDISK DRIVE
+===============================
+Research and paper tracking only. No real money, no wagers.
+
+ONE-TIME SETUP
+1. Copy this whole folder onto your SanDisk drive and unzip it there.
+2. Start it:
+   - Mac: double-click "Start True Edge (Mac).command".
+     If macOS says it is from an unidentified developer: right-click it,
+     choose Open, then click Open.
+   - Windows: double-click "Start True Edge (Windows).bat".
+     If SmartScreen appears: click "More info", then "Run anyway".
+3. The first start installs a Python tool called uv and the Python packages
+   onto THIS COMPUTER (not the drive). It takes a few minutes. Later starts are quick.
+4. Your browser opens http://127.0.0.1:8000. The window shows an
+   operator token: paste it under Admin to get operator controls.
+   Keep the window open while you use the app; close it to stop.
+
+EVERY TIME AFTER THAT
+- Plug in the drive and double-click the same Start file.
+- If Git is installed (https://git-scm.com), it first downloads the latest
+  saved version from GitHub, so work done in the cloud shows up here too.
+
+WORKING ON IT WITH CLAUDE
+- Open the Claude desktop app, Code tab, start a LOCAL session and pick
+  the "Anthropic-number-one" folder on this drive. Say "continue":
+  Claude reads sports_edge/PROGRESS.md and picks up where we left off.
+
+SAFETY
+- Do not store your Kalshi private key on this drive (easy to lose).
+  Keep it on the computer or enter it in the app under Admin -> Connections.
+- Always eject the drive before unplugging it.
