@@ -1,5 +1,12 @@
 # Progress log (for resuming in a new session)
 
+## 2026-10-04: running from a USB drive
+
+- `launch/`: double-click launchers (`start-mac.command`, `start-windows.bat` + `.ps1`) and `START HERE.txt`. They install uv if missing, keep the Python env off the drive (`UV_PROJECT_ENVIRONMENT=~/.true-edge/venv`), `git pull --ff-only` when git exists, and serve on 127.0.0.1:8000.
+- Mac launcher tested here from a clean copy (fresh venv, board and UI served). Windows launcher NOT tested (no Windows machine).
+- User was given `TrueEdge-SanDisk.zip` (shallow clone + prebuilt `web/dist`) to unzip onto their SanDisk.
+- Kalshi still pending: user must add keys + network hosts in the environment settings (or Admin → Connections locally).
+
 ## 2026-10-03: True Edge commercial multi-sport upgrade
 
 The scope change is recorded at the top of SPEC.md. The evidence map and the three verdicts are in `docs/TRUE_EDGE_TRACE.md`; rights, costs and the launch gate are in `docs/COMMERCIAL_READINESS.md`. Screenshots are in `docs/screenshots/`.
